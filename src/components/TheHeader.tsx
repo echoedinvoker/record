@@ -4,7 +4,7 @@ import { CircleButton, ContentWrapper } from "./ui"
 import { Task } from "../types"
 
 interface Props {
-  tasks: Map<number, Task>
+  tasks: Task[]
   setShowModal: (showModal: boolean) => void
 }
 

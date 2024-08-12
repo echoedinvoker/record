@@ -8,7 +8,7 @@ import { Task } from '../types';
 import { CircleButton, ContentWrapper } from './ui';
 
 interface Props {
-  tasks: Map<number, Task>
+  tasks: Task[]
   addTask: (task: string, estimatedDurationHMS: string, markdownText: string) => void
   deleteTask: (id: number) => void
   startTask: (id: number) => void
@@ -79,7 +79,7 @@ export default function OnGoingTab({ tasks, addTask, deleteTask, startTask, stop
       </Container >
       {showModal && <FormAddTask setShowModal={setShowModal} addTask={handleAddTask} />}
       {activeTaskId !== null && <TheTimer
-        task={tasks.get(activeTaskId) as Task}
+        task={tasks.find(task => task.id === activeTaskId)!}
         setActiveTaskId={setActiveTaskId}
         stopTask={handleStopTask}
         changeTaskName={changeTaskName}

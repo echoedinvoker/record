@@ -6,84 +6,43 @@ import yaml from 'js-yaml'
 
 export default function App() {
 
-  const [tasks, setTasks] = useState<Map<number, Task>>(new Map())
+  const [tasks, setTasks] = useState<Task[]>([])
 
-  const notDoneTasks = new Map(Array.from(tasks.values()).filter(task => task.status !== 'done').map(task => [task.id, task])) // O(n)
+  const notDoneTasks = tasks.filter(task => task.status !== 'done')
 
   function addTask(task: string, estimatedDurationHMS: string, markdownText: string) {
     const newTask = {
-      id: Array.from(tasks.keys()).reduce((max, key) => Math.max(max, key), 0) + 1,
+      id: tasks.reduce((max, task) => Math.max(max, task.id), 0) + 1,
       task: task,
       status: 'pending',
       estimatedDuration: convertHMStoMilliseconds(estimatedDurationHMS),
       timestamp: null,
       timestampSum: 0,
       markdownContent: markdownText,
-      priority: Array.from(tasks.values()).reduce((max, task) => Math.max(max, task.priority), 0) + 1
+      priority: tasks.reduce((max, task) => Math.max(max, task.priority), 0) + 1
     }
-    setTasks(new Map([...tasks, [newTask.id, newTask]]))
+    setTasks([...tasks, newTask])
   }
-  function deleteTask(id: number) {
-    setTasks((prevTasks) => {
-      const newTasks = new Map(prevTasks)
-      newTasks.delete(id)
-      return newTasks
-    })
+  function deleteTask(id: number): void {
+    setTasks((prevTasks) => prevTasks.filter(task => task.id !== id))
   }
   function startTask(id: number) {
-    setTasks((prevTasks) => {
-      const newTasks = new Map(prevTasks)
-      const task = newTasks.get(id)
-      if (!task) return prevTasks
-      if (task.timestamp !== null) {
-        task.timestampSum += Date.now() - task.timestamp
-        task.timestamp = null
-      }
-      task.timestamp = Date.now()
-      task.status = 'in progress'
-      return newTasks
-    })
+    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, timestamp: Date.now(), status: 'in progress' } : task))
   }
   function stopTask(id: number) {
-    setTasks((prevTasks) => {
-      const newTasks = new Map(prevTasks)
-      const task = newTasks.get(id)
-      if (!task || task.timestamp === null) return prevTasks
-      task.timestampSum += Date.now() - task.timestamp
-      task.timestamp = null
-      task.status = 'done'
-      return newTasks
-    })
+    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, timestampSum: task.timestampSum + (Date.now() - task.timestamp!), timestamp: null, status: 'done' } : task))
   }
   function changeTaskName(id: number, name: string) {
-    setTasks((prevTasks) => {
-      const newTasks = new Map(prevTasks)
-      const task = newTasks.get(id)
-      if (!task) return prevTasks
-      task.task = name
-      return newTasks
-    })
+    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, task: name } : task))
   }
   function updateTaskMardownContent(id: number, content: string) {
-    setTasks((prevTasks) => {
-      const newTasks = new Map(prevTasks)
-      const task = newTasks.get(id)
-      if (!task) return prevTasks
-      task.markdownContent = content
-      return newTasks
-    })
+    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, markdownContent: content } : task))
   }
   function changeTaskElapsedDuration(id: number, elapsedDurationHMS: string) {
-    setTasks((prevTasks) => {
-      const newTasks = new Map(prevTasks)
-      const task = newTasks.get(id)
-      if (!task) return prevTasks
-      task.estimatedDuration = convertHMStoMilliseconds(elapsedDurationHMS)
-      return newTasks
-    })
+    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, estimatedDuration: convertHMStoMilliseconds(elapsedDurationHMS) } : task))
   }
   function downloadTasks() {
-    const yamlStr = yaml.dump(Array.from(tasks.values()))
+    const yamlStr = yaml.dump(tasks)
     const blob = new Blob([yamlStr], { type: 'text/yaml' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -95,6 +54,10 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
+  useEffect(() => {
+    if (tasks.some(task => task.status === 'in progress')) downloadTasks()
+  }, [tasks])
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,7 +65,7 @@ export default function App() {
         const response = await fetch('/data.yaml')
         const text = await response.text()
         const parsedData = yaml.load(text)
-        setTasks(new Map(parsedData.map((task: Task) => [task.id, task])))
+        parsedData && setTasks(parsedData)
       } catch (error) {
         console.error(error)
       }

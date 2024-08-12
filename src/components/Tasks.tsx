@@ -3,7 +3,7 @@ import { Task } from "../types"
 import TheTask from "./TheTask"
 
 interface Props {
-  tasks: Map<number, Task>
+  tasks: Task[]
   deleteTask: (id: number) => void
   startTask: (id: number) => void
   changeTaskName: (id: number, name: string) => void
