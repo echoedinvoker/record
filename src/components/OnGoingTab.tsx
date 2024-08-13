@@ -75,6 +75,7 @@ export default function OnGoingTab({ tasks, addTask, deleteTask, startTask, stop
           deleteTask={deleteTask}
           startTask={handleStartTask}
           changeTaskName={changeTaskName}
+          updateTaskMardownContent={updateTaskMardownContent}
           changeTaskElapsedDuration={changeTaskElapsedDuration} />
       </Container >
       {showModal && <FormAddTask setShowModal={setShowModal} addTask={handleAddTask} />}

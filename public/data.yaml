@@ -1,0 +1,48 @@
+- id: 1
+  task: 完成 Omniverse 分享 Report
+  status: done
+  estimatedDuration: 3600000
+  timestamp: null
+  timestampSum: 3766017
+  markdownContent: ''
+  priority: 1
+- id: 2
+  task: Quaternion 轉換到 Global 座標系方向向量
+  status: done
+  estimatedDuration: 900000
+  timestamp: null
+  timestampSum: 3544087
+  markdownContent: ''
+  priority: 2
+- id: 3
+  task: 237. Entrypoint and CMD
+  status: done
+  estimatedDuration: 2100000
+  timestamp: null
+  timestampSum: 2840443
+  markdownContent: ''
+  priority: 3
+- id: 4
+  task: 238. Docker Compose
+  status: in progress
+  estimatedDuration: 4500000
+  timestamp: 1723530975448
+  timestampSum: 0
+  markdownContent: ''
+  priority: 4
+- id: 5
+  task: 239. Multi Stage Dockerfile
+  status: pending
+  estimatedDuration: 3000000
+  timestamp: null
+  timestampSum: 0
+  markdownContent: ''
+  priority: 5
+- id: 6
+  task: Walk
+  status: done
+  estimatedDuration: 300000
+  timestamp: null
+  timestampSum: 772911
+  markdownContent: ''
+  priority: 6

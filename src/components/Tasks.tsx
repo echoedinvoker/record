@@ -8,13 +8,21 @@ interface Props {
   startTask: (id: number) => void
   changeTaskName: (id: number, name: string) => void
   changeTaskElapsedDuration: (id: number, elapsedDurationHMS: string) => void
+  updateTaskMardownContent: (id: number, markdownContent: string) => void
 }
 
-export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration }: Props) {
+export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration, updateTaskMardownContent }: Props) {
   return (
     <TaskGroup>
       {Array.from(tasks.values()).map((task: Task) => (
-        <TheTask key={task.id} task={task} deleteTask={deleteTask} startTask={startTask} changeTaskName={changeTaskName} changeTaskElapsedDuration={changeTaskElapsedDuration} />
+        <TheTask
+          key={task.id}
+          task={task}
+          deleteTask={deleteTask}
+          startTask={startTask}
+          changeTaskName={changeTaskName}
+          changeMarkdown={updateTaskMardownContent}
+          changeTaskElapsedDuration={changeTaskElapsedDuration} />
       ))}
     </TaskGroup>
   )

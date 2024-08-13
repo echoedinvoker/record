@@ -76,7 +76,16 @@ export default function App() {
 
   return (
     <>
-      <OnGoingTab tasks={notDoneTasks} addTask={addTask} deleteTask={deleteTask} startTask={startTask} stopTask={stopTask} changeTaskName={changeTaskName} updateTaskMardownContent={updateTaskMardownContent} changeTaskElapsedDuration={changeTaskElapsedDuration} downloadTasks={downloadTasks} />
+      <OnGoingTab
+        tasks={notDoneTasks}
+        addTask={addTask}
+        deleteTask={deleteTask}
+        startTask={startTask}
+        stopTask={stopTask}
+        changeTaskName={changeTaskName}
+        updateTaskMardownContent={updateTaskMardownContent}
+        changeTaskElapsedDuration={changeTaskElapsedDuration}
+        downloadTasks={downloadTasks} />
     </>
   )
 }
