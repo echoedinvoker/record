@@ -9,7 +9,7 @@ import styled from "styled-components";
 
 interface Props {
   task: Task
-  changeMarkdown: (id: number, markdownContent: string) => void
+  changeMarkdown: (taskId: string, markdownContent: string) => void
   setShowModal: (show: boolean) => void
 }
 

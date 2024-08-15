@@ -1,51 +1,200 @@
 import { useEffect, useState } from 'react'
 import { convertHMStoMilliseconds } from './utils';
-import { Task } from './types';
+import { Data, Task } from './types';
 import OnGoingTab from './components/OnGoingTab';
 import yaml from 'js-yaml'
 
 export default function App() {
 
-  const [tasks, setTasks] = useState<Task[]>([])
+  const [data, setData] = useState<Data | null>(null)
+  const tasks = data?.tasks || []
 
   function addTask(task: string, estimatedDurationHMS: string, markdownText: string) {
+    const newId = crypto.randomUUID()
     const newTask = {
-      id: tasks.reduce((max, task) => Math.max(max, task.id), 0) + 1,
+      id: newId,
       task: task,
       status: 'pending',
       estimatedDuration: convertHMStoMilliseconds(estimatedDurationHMS),
       timestamp: null,
       timestampSum: 0,
       markdownContent: markdownText,
-      priority: tasks.reduce((max, task) => Math.max(max, task.priority), 0) + 1,
       delayTS: []
     }
-    setTasks([...tasks, newTask])
+    setData({
+      ...data!,
+      tasks: { ...data!.tasks, [newId]: newTask },
+      columns: {
+        ...data!.columns,
+        "column-1": {
+          ...data!.columns["column-1"],
+          taskIds: [...data!.columns["column-1"].taskIds, newId]
+        }
+      }
+    })
   }
-  function deleteTask(id: number): void {
-    setTasks((prevTasks) => prevTasks.filter(task => task.id !== id))
+  function deleteTask(taskId: string): void {
+    if (!data || !data.tasks) {
+      throw new Error("Data or tasks are undefined");
+    }
+    const { [taskId]: _, ...rest } = data.tasks
+    setData({
+      ...data,
+      tasks: rest,
+      columns: {
+        ...data.columns,
+        "column-1": {
+          ...data.columns["column-1"],
+          taskIds: data.columns["column-1"].taskIds.filter(id => id !== taskId)
+        }
+      }
+    })
   }
-  function startTask(id: number) {
-    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, timestamp: Date.now(), status: 'in progress' } : task))
+  function startTask(taskId: string) {
+    if (!data || !data.tasks) {
+      throw new Error("Data or tasks are undefined");
+    }
+    setData({
+      ...data!,
+      tasks: {
+        ...data.tasks,
+        [taskId]: {
+          ...data.tasks[taskId],
+          timestamp: Date.now(),
+        }
+      },
+    })
   }
-  function stopTask(id: number) {
-    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, timestampSum: task.timestampSum + (Date.now() - task.timestamp!), timestamp: null, status: 'done' } : task))
+  function stopTask(taskId: string) {
+    if (!data || !data.tasks) {
+      throw new Error("Data or tasks are undefined");
+    }
+    setData({
+      ...data!,
+      tasks: {
+        ...data.tasks,
+        [taskId]: {
+          ...data.tasks[taskId],
+          timestampSum: data.tasks[taskId].timestampSum + (Date.now() - data.tasks[taskId].timestamp!),
+          timestamp: null,
+        }
+      },
+      columns: {
+        ...data.columns,
+        "0": {
+          ...data.columns["0"],
+          taskIds: data.columns["0"].taskIds.filter(id => id !== taskId)
+        },
+        "done": {
+          ...data.columns["done"],
+          taskIds: [...data.columns["done"].taskIds, taskId]
+        }
+      }
+    })
   }
-  function changeTaskName(id: number, name: string) {
-    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, task: name } : task))
+  function changeTaskName(taskId: string, name: string) {
+    if (!data || !data.tasks) {
+      throw new Error("Data or tasks are undefined");
+    }
+    setData({
+      ...data!,
+      tasks: {
+        ...data.tasks,
+        [taskId]: {
+          ...data.tasks[taskId],
+          task: name
+        }
+      }
+    })
   }
-  function updateTaskMardownContent(id: number, content: string) {
-    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, markdownContent: content } : task))
+  function updateTaskMardownContent(taskId: string, content: string) {
+    if (!data || !data.tasks) {
+      throw new Error("Data or tasks are undefined");
+    }
+    setData({
+      ...data!,
+      tasks: {
+        ...data.tasks,
+        [taskId]: {
+          ...data.tasks[taskId],
+          markdownContent: content
+        }
+      }
+    })
   }
-  function changeTaskElapsedDuration(id: number, elapsedDurationHMS: string) {
-    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, estimatedDuration: convertHMStoMilliseconds(elapsedDurationHMS) } : task))
+  function changeTaskElapsedDuration(taskId: string, elapsedDurationHMS: string) {
+    if (!data || !data.tasks) {
+      throw new Error("Data or tasks are undefined");
+    }
+    setData({
+      ...data!,
+      tasks: {
+        ...data.tasks,
+        [taskId]: {
+          ...data.tasks[taskId],
+          estimatedDuration: convertHMStoMilliseconds(elapsedDurationHMS)
+        }
+      }
+    })
   }
-  function delayToNextDay(id: number, numOfDays: number) {
-    const date = new Date()
-    date.setDate(date.getDate() + numOfDays)
-    const dateTS = date.setHours(0, 0, 0, 0)
-    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, delayTS: [...task.delayTS, dateTS] } : task))
+  function delayToNextDay(taskId: string) {
+    if (!data) {
+      throw new Error("Data is undefined");
+    }
+    const columnId = getColumnIdByTaskId(taskId)
+    const newColumnId = (parseInt(columnId) + 1).toString()
+    const getNewColumn = () => {
+      if (data.columns[newColumnId]) {
+        return {
+          ...data.columns[newColumnId],
+          taskIds: [...data.columns[newColumnId].taskIds, taskId]
+        }
+      } else {
+        const ts = new Date()
+        ts.setDate(ts.getDate() + parseInt(newColumnId))
+        ts.setHours(0, 0, 0, 0)
+        return {
+          id: newColumnId,
+          title: new Date().toDateString(),
+          ts: ts.getTime(),
+          taskIds: [taskId]
+        }
+      }
+    }
+
+    const newData = {
+      ...data,
+      columns: {
+        ...data.columns,
+        [columnId]: {
+          ...data.columns[columnId],
+          taskIds: data.columns[columnId].taskIds.filter(id => id !== taskId)
+        },
+        [newColumnId]: getNewColumn()
+      }
+    }
+
+    setData(newData)
   }
+
+  function getColumnIdByTaskId(taskId: string): string {
+    if (!data) {
+      throw new Error("Data is undefined");
+    }
+    const taskIdToColumnIdMap = createTaskIdToColumnIdMap(data)
+    return taskIdToColumnIdMap.get(taskId) || ""
+  }
+
+  function createTaskIdToColumnIdMap(data: Data): Map<string, string> {
+    return Object.entries(data.columns).reduce((acc, [columnId, column]) => {
+      column.taskIds.forEach(taskId => {
+        acc.set(taskId, columnId);
+      });
+      return acc;
+    }, new Map<string, string>());
+  }
+
+
   function downloadTasks() {
     const yamlStr = yaml.dump(tasks)
     const blob = new Blob([yamlStr], { type: 'text/yaml' });
@@ -59,10 +208,6 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
-  useEffect(() => {
-    if (tasks.some(task => task.status === 'in progress')) downloadTasks()
-  }, [tasks])
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,7 +215,8 @@ export default function App() {
         const response = await fetch('/data.yaml')
         const text = await response.text()
         const parsedData = yaml.load(text)
-        parsedData && setTasks(parsedData)
+        // parsedData && setTasks(parsedData)
+        parsedData && setData(parsedData)
       } catch (error) {
         console.error(error)
       }
@@ -82,7 +228,7 @@ export default function App() {
   return (
     <>
       <OnGoingTab
-        tasks={tasks}
+        data={data}
         addTask={addTask}
         deleteTask={deleteTask}
         startTask={startTask}

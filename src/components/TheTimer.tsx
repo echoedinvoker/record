@@ -11,10 +11,10 @@ import styled from "styled-components";
 
 interface Props {
   task: Task
-  setActiveTaskId: (id: number | null) => void
-  stopTask: (id: number) => void
-  changeTaskName: (id: number, name: string) => void
-  updateTaskMardownContent: (id: number, content: string) => void
+  setActiveTaskId: (taskId: string | null) => void
+  stopTask: (taskId: string) => void
+  changeTaskName: (taskId: string, name: string) => void
+  updateTaskMardownContent: (taskId: string, content: string) => void
 }
 
 export default function TheTimer({ task, setActiveTaskId, stopTask, changeTaskName, updateTaskMardownContent }: Props) {

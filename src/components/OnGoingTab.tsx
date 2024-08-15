@@ -4,59 +4,74 @@ import TheHeader from './TheHeader';
 import Tasks from './Tasks';
 import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { Task } from '../types';
+import { Data, Task } from '../types';
 import { CircleButton, ContentWrapper } from './ui';
 
 interface Props {
-  tasks: Task[]
+  data: (Data | null)
   addTask: (task: string, estimatedDurationHMS: string, markdownText: string) => void
-  deleteTask: (id: number) => void
-  startTask: (id: number) => void
-  stopTask: (id: number) => void
-  changeTaskName: (id: number, name: string) => void
-  updateTaskMardownContent: (id: number, content: string) => void
-  changeTaskElapsedDuration: (id: number, elapsedDurationHMS: string) => void
+  deleteTask: (taskId: string) => void
+  startTask: (taskId: string) => void
+  stopTask: (taskId: string) => void
+  changeTaskName: (taskId: string, name: string) => void
+  updateTaskMardownContent: (taskId: string, content: string) => void
+  changeTaskElapsedDuration: (taskId: string, elapsedDurationHMS: string) => void
   downloadTasks: () => void
-  delayToNextDay: (id: number, numOfDays: number) => void
+  delayToNextDay: (taskId: string) => void
 }
 
-export default function OnGoingTab({ tasks, addTask, deleteTask, startTask, stopTask, changeTaskName, updateTaskMardownContent, changeTaskElapsedDuration, downloadTasks, delayToNextDay }: Props) {
+export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopTask, changeTaskName, updateTaskMardownContent, changeTaskElapsedDuration, downloadTasks, delayToNextDay }: Props) {
   const isLoadedTasksAtStart = useRef(false)
   const [showModal, setShowModal] = useState(false)
-  const [activeTaskId, setActiveTaskId] = useState<number | null>(null)
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null)
   const [whichDay, setWhichDay] = useState(0)
 
-  const filteredTasks = tasks
-    .filter(task => task.status !== 'done')
-    .filter(task => task.delayTS.length === whichDay)
-
-  const maxWhichDay = tasks.reduce((acc, task) => Math.max(acc, task.delayTS.length), 0)
-  const hasNextDay = maxWhichDay > whichDay
-  const hasPrevDay = whichDay > 0
-
   useEffect(() => {
+    if (!data) return
     if (isLoadedTasksAtStart.current) return
-    for (const task of Array.from(tasks.values())) {
-      if (task.timestamp !== null) {
+    isLoadedTasksAtStart.current = true
+    for (const taskId of data!.columns["0"].taskIds) {
+      const task = data!.tasks[taskId]
+      if (task.timestamp) {
         setActiveTaskId(task.id)
-        isLoadedTasksAtStart.current = true
         break
       }
     }
-  }, [tasks])
+  }, [data])
+
+  if (!data) return null
+
+  const filteredTasks = data.columns[whichDay].taskIds.map(taskId => data.tasks[taskId])
+
+  const maxWhichDay = getMaxWhichDay()
+  const hasNextDay = maxWhichDay > whichDay
+  const hasPrevDay = whichDay > 0
+
+  function getMaxWhichDay() {
+    let max = 0
+    while (true) {
+      if ((max + 1).toString() in data!.columns) {
+        max++
+      } else {
+        break
+      }
+    }
+    return max
+  }
+
 
   function handleAddTask(task: string, estimatedDurationHMS: string, markdownText: string) {
     setShowModal(false)
     addTask(task, estimatedDurationHMS, markdownText)
   }
 
-  function handleStartTask(id: number) {
-    setActiveTaskId(id)
-    startTask(id)
+  function handleStartTask(taskId: string) {
+    setActiveTaskId(taskId)
+    startTask(taskId)
   }
 
-  function handleStopTask(id: number) {
-    stopTask(id)
+  function handleStopTask(taskId: string) {
+    stopTask(taskId)
     setActiveTaskId(null)
   }
 
@@ -98,7 +113,7 @@ export default function OnGoingTab({ tasks, addTask, deleteTask, startTask, stop
       </Container >
       {showModal && <FormAddTask setShowModal={setShowModal} addTask={handleAddTask} />}
       {activeTaskId !== null && <TheTimer
-        task={tasks.find(task => task.id === activeTaskId)!}
+        task={data.tasks[activeTaskId]}
         setActiveTaskId={setActiveTaskId}
         stopTask={handleStopTask}
         changeTaskName={changeTaskName}

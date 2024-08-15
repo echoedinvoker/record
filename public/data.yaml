@@ -1,57 +1,52 @@
-- id: 1
-  task: 'Record: Create Buttons to switch date: 過濾正確資訊到 daily 頁面'
-  status: done
-  estimatedDuration: 3600000
-  timestamp: null
-  timestampSum: 3621556
-  markdownContent: ''
-  priority: 1
-  delayTS: []
-- id: 2
-  task: 'Devops: 239. Multi Stage Dockerfile'
-  status: pending
-  estimatedDuration: 3000000
-  timestamp: null
-  timestampSum: 0
-  markdownContent: ''
-  priority: 2
-  delayTS: []
-- id: 3
-  task: 'Record: 拖曳改變 Tasks priority 以及畫面上的排序'
-  status: pending
-  estimatedDuration: 3600000
-  timestamp: null
-  timestampSum: 0
-  markdownContent: ''
-  priority: 3
-  delayTS: []
-- id: 4
-  task: tomorrow
-  status: pending
-  estimatedDuration: 3600000
-  timestamp: null
-  timestampSum: 0
-  markdownContent: ''
-  priority: 4
-  delayTS:
-    - 1723737600000
-- id: 5
-  task: next two day
-  status: pending
-  estimatedDuration: 3600000
-  timestamp: null
-  timestampSum: 0
-  markdownContent: ''
-  priority: 5
-  delayTS:
-    - 1723737600000
-    - 1723824000000
-- id: 6
-  task: 'Record: Button to switch dates'
-  status: in progress
-  estimatedDuration: 1800000
-  timestamp: 1723704066856
-  timestampSum: 0
-  markdownContent: ''
-  priority: 6
-  delayTS: []
+tasks:
+  task-1:
+    id: task-1
+    task: Task-1
+    estimatedDuration: 3600000
+    timestamp: null
+    timestampSum: 3621556
+    markdownContent: ''
+  task-2:
+    id: task-2
+    task: Task-2
+    estimatedDuration: 3600000
+    timestamp: null
+    timestampSum: 3621556
+    markdownContent: ''
+  task-3:
+    id: task-3
+    task: Task-3
+    estimatedDuration: 3600000
+    timestamp: null
+    timestampSum: 3621556
+    markdownContent: ''
+  task-4:
+    id: task-4
+    task: Task-4
+    estimatedDuration: 3600000
+    timestamp: null
+    timestampSum: 3621556
+    markdownContent: ''
+
+columns:
+  '0':
+    id: '0' 
+    title: 'Today'
+    ts: 1723737600000
+    taskIds:
+      - task-1
+      - task-2
+  '1':
+    id: '1' 
+    title: 'Tomorrow'
+    ts: 1723824000000
+    taskIds:
+      - task-3
+  'done':
+    id: 'done'
+    title: 'Done'
+    taskIds:
+      - task-4
+
+columnOrder:
+  - '0'

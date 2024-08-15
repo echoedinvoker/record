@@ -4,12 +4,12 @@ import TheTask from "./TheTask"
 
 interface Props {
   tasks: Task[]
-  deleteTask: (id: number) => void
-  startTask: (id: number) => void
-  changeTaskName: (id: number, name: string) => void
-  changeTaskElapsedDuration: (id: number, elapsedDurationHMS: string) => void
-  updateTaskMardownContent: (id: number, markdownContent: string) => void
-  delayToNextDay: (id: number, numOfDays: number) => void
+  deleteTask: (taskId: string) => void
+  startTask: (taskId: string) => void
+  changeTaskName: (taskId: string, name: string) => void
+  changeTaskElapsedDuration: (taskId: string, elapsedDurationHMS: string) => void
+  updateTaskMardownContent: (taskId: string, markdownContent: string) => void
+  delayToNextDay: (taskId: string) => void
 }
 
 export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration, updateTaskMardownContent, delayToNextDay }: Props) {

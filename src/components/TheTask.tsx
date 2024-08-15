@@ -7,12 +7,12 @@ import EditMarkdownModal from "./EditMardownModal";
 
 interface Props {
   task: TypeTask,
-  deleteTask: (id: number) => void,
-  startTask: (id: number) => void
-  changeTaskName: (id: number, name: string) => void
-  changeTaskElapsedDuration: (id: number, elapsedDuration: string) => void
-  changeMarkdown: (id: number, markdown: string) => void
-  delayToNextDay: (id: number, numOfDays: number) => void
+  deleteTask: (taskId: string) => void,
+  startTask: (taskId: string) => void
+  changeTaskName: (taskId: string, name: string) => void
+  changeTaskElapsedDuration: (taskId: string, elapsedDuration: string) => void
+  changeMarkdown: (taskId: string, markdown: string) => void
+  delayToNextDay: (taskId: string) => void
 }
 
 export default function TheTask({ task, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration, changeMarkdown, delayToNextDay }: Props) {
@@ -36,7 +36,7 @@ export default function TheTask({ task, deleteTask, startTask, changeTaskName, c
   }
 
   const handleDelay = () => {
-    delayToNextDay(task.id, task.delayTS.length + 1);
+    delayToNextDay(task.id);
   }
 
   return (
@@ -78,12 +78,6 @@ export default function TheTask({ task, deleteTask, startTask, changeTaskName, c
           </TaskActions>
         </TaskHeader>
         <Pairs>
-          <Pair>
-            <Key>Status:</Key>
-            <PairValueContainer style={{ marginTop: '.4em' }}>
-              <Value>{task.status}</Value>
-            </PairValueContainer>
-          </Pair>
           <Pair>
             <Key>Estimated Duration:</Key>
             <PairValueContainer>
