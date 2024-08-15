@@ -9,9 +9,10 @@ interface Props {
   changeTaskName: (id: number, name: string) => void
   changeTaskElapsedDuration: (id: number, elapsedDurationHMS: string) => void
   updateTaskMardownContent: (id: number, markdownContent: string) => void
+  delayToNextDay: (id: number, numOfDays: number) => void
 }
 
-export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration, updateTaskMardownContent }: Props) {
+export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration, updateTaskMardownContent, delayToNextDay }: Props) {
   return (
     <TaskGroup>
       {Array.from(tasks.values()).map((task: Task) => (
@@ -22,6 +23,7 @@ export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, ch
           startTask={startTask}
           changeTaskName={changeTaskName}
           changeMarkdown={updateTaskMardownContent}
+          delayToNextDay={delayToNextDay}
           changeTaskElapsedDuration={changeTaskElapsedDuration} />
       ))}
     </TaskGroup>

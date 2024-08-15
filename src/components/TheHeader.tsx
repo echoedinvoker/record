@@ -5,16 +5,28 @@ import { Task } from "../types"
 
 interface Props {
   tasks: Task[]
-  setShowModal: (showModal: boolean) => void
+  whichDay: number
+  switchToNextDay: () => void
+  switchToPrevDay: () => void
+  hasNextDay: boolean
+  hasPrevDay: boolean
 }
 
-export default function TheHeader({ tasks, setShowModal }: Props) {
+export default function TheHeader({ tasks, whichDay, switchToNextDay, switchToPrevDay, hasNextDay, hasPrevDay }: Props) {
   const totalDurationTS = Array.from(tasks.values()).reduce((acc, task) => acc + task.estimatedDuration, 0)
   const totalElapsedTimeTS = Array.from(tasks.values()).reduce((acc, task) => acc + task.timestampSum, 0)
 
   return (
     <Container>
-      <h1>Daily</h1>
+      {hasPrevDay && (
+        <CircleButton $counter onClick={switchToPrevDay}>
+          <ContentWrapper
+            $size="2em"
+            $offsetY="-4px"
+          >&laquo;</ContentWrapper>
+        </CircleButton>
+      )}
+      <h1>{whichDay === 0 ? 'Today' : whichDay === 1 ? 'Tomorrow' : `In ${whichDay} days`}</h1>
       <Stats>
         <Stat>
           <StatName>Total Duration:</StatName>
@@ -25,6 +37,14 @@ export default function TheHeader({ tasks, setShowModal }: Props) {
           <StatValue>{convertMillisecondsToHMS(totalElapsedTimeTS)}</StatValue>
         </Stat>
       </Stats>
+      {hasNextDay && (
+        <CircleButton $counter onClick={switchToNextDay}>
+          <ContentWrapper
+            $size="2em"
+            $offsetY="-4px"
+          >&raquo;</ContentWrapper>
+        </CircleButton>
+      )}
     </Container>
 
   )

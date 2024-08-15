@@ -7,4 +7,5 @@ export interface Task {
   timestampSum: number
   markdownContent: string
   priority: number
+  delayTS: number[]
 }

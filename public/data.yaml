@@ -1,48 +1,57 @@
 - id: 1
-  task: 完成 Omniverse 分享 Report
+  task: 'Record: Create Buttons to switch date: 過濾正確資訊到 daily 頁面'
   status: done
   estimatedDuration: 3600000
   timestamp: null
-  timestampSum: 3766017
+  timestampSum: 3621556
   markdownContent: ''
   priority: 1
+  delayTS: []
 - id: 2
-  task: Quaternion 轉換到 Global 座標系方向向量
-  status: done
-  estimatedDuration: 900000
-  timestamp: null
-  timestampSum: 3544087
-  markdownContent: ''
-  priority: 2
-- id: 3
-  task: 237. Entrypoint and CMD
-  status: done
-  estimatedDuration: 2100000
-  timestamp: null
-  timestampSum: 2840443
-  markdownContent: ''
-  priority: 3
-- id: 4
-  task: 238. Docker Compose
-  status: in progress
-  estimatedDuration: 4500000
-  timestamp: 1723530975448
-  timestampSum: 0
-  markdownContent: ''
-  priority: 4
-- id: 5
-  task: 239. Multi Stage Dockerfile
+  task: 'Devops: 239. Multi Stage Dockerfile'
   status: pending
   estimatedDuration: 3000000
   timestamp: null
   timestampSum: 0
   markdownContent: ''
-  priority: 5
-- id: 6
-  task: Walk
-  status: done
-  estimatedDuration: 300000
+  priority: 2
+  delayTS: []
+- id: 3
+  task: 'Record: 拖曳改變 Tasks priority 以及畫面上的排序'
+  status: pending
+  estimatedDuration: 3600000
   timestamp: null
-  timestampSum: 772911
+  timestampSum: 0
+  markdownContent: ''
+  priority: 3
+  delayTS: []
+- id: 4
+  task: tomorrow
+  status: pending
+  estimatedDuration: 3600000
+  timestamp: null
+  timestampSum: 0
+  markdownContent: ''
+  priority: 4
+  delayTS:
+    - 1723737600000
+- id: 5
+  task: next two day
+  status: pending
+  estimatedDuration: 3600000
+  timestamp: null
+  timestampSum: 0
+  markdownContent: ''
+  priority: 5
+  delayTS:
+    - 1723737600000
+    - 1723824000000
+- id: 6
+  task: 'Record: Button to switch dates'
+  status: in progress
+  estimatedDuration: 1800000
+  timestamp: 1723704066856
+  timestampSum: 0
   markdownContent: ''
   priority: 6
+  delayTS: []

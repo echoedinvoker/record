@@ -8,8 +8,6 @@ export default function App() {
 
   const [tasks, setTasks] = useState<Task[]>([])
 
-  const notDoneTasks = tasks.filter(task => task.status !== 'done')
-
   function addTask(task: string, estimatedDurationHMS: string, markdownText: string) {
     const newTask = {
       id: tasks.reduce((max, task) => Math.max(max, task.id), 0) + 1,
@@ -19,7 +17,8 @@ export default function App() {
       timestamp: null,
       timestampSum: 0,
       markdownContent: markdownText,
-      priority: tasks.reduce((max, task) => Math.max(max, task.priority), 0) + 1
+      priority: tasks.reduce((max, task) => Math.max(max, task.priority), 0) + 1,
+      delayTS: []
     }
     setTasks([...tasks, newTask])
   }
@@ -40,6 +39,12 @@ export default function App() {
   }
   function changeTaskElapsedDuration(id: number, elapsedDurationHMS: string) {
     setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, estimatedDuration: convertHMStoMilliseconds(elapsedDurationHMS) } : task))
+  }
+  function delayToNextDay(id: number, numOfDays: number) {
+    const date = new Date()
+    date.setDate(date.getDate() + numOfDays)
+    const dateTS = date.setHours(0, 0, 0, 0)
+    setTasks((prevTasks) => prevTasks.map(task => task.id === id ? { ...task, delayTS: [...task.delayTS, dateTS] } : task))
   }
   function downloadTasks() {
     const yamlStr = yaml.dump(tasks)
@@ -77,7 +82,7 @@ export default function App() {
   return (
     <>
       <OnGoingTab
-        tasks={notDoneTasks}
+        tasks={tasks}
         addTask={addTask}
         deleteTask={deleteTask}
         startTask={startTask}
@@ -85,6 +90,7 @@ export default function App() {
         changeTaskName={changeTaskName}
         updateTaskMardownContent={updateTaskMardownContent}
         changeTaskElapsedDuration={changeTaskElapsedDuration}
+        delayToNextDay={delayToNextDay}
         downloadTasks={downloadTasks} />
     </>
   )

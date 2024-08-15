@@ -12,9 +12,10 @@ interface Props {
   changeTaskName: (id: number, name: string) => void
   changeTaskElapsedDuration: (id: number, elapsedDuration: string) => void
   changeMarkdown: (id: number, markdown: string) => void
+  delayToNextDay: (id: number, numOfDays: number) => void
 }
 
-export default function TheTask({ task, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration, changeMarkdown }: Props) {
+export default function TheTask({ task, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration, changeMarkdown, delayToNextDay }: Props) {
   const [isEditingTaskName, setIsEditingTaskName] = useState(false);
   const [taskName, setTaskName] = useState(task.task);
   const [isEditingEstimatedDuration, setIsEditingEstimatedDuration] = useState(false);
@@ -32,6 +33,10 @@ export default function TheTask({ task, deleteTask, startTask, changeTaskName, c
     e.preventDefault();
     setIsEditingEstimatedDuration(false);
     changeTaskElapsedDuration(task.id, estimatedDurationHMS);
+  }
+
+  const handleDelay = () => {
+    delayToNextDay(task.id, task.delayTS.length + 1);
   }
 
   return (
@@ -58,6 +63,11 @@ export default function TheTask({ task, deleteTask, startTask, changeTaskName, c
             <CircleButton onClick={() => setShowModal(true)}>
               <ContentWrapper>
                 &#128196;
+              </ContentWrapper>
+            </CircleButton>
+            <CircleButton onClick={handleDelay}>
+              <ContentWrapper $size="1.5em" $offsetY="-2px">
+                &#9202;
               </ContentWrapper>
             </CircleButton>
             <CircleButton onClick={() => deleteTask(task.id)}>
@@ -103,8 +113,9 @@ export default function TheTask({ task, deleteTask, startTask, changeTaskName, c
             </TextButton>
           </TaskTimer>
         </Pairs>
-      </Task>
-      {showModal && <EditMarkdownModal task={task} setShowModal={setShowModal} changeMarkdown={changeMarkdown} />}
+      </Task >
+      {showModal && <EditMarkdownModal task={task} setShowModal={setShowModal} changeMarkdown={changeMarkdown} />
+      }
     </>
   )
 }
