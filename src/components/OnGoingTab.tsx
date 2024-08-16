@@ -10,7 +10,7 @@ import { CircleButton, ContentWrapper } from './ui';
 interface Props {
   data: (Data | null)
   addTask: (task: string, estimatedDurationHMS: string, markdownText: string) => void
-  deleteTask: (taskId: string) => void
+  deleteTask: (taskId: string, columnId: string) => void
   startTask: (taskId: string) => void
   stopTask: (taskId: string) => void
   changeTaskName: (taskId: string, name: string) => void
@@ -104,6 +104,7 @@ export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopT
         />
         <Tasks
           tasks={filteredTasks}
+          whichDay={whichDay}
           deleteTask={deleteTask}
           startTask={handleStartTask}
           changeTaskName={changeTaskName}

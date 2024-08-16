@@ -7,7 +7,8 @@ import EditMarkdownModal from "./EditMardownModal";
 
 interface Props {
   task: TypeTask,
-  deleteTask: (taskId: string) => void,
+  deleteTask: (taskId: string, columnId: string) => void
+  whichDay: number
   startTask: (taskId: string) => void
   changeTaskName: (taskId: string, name: string) => void
   changeTaskElapsedDuration: (taskId: string, elapsedDuration: string) => void
@@ -15,7 +16,7 @@ interface Props {
   delayToNextDay: (taskId: string) => void
 }
 
-export default function TheTask({ task, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration, changeMarkdown, delayToNextDay }: Props) {
+export default function TheTask({ task, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration, changeMarkdown, delayToNextDay, whichDay }: Props) {
   const [isEditingTaskName, setIsEditingTaskName] = useState(false);
   const [taskName, setTaskName] = useState(task.task);
   const [isEditingEstimatedDuration, setIsEditingEstimatedDuration] = useState(false);
@@ -70,7 +71,7 @@ export default function TheTask({ task, deleteTask, startTask, changeTaskName, c
                 &#9202;
               </ContentWrapper>
             </CircleButton>
-            <CircleButton onClick={() => deleteTask(task.id)}>
+            <CircleButton onClick={() => deleteTask(task.id, whichDay.toString())}>
               <ContentWrapper>
                 &#10006;
               </ContentWrapper>

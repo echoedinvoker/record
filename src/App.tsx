@@ -33,7 +33,8 @@ export default function App() {
       }
     })
   }
-  function deleteTask(taskId: string): void {
+  function deleteTask(taskId: string, columnId: string): void {
+    console.log("deleteTask", taskId)
     if (!data || !data.tasks) {
       throw new Error("Data or tasks are undefined");
     }
@@ -43,9 +44,9 @@ export default function App() {
       tasks: rest,
       columns: {
         ...data.columns,
-        "column-1": {
-          ...data.columns["column-1"],
-          taskIds: data.columns["column-1"].taskIds.filter(id => id !== taskId)
+        [columnId]: {
+          ...data.columns[columnId],
+          taskIds: data.columns[columnId].taskIds.filter(id => id !== taskId)
         }
       }
     })
