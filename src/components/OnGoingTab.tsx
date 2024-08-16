@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { Data, Task } from '../types';
 import { CircleButton, ContentWrapper } from './ui';
+import DoneList from './DoneList';
 
 interface Props {
   data: (Data | null)
@@ -21,11 +22,14 @@ interface Props {
   changeTaskName: (taskId: string, name: string) => void
   updateTaskMardownContent: (taskId: string, content: string) => void
   changeTaskElapsedDuration: (taskId: string, elapsedDurationHMS: string) => void
+  changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void
   downloadTasks: () => void
   delayToNextDay: (taskId: string) => void
 }
 
-export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopTask, changeTaskName, updateTaskMardownContent, changeTaskElapsedDuration, downloadTasks, delayToNextDay }: Props) {
+export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopTask, changeTaskName, updateTaskMardownContent, changeTaskElapsedDuration,
+  changeTaskEstimatedDuration,
+  downloadTasks, delayToNextDay }: Props) {
   const isLoadedTasksAtStart = useRef(false)
   const [showModal, setShowModal] = useState(false)
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null)
@@ -107,15 +111,24 @@ export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopT
           hasNextDay={hasNextDay}
           hasPrevDay={hasPrevDay}
         />
-        <Tasks
-          tasks={filteredTasks}
-          whichDay={whichDay}
-          deleteTask={deleteTask}
-          startTask={handleStartTask}
-          changeTaskName={changeTaskName}
-          updateTaskMardownContent={updateTaskMardownContent}
-          delayToNextDay={delayToNextDay}
-          changeTaskElapsedDuration={changeTaskElapsedDuration} />
+        <Columns>
+          <Tasks
+            tasks={filteredTasks}
+            whichDay={whichDay}
+            deleteTask={deleteTask}
+            startTask={handleStartTask}
+            changeTaskName={changeTaskName}
+            updateTaskMardownContent={updateTaskMardownContent}
+            delayToNextDay={delayToNextDay}
+            changeTaskEstimatedDuration={changeTaskEstimatedDuration} />
+          <DoneList
+            tasks={data.columns["done"].taskIds.map(taskId => data.tasks[taskId])}
+            deleteTask={deleteTask}
+            changeTaskName={changeTaskName}
+            updateTaskMardownContent={updateTaskMardownContent}
+            changeTaskEstimatedDuration={changeTaskEstimatedDuration}
+            changeTaskElapsedDuration={changeTaskElapsedDuration} />
+        </Columns>
       </Container >
       {showModal && <FormAddTask setShowModal={setShowModal} addTask={handleAddTask} />}
       {activeTaskId !== null && <TheTimer
@@ -129,6 +142,13 @@ export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopT
 
   )
 }
+
+const Columns = styled.div`
+  display: flex;
+  gap: 1em;
+  flex-wrap: wrap;
+  justify-content: center;
+  `
 
 const FixedButtons = styled.div`
   display: flex;

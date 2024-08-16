@@ -130,7 +130,7 @@ export default function App() {
       }
     })
   }
-  function changeTaskElapsedDuration(taskId: string, elapsedDurationHMS: string) {
+  function changeTaskEstimatedDuration(taskId: string, elapsedDurationHMS: string) {
     if (!data || !data.tasks) {
       throw new Error("Data or tasks are undefined");
     }
@@ -145,6 +145,23 @@ export default function App() {
       }
     })
   }
+  function changeTaskElapsedDuration(taskId: string, elapsedDurationHMS: string) {
+    console.log("changeTaskElapsedDuration", taskId, elapsedDurationHMS)
+    if (!data || !data.tasks) {
+      throw new Error("Data or tasks are undefined");
+    }
+    setData({
+      ...data!,
+      tasks: {
+        ...data.tasks,
+        [taskId]: {
+          ...data.tasks[taskId],
+          timestampSum: convertHMStoMilliseconds(elapsedDurationHMS)
+        }
+      }
+    })
+  }
+
   function delayToNextDay(taskId: string) {
     if (!data) {
       throw new Error("Data is undefined");
@@ -223,7 +240,6 @@ export default function App() {
         const response = await fetch('/data.yaml')
         const text = await response.text()
         const parsedData = yaml.load(text)
-        // parsedData && setTasks(parsedData)
         parsedData && setData(parsedData)
       } catch (error) {
         console.error(error)
@@ -243,6 +259,7 @@ export default function App() {
         stopTask={stopTask}
         changeTaskName={changeTaskName}
         updateTaskMardownContent={updateTaskMardownContent}
+        changeTaskEstimatedDuration={changeTaskEstimatedDuration}
         changeTaskElapsedDuration={changeTaskElapsedDuration}
         delayToNextDay={delayToNextDay}
         downloadTasks={downloadTasks} />

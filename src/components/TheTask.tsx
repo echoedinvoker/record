@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Task as TypeTask } from "../types";
-import { CircleButton, ContentWrapper, Input, InputWrapper, TextButton } from "./ui";
+import { CircleButton, ContentWrapper, Input, InputWrapper, Task, TextButton } from "./ui";
 import { convertMillisecondsToHMS } from "../utils";
 import { useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
@@ -11,12 +11,12 @@ interface Props {
   whichDay: number
   startTask: (taskId: string) => void
   changeTaskName: (taskId: string, name: string) => void
-  changeTaskElapsedDuration: (taskId: string, elapsedDuration: string) => void
+  changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void
   changeMarkdown: (taskId: string, markdown: string) => void
   delayToNextDay: (taskId: string) => void
 }
 
-export default function TheTask({ task, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration, changeMarkdown, delayToNextDay, whichDay }: Props) {
+export default function TheTask({ task, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, changeMarkdown, delayToNextDay, whichDay }: Props) {
   const [isEditingTaskName, setIsEditingTaskName] = useState(false);
   const [taskName, setTaskName] = useState(task.task);
   const [isEditingEstimatedDuration, setIsEditingEstimatedDuration] = useState(false);
@@ -33,7 +33,7 @@ export default function TheTask({ task, deleteTask, startTask, changeTaskName, c
   const handleEstimatedDurationSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsEditingEstimatedDuration(false);
-    changeTaskElapsedDuration(task.id, estimatedDurationHMS);
+    changeTaskEstimatedDuration(task.id, estimatedDurationHMS);
   }
 
   const handleDelay = () => {
@@ -119,16 +119,6 @@ const PairValueContainer = styled.div`
   display: flex;
   align-items: center;
 `
-
-const Task = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 1.5em;
-    padding: 1em 1.5em;
-    border: 2px solid rgba(255, 255, 255, 0.6);
-    border-radius: 0.5em
-  `
 
 const TaskHeader = styled.div`
   display: flex;

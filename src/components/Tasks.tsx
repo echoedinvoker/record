@@ -1,6 +1,6 @@
-import styled from "styled-components"
 import { Task } from "../types"
 import TheTask from "./TheTask"
+import { TaskGroup } from "./ui"
 
 interface Props {
   tasks: Task[]
@@ -8,12 +8,12 @@ interface Props {
   whichDay: number
   startTask: (taskId: string) => void
   changeTaskName: (taskId: string, name: string) => void
-  changeTaskElapsedDuration: (taskId: string, elapsedDurationHMS: string) => void
+  changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void
   updateTaskMardownContent: (taskId: string, markdownContent: string) => void
   delayToNextDay: (taskId: string) => void
 }
 
-export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskElapsedDuration, updateTaskMardownContent, delayToNextDay, whichDay }: Props) {
+export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, updateTaskMardownContent, delayToNextDay, whichDay }: Props) {
   return (
     <TaskGroup>
       {Array.from(tasks.values()).map((task: Task) => (
@@ -26,14 +26,9 @@ export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, ch
           changeTaskName={changeTaskName}
           changeMarkdown={updateTaskMardownContent}
           delayToNextDay={delayToNextDay}
-          changeTaskElapsedDuration={changeTaskElapsedDuration} />
+          changeTaskEstimatedDuration={changeTaskEstimatedDuration}
+        />
       ))}
     </TaskGroup>
   )
 }
-
-const TaskGroup = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-  `
