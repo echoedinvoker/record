@@ -4,6 +4,7 @@ import { CircleButton, ContentWrapper, Input, InputWrapper, Task, TextButton } f
 import { convertMillisecondsToHMS } from "../utils";
 import { useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
+import { Draggable, DraggableProvided } from "react-beautiful-dnd";
 
 interface Props {
   task: TypeTask,
@@ -14,9 +15,10 @@ interface Props {
   changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void
   changeMarkdown: (taskId: string, markdown: string) => void
   delayToNextDay: (taskId: string) => void
+  index: number
 }
 
-export default function TheTask({ task, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, changeMarkdown, delayToNextDay, whichDay }: Props) {
+export default function TheTask({ index, task, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, changeMarkdown, delayToNextDay, whichDay }: Props) {
   const [isEditingTaskName, setIsEditingTaskName] = useState(false);
   const [taskName, setTaskName] = useState(task.task);
   const [isEditingEstimatedDuration, setIsEditingEstimatedDuration] = useState(false);
@@ -42,73 +44,81 @@ export default function TheTask({ task, deleteTask, startTask, changeTaskName, c
 
   return (
     <>
-      <Task key={task.id}>
-        <TaskHeader>
-          <TaskNameContainer>
-            <CircleButton $ghost onClick={() => setIsEditingTaskName((prev) => !prev)}>
-              <ContentWrapper $offsetY="-3px" $size="1.5em" style={{ color: 'white' }}>
-                &#9998;
-              </ContentWrapper>
-            </CircleButton>
-            {isEditingTaskName ? (
-              <form onSubmit={handleTaskNameSubmit}>
-                <InputWrapper $white>
-                  <Input $white type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
-                </InputWrapper>
-              </form>
-            ) : (
-              <TaskName>{task.task}</TaskName>
-            )}
-          </TaskNameContainer>
-          <TaskActions>
-            <CircleButton onClick={() => setShowModal(true)}>
-              <ContentWrapper>
-                &#128196;
-              </ContentWrapper>
-            </CircleButton>
-            <CircleButton onClick={handleDelay}>
-              <ContentWrapper $size="1.5em" $offsetY="-2px">
-                &#9202;
-              </ContentWrapper>
-            </CircleButton>
-            <CircleButton onClick={() => deleteTask(task.id, whichDay.toString())}>
-              <ContentWrapper>
-                &#10006;
-              </ContentWrapper>
-            </CircleButton>
-          </TaskActions>
-        </TaskHeader>
-        <Pairs>
-          <Pair>
-            <Key>Estimated Duration:</Key>
-            <PairValueContainer>
-              <CircleButton $ghost onClick={() => setIsEditingEstimatedDuration((prev) => !prev)}>
-                <ContentWrapper $offsetY="-3px" $size="1.5em" style={{ color: 'white' }}>
-                  &#9998;
-                </ContentWrapper>
-              </CircleButton>
-              {isEditingEstimatedDuration ? (
-                <form onSubmit={handleEstimatedDurationSubmit}>
-                  <InputWrapper $white>
-                    <Input $white type="text" value={estimatedDurationHMS} onChange={(e) => setEstimatedDurationHMS(e.target.value)} />
-                  </InputWrapper>
-                </form>
-              ) : (
-                <Value>{convertMillisecondsToHMS(task.estimatedDuration)}</Value>
-              )}
-            </PairValueContainer>
-          </Pair>
-          <TaskTimer>
-            <TextButton
-              $paddingMultiplier={1.3}
-              onClick={() => startTask(task.id)}>
-              <ContentWrapper $size="2em" $weight="bold" $offsetY="-2px">
-                {task.timestampSum === 0 ? 'Start' : convertMillisecondsToHMS(task.timestampSum + (task.timestamp ? Date.now() - task.timestamp : 0))}
-              </ContentWrapper>
-            </TextButton>
-          </TaskTimer>
-        </Pairs>
-      </Task >
+      <Draggable draggableId={task.id} index={index}>
+        {(provided: DraggableProvided) => (
+          <Task
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+          >
+            <TaskHeader>
+              <TaskNameContainer>
+                <CircleButton $ghost onClick={() => setIsEditingTaskName((prev) => !prev)}>
+                  <ContentWrapper $offsetY="-3px" $size="1.5em" style={{ color: 'white' }}>
+                    &#9998;
+                  </ContentWrapper>
+                </CircleButton>
+                {isEditingTaskName ? (
+                  <form onSubmit={handleTaskNameSubmit}>
+                    <InputWrapper $white>
+                      <Input $white type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
+                    </InputWrapper>
+                  </form>
+                ) : (
+                  <TaskName>{task.task}</TaskName>
+                )}
+              </TaskNameContainer>
+              <TaskActions>
+                <CircleButton onClick={() => setShowModal(true)}>
+                  <ContentWrapper>
+                    &#128196;
+                  </ContentWrapper>
+                </CircleButton>
+                <CircleButton onClick={handleDelay}>
+                  <ContentWrapper $size="1.5em" $offsetY="-2px">
+                    &#9202;
+                  </ContentWrapper>
+                </CircleButton>
+                <CircleButton onClick={() => deleteTask(task.id, whichDay.toString())}>
+                  <ContentWrapper>
+                    &#10006;
+                  </ContentWrapper>
+                </CircleButton>
+              </TaskActions>
+            </TaskHeader>
+            <Pairs>
+              <Pair>
+                <Key>Estimated Duration:</Key>
+                <PairValueContainer>
+                  <CircleButton $ghost onClick={() => setIsEditingEstimatedDuration((prev) => !prev)}>
+                    <ContentWrapper $offsetY="-3px" $size="1.5em" style={{ color: 'white' }}>
+                      &#9998;
+                    </ContentWrapper>
+                  </CircleButton>
+                  {isEditingEstimatedDuration ? (
+                    <form onSubmit={handleEstimatedDurationSubmit}>
+                      <InputWrapper $white>
+                        <Input $white type="text" value={estimatedDurationHMS} onChange={(e) => setEstimatedDurationHMS(e.target.value)} />
+                      </InputWrapper>
+                    </form>
+                  ) : (
+                    <Value>{convertMillisecondsToHMS(task.estimatedDuration)}</Value>
+                  )}
+                </PairValueContainer>
+              </Pair>
+              <TaskTimer>
+                <TextButton
+                  $paddingMultiplier={1.3}
+                  onClick={() => startTask(task.id)}>
+                  <ContentWrapper $size="2em" $weight="bold" $offsetY="-2px">
+                    {task.timestampSum === 0 ? 'Start' : convertMillisecondsToHMS(task.timestampSum + (task.timestamp ? Date.now() - task.timestamp : 0))}
+                  </ContentWrapper>
+                </TextButton>
+              </TaskTimer>
+            </Pairs>
+          </Task >
+        )}
+      </Draggable>
       {showModal && <EditMarkdownModal task={task} setShowModal={setShowModal} changeMarkdown={changeMarkdown} />
       }
     </>

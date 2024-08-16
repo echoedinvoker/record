@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { convertHMStoMilliseconds } from './utils';
-import { Data, Task } from './types';
+import { Data } from './types';
 import OnGoingTab from './components/OnGoingTab';
 import yaml from 'js-yaml'
+import { DragDropContext } from 'react-beautiful-dnd';
 
 export default function App() {
 
@@ -249,21 +250,38 @@ export default function App() {
     fetchData()
   }, [])
 
+  function onDragEnd(result: any) {
+    console.log(result)
+  }
+
   return (
-    <>
-      <OnGoingTab
-        data={data}
-        addTask={addTask}
-        deleteTask={deleteTask}
-        startTask={startTask}
-        stopTask={stopTask}
-        changeTaskName={changeTaskName}
-        updateTaskMardownContent={updateTaskMardownContent}
-        changeTaskEstimatedDuration={changeTaskEstimatedDuration}
-        changeTaskElapsedDuration={changeTaskElapsedDuration}
-        delayToNextDay={delayToNextDay}
-        downloadTasks={downloadTasks} />
-    </>
+    <ErrorLog>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <OnGoingTab
+          data={data}
+          addTask={addTask}
+          deleteTask={deleteTask}
+          startTask={startTask}
+          stopTask={stopTask}
+          changeTaskName={changeTaskName}
+          updateTaskMardownContent={updateTaskMardownContent}
+          changeTaskEstimatedDuration={changeTaskEstimatedDuration}
+          changeTaskElapsedDuration={changeTaskElapsedDuration}
+          delayToNextDay={delayToNextDay}
+          downloadTasks={downloadTasks} />
+      </DragDropContext>
+    </ErrorLog>
   )
 }
 
+const ErrorLog = ({ children }: { children: React.ReactNode }) => {
+  const originalConsoleError = console.error;
+  console.error = (...args) => {
+    if (args[0].includes('Support for defaultProps will be removed')) {
+      return;
+    }
+    originalConsoleError.apply(console, args);
+  };
+
+  return children;
+};
