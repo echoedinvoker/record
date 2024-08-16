@@ -17,33 +17,31 @@ interface Props {
 export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, updateTaskMardownContent, delayToNextDay, whichDay }: Props) {
   return (
     <>
-      {tasks.length > 0 && (
-        <Droppable droppableId={String(whichDay)}>
-          {(provided: DroppableProvided) => (
-            <TaskGroup
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              {tasks.map((task: Task, index: number) => (
-                <TheTask
-                  index={index}
-                  key={task.id}
-                  task={task}
-                  whichDay={whichDay}
-                  deleteTask={deleteTask}
-                  startTask={startTask}
-                  changeTaskName={changeTaskName}
-                  changeMarkdown={updateTaskMardownContent}
-                  delayToNextDay={delayToNextDay}
-                  changeTaskEstimatedDuration={changeTaskEstimatedDuration}
-                />
-              ))}
-              {provided.placeholder}
-            </TaskGroup>
-          )}
-        </Droppable>
-      )
-      }
+      <Droppable droppableId={String(whichDay)}>
+        {(provided: DroppableProvided) => (
+          <TaskGroup
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            <h2>To Do</h2>
+            {tasks.map((task: Task, index: number) => (
+              <TheTask
+                index={index}
+                key={task.id}
+                task={task}
+                whichDay={whichDay}
+                deleteTask={deleteTask}
+                startTask={startTask}
+                changeTaskName={changeTaskName}
+                changeMarkdown={updateTaskMardownContent}
+                delayToNextDay={delayToNextDay}
+                changeTaskEstimatedDuration={changeTaskEstimatedDuration}
+              />
+            ))}
+            {provided.placeholder}
+          </TaskGroup>
+        )}
+      </Droppable>
     </>
   )
 }

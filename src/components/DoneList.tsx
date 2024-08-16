@@ -1,3 +1,4 @@
+import { Droppable, DroppableProvided } from "react-beautiful-dnd"
 import { Task } from "../types"
 import Done from "./Done"
 import { TaskGroup } from "./ui"
@@ -18,17 +19,29 @@ export default function DoneList({
   changeTaskEstimatedDuration,
   changeTaskElapsedDuration }: Props) {
   return (
-    <TaskGroup>
-      {tasks.map((task: Task) => (
-        <Done
-          key={task.id}
-          task={task}
-          deleteTask={deleteTask}
-          changeTaskName={changeTaskName}
-          updateTaskMardownContent={updateTaskMardownContent}
-          changeTaskEstimatedDuration={changeTaskEstimatedDuration}
-          changeTaskElapsedDuration={changeTaskElapsedDuration} />
-      ))}
-    </TaskGroup>
+    <>
+      <Droppable droppableId="done">
+        {(provided: DroppableProvided) => (
+          <TaskGroup
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            <h2>Done</h2>
+            {tasks.map((task: Task, index: number) => (
+              <Done
+                index={index}
+                key={task.id}
+                task={task}
+                deleteTask={deleteTask}
+                changeTaskName={changeTaskName}
+                updateTaskMardownContent={updateTaskMardownContent}
+                changeTaskEstimatedDuration={changeTaskEstimatedDuration}
+                changeTaskElapsedDuration={changeTaskElapsedDuration} />
+            ))}
+            {provided.placeholder}
+          </TaskGroup>
+        )}
+      </Droppable>
+    </>
   )
 }

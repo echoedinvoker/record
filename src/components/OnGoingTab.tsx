@@ -4,7 +4,7 @@ import TheHeader from './TheHeader';
 import Tasks from './Tasks';
 import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { Data, Task } from '../types';
+import { Data } from '../types';
 import { CircleButton, ContentWrapper } from './ui';
 import DoneList from './DoneList';
 
