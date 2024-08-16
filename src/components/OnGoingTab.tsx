@@ -9,7 +9,12 @@ import { CircleButton, ContentWrapper } from './ui';
 
 interface Props {
   data: (Data | null)
-  addTask: (task: string, estimatedDurationHMS: string, markdownText: string) => void
+  addTask: (
+    task: string,
+    estimatedDurationHMS: string,
+    markdownText: string,
+    columnId: string
+  ) => void
   deleteTask: (taskId: string, columnId: string) => void
   startTask: (taskId: string) => void
   stopTask: (taskId: string) => void
@@ -62,7 +67,7 @@ export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopT
 
   function handleAddTask(task: string, estimatedDurationHMS: string, markdownText: string) {
     setShowModal(false)
-    addTask(task, estimatedDurationHMS, markdownText)
+    addTask(task, estimatedDurationHMS, markdownText, whichDay.toString())
   }
 
   function handleStartTask(taskId: string) {

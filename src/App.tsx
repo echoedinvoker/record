@@ -9,7 +9,12 @@ export default function App() {
   const [data, setData] = useState<Data | null>(null)
   const tasks = data?.tasks || []
 
-  function addTask(task: string, estimatedDurationHMS: string, markdownText: string) {
+  function addTask(
+    task: string,
+    estimatedDurationHMS: string,
+    markdownText: string,
+    columnId: string
+  ) {
     const newId = crypto.randomUUID()
     const newTask = {
       id: newId,
@@ -19,16 +24,18 @@ export default function App() {
       timestamp: null,
       timestampSum: 0,
       markdownContent: markdownText,
-      delayTS: []
     }
     setData({
       ...data!,
-      tasks: { ...data!.tasks, [newId]: newTask },
+      tasks: {
+        ...data!.tasks,
+        [newId]: newTask
+      },
       columns: {
         ...data!.columns,
-        "column-1": {
-          ...data!.columns["column-1"],
-          taskIds: [...data!.columns["column-1"].taskIds, newId]
+        [columnId]: {
+          ...data!.columns[columnId],
+          taskIds: [...data!.columns[columnId].taskIds, newId]
         }
       }
     })
