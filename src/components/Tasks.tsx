@@ -1,7 +1,8 @@
 import { Task } from "../types"
 import TheTask from "./TheTask"
-import { TaskGroup } from "./ui"
+import { TaskGroup, TasksHeader } from "./ui"
 import { Droppable, DroppableProvided } from "react-beautiful-dnd"
+import { convertMillisecondsToHMS } from "../utils"
 
 interface Props {
   tasks: Task[]
@@ -14,7 +15,14 @@ interface Props {
   delayToNextDay: (taskId: string) => void
 }
 
+
 export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, updateTaskMardownContent, delayToNextDay, whichDay }: Props) {
+
+  const totalEstimatedDuration = convertMillisecondsToHMS(tasks
+    .reduce((acc, task) => {
+      return acc + task.estimatedDuration
+    }, 0))
+
   return (
     <>
       <Droppable droppableId={String(whichDay)}>
@@ -23,7 +31,10 @@ export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, ch
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            <h2>To Do</h2>
+            <TasksHeader>
+              <h2>To Do</h2>
+              {tasks?.length !== 0 && <h2>{totalEstimatedDuration}</h2>}
+            </TasksHeader>
             {tasks.map((task: Task, index: number) => (
               <TheTask
                 index={index}
@@ -45,3 +56,4 @@ export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, ch
     </>
   )
 }
+
