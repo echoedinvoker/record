@@ -4,7 +4,7 @@ import TheHeader from './TheHeader';
 import Tasks from './Tasks';
 import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
-import { Data } from '../types';
+import { Data, Done } from '../types';
 import DoneList from './DoneList';
 
 interface Props {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { convertHMStoMilliseconds } from './utils';
-import { Data } from './types';
+import { Data, Done, Task } from './types';
 import OnGoingTab from './components/OnGoingTab';
 import yaml from 'js-yaml'
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -77,6 +77,8 @@ export default function App() {
     if (!data || !data.tasks) {
       throw new Error("Data or tasks are undefined");
     }
+    const timestampSum = data.tasks[taskId].timestampSum + (Date.now() - data.tasks[taskId].timestamp!)
+    const efficiency = data.tasks[taskId].estimatedDuration / timestampSum
     setData({
       ...data!,
       tasks: {
@@ -85,7 +87,9 @@ export default function App() {
           ...data.tasks[taskId],
           timestampSum: data.tasks[taskId].timestampSum + (Date.now() - data.tasks[taskId].timestamp!),
           timestamp: null,
-        }
+          ts: Date.now(),
+          efficiency
+        } as Done
       },
       columns: {
         ...data.columns,
@@ -100,6 +104,10 @@ export default function App() {
       }
     })
   }
+  useEffect(() => {
+    console.log(data)
+  }, [data])
+
   function changeTaskName(taskId: string, name: string) {
     if (!data || !data.tasks) {
       throw new Error("Data or tasks are undefined");
@@ -146,7 +154,6 @@ export default function App() {
     })
   }
   function changeTaskElapsedDuration(taskId: string, elapsedDurationHMS: string) {
-    console.log("changeTaskElapsedDuration", taskId, elapsedDurationHMS)
     if (!data || !data.tasks) {
       throw new Error("Data or tasks are undefined");
     }
@@ -258,32 +265,20 @@ export default function App() {
     if (destination.droppableId === source.droppableId && destination.index === source.index) {
       return
     }
+
     const column = data!.columns[source.droppableId]
     const newTaskIds = Array.from(column.taskIds)
     newTaskIds.splice(source.index, 1)
+
     if (destination.droppableId === source.droppableId) {
-      newTaskIds.splice(destination.index, 0, draggableId)
+      dropToTheSameColumn(newTaskIds, source, destination, draggableId, column)
     } else {
-      const newColumn = data!.columns[destination.droppableId]
-      const newDestinationTaskIds = Array.from(newColumn.taskIds)
-      newDestinationTaskIds.splice(destination.index, 0, draggableId)
-      const newColumns = {
-        ...data!.columns,
-        [source.droppableId]: {
-          ...column,
-          taskIds: newTaskIds
-        },
-        [destination.droppableId]: {
-          ...newColumn,
-          taskIds: newDestinationTaskIds
-        }
-      }
-      setData({
-        ...data!,
-        columns: newColumns
-      })
-      return
+      dropToDifferentColumn(newTaskIds, source, destination, draggableId, column)
     }
+  }
+
+  function dropToTheSameColumn(newTaskIds: string[], source: any, destination: any, draggableId: string, column: any) {
+    newTaskIds.splice(destination.index, 0, draggableId)
     const newColumn = {
       ...column,
       taskIds: newTaskIds
@@ -296,6 +291,44 @@ export default function App() {
       }
     }
     setData(newData)
+  }
+  function dropToDifferentColumn(newTaskIds: string[], source: any, destination: any, draggableId: string, column: any) {
+    const newColumn = data!.columns[destination.droppableId]
+    const newColumnId = newColumn.id
+    const newDestinationTaskIds = Array.from(newColumn.taskIds)
+    newDestinationTaskIds.splice(destination.index, 0, draggableId)
+    const newColumns = {
+      ...data!.columns,
+      [source.droppableId]: {
+        ...column,
+        taskIds: newTaskIds
+      },
+      [destination.droppableId]: {
+        ...newColumn,
+        taskIds: newDestinationTaskIds
+      }
+    }
+
+    let newTask = null
+    if (newColumnId === "done") {
+      newTask = {
+        ...data!.tasks[draggableId],
+        ts: Date.now(),
+        efficiency: data!.tasks[draggableId].estimatedDuration / data!.tasks[draggableId].timestampSum
+      } as Done
+    } else {
+      const { ts, efficiency, ...rest } = data!.tasks[draggableId] as Done
+      newTask = rest as Task
+    }
+
+    setData({
+      ...data!,
+      tasks: {
+        ...data!.tasks,
+        [draggableId]: newTask
+      },
+      columns: newColumns
+    })
   }
 
   return (

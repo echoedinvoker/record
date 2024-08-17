@@ -7,6 +7,11 @@ export interface Task {
   markdownContent: string
 }
 
+export interface Done extends Task {
+  ts: number
+  efficiency: number
+}
+
 export interface Column {
   id: string
   title: string
