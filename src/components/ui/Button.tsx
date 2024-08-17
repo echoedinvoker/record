@@ -47,7 +47,7 @@ export const TextButton = styled(BaseButton) <{ $paddingMultiplier?: number }>`
   border-radius: 0.5em;
 `
 
-export const ContentWrapper = styled.span<{ $size?: string, $weight?: string, $offsetX?: string, $offsetY?: string }>`
+export const ContentWrapper = styled.span<{ $size?: string, $weight?: string, $offsetX?: string, $offsetY?: string, $color?: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -55,4 +55,5 @@ export const ContentWrapper = styled.span<{ $size?: string, $weight?: string, $o
   font-weight: ${(props) => props.$weight || 'normal'};
   margin-left: ${(props) => props.$offsetX || '0'};
   margin-top: ${(props) => props.$offsetY || '0'};
+  ${props => props.$color && `color: ${props.$color};`}
 `

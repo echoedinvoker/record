@@ -5,7 +5,6 @@ import Tasks from './Tasks';
 import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { Data } from '../types';
-import { CircleButton, ContentWrapper } from './ui';
 import DoneList from './DoneList';
 
 interface Props {
@@ -27,9 +26,7 @@ interface Props {
   delayToNextDay: (taskId: string) => void
 }
 
-export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopTask, changeTaskName, updateTaskMardownContent, changeTaskElapsedDuration,
-  changeTaskEstimatedDuration,
-  downloadTasks, delayToNextDay }: Props) {
+export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopTask, changeTaskName, updateTaskMardownContent, changeTaskElapsedDuration, changeTaskEstimatedDuration, delayToNextDay }: Props) {
   const isLoadedTasksAtStart = useRef(false)
   const [showModal, setShowModal] = useState(false)
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null)
@@ -86,22 +83,6 @@ export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopT
 
   return (
     <>
-      <FixedButtons>
-        <CircleButton $primary onClick={() => setShowModal(true)}>
-          <ContentWrapper
-            $size="1.5em"
-            $weight="bold"
-            $offsetY="-2px"
-          >&#43;</ContentWrapper>
-        </CircleButton>
-        <CircleButton $primary onClick={downloadTasks}>
-          <ContentWrapper
-            $size="1.3em"
-            $weight="bold"
-            $offsetY="-2px"
-          >&#8595;</ContentWrapper>
-        </CircleButton>
-      </FixedButtons>
       <Container>
         <TheHeader
           tasks={filteredTasks}
@@ -120,6 +101,7 @@ export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopT
             changeTaskName={changeTaskName}
             updateTaskMardownContent={updateTaskMardownContent}
             delayToNextDay={delayToNextDay}
+            setShowModal={setShowModal}
             changeTaskEstimatedDuration={changeTaskEstimatedDuration} />
           <DoneList
             tasks={data.columns["done"].taskIds.map(taskId => data.tasks[taskId])}

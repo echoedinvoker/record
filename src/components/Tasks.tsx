@@ -1,6 +1,6 @@
 import { Task } from "../types"
 import TheTask from "./TheTask"
-import { TaskGroup, TasksHeader } from "./ui"
+import { CircleButton, ContentWrapper, TaskGroup, TasksHeader } from "./ui"
 import { Droppable, DroppableProvided } from "react-beautiful-dnd"
 import { convertMillisecondsToHMS } from "../utils"
 
@@ -13,10 +13,11 @@ interface Props {
   changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void
   updateTaskMardownContent: (taskId: string, markdownContent: string) => void
   delayToNextDay: (taskId: string) => void
+  setShowModal: (show: boolean) => void
 }
 
 
-export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, updateTaskMardownContent, delayToNextDay, whichDay }: Props) {
+export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, updateTaskMardownContent, delayToNextDay, whichDay, setShowModal }: Props) {
 
   const totalEstimatedDuration = convertMillisecondsToHMS(tasks
     .reduce((acc, task) => {
@@ -32,8 +33,16 @@ export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, ch
             {...provided.droppableProps}
           >
             <TasksHeader>
-              <h2>To Do</h2>
-              {tasks?.length !== 0 && <h2>{totalEstimatedDuration}</h2>}
+              <h2>To Do{tasks?.length !== 0 && ` : ${totalEstimatedDuration}`}</h2>
+              <CircleButton $ghost onClick={() => setShowModal(true)}>
+                <ContentWrapper
+                  $size="2.5em"
+                  $weight="bold"
+                  $offsetX=".5em"
+                  $offsetY="-2px"
+                  $color="rgba(255, 255, 255, 0.87)"
+                >&#43;</ContentWrapper>
+              </CircleButton>
             </TasksHeader>
             {tasks.map((task: Task, index: number) => (
               <TheTask
@@ -52,7 +61,7 @@ export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, ch
             {provided.placeholder}
           </TaskGroup>
         )}
-      </Droppable>
+      </Droppable >
     </>
   )
 }
