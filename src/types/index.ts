@@ -14,12 +14,8 @@ export interface Column {
   ts?: number
 }
 
-export interface ColumnOrder {
-  id: string[]
-}
-
 export interface Data {
   tasks: { [key: string]: Task }
   columns: { [key: string]: Column }
-  columnOrder: ColumnOrder
+  columnOrder: string[]
 }

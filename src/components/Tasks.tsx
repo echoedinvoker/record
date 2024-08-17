@@ -1,6 +1,7 @@
 import { Task } from "../types"
 import TheTask from "./TheTask"
 import { TaskGroup } from "./ui"
+import { Droppable, DroppableProvided } from "react-beautiful-dnd"
 
 interface Props {
   tasks: Task[]
@@ -15,20 +16,32 @@ interface Props {
 
 export default function Tasks({ tasks, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, updateTaskMardownContent, delayToNextDay, whichDay }: Props) {
   return (
-    <TaskGroup>
-      {Array.from(tasks.values()).map((task: Task) => (
-        <TheTask
-          key={task.id}
-          task={task}
-          whichDay={whichDay}
-          deleteTask={deleteTask}
-          startTask={startTask}
-          changeTaskName={changeTaskName}
-          changeMarkdown={updateTaskMardownContent}
-          delayToNextDay={delayToNextDay}
-          changeTaskEstimatedDuration={changeTaskEstimatedDuration}
-        />
-      ))}
-    </TaskGroup>
+    <>
+      <Droppable droppableId={String(whichDay)}>
+        {(provided: DroppableProvided) => (
+          <TaskGroup
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            <h2>To Do</h2>
+            {tasks.map((task: Task, index: number) => (
+              <TheTask
+                index={index}
+                key={task.id}
+                task={task}
+                whichDay={whichDay}
+                deleteTask={deleteTask}
+                startTask={startTask}
+                changeTaskName={changeTaskName}
+                changeMarkdown={updateTaskMardownContent}
+                delayToNextDay={delayToNextDay}
+                changeTaskEstimatedDuration={changeTaskEstimatedDuration}
+              />
+            ))}
+            {provided.placeholder}
+          </TaskGroup>
+        )}
+      </Droppable>
+    </>
   )
 }

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { convertHMStoMilliseconds } from './utils';
-import { Data, Task } from './types';
+import { Data } from './types';
 import OnGoingTab from './components/OnGoingTab';
 import yaml from 'js-yaml'
+import { DragDropContext } from 'react-beautiful-dnd';
 
 export default function App() {
 
   const [data, setData] = useState<Data | null>(null)
-  const tasks = data?.tasks || []
 
   function addTask(
     task: string,
@@ -221,16 +221,17 @@ export default function App() {
 
 
   function downloadTasks() {
-    const yamlStr = yaml.dump(tasks)
-    const blob = new Blob([yamlStr], { type: 'text/yaml' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'data.yaml';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    console.log(data)
+    // const yamlStr = yaml.dump(tasks)
+    // const blob = new Blob([yamlStr], { type: 'text/yaml' });
+    // const url = URL.createObjectURL(blob);
+    // const link = document.createElement('a');
+    // link.href = url;
+    // link.download = 'data.yaml';
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+    // URL.revokeObjectURL(url);
   };
 
 
@@ -239,7 +240,7 @@ export default function App() {
       try {
         const response = await fetch('/data.yaml')
         const text = await response.text()
-        const parsedData = yaml.load(text)
+        const parsedData = yaml.load(text) as Data
         parsedData && setData(parsedData)
       } catch (error) {
         console.error(error)
@@ -249,21 +250,82 @@ export default function App() {
     fetchData()
   }, [])
 
+  function onDragEnd(result: any) {
+    const { destination, source, draggableId } = result
+    if (!destination) {
+      return
+    }
+    if (destination.droppableId === source.droppableId && destination.index === source.index) {
+      return
+    }
+    const column = data!.columns[source.droppableId]
+    const newTaskIds = Array.from(column.taskIds)
+    newTaskIds.splice(source.index, 1)
+    if (destination.droppableId === source.droppableId) {
+      newTaskIds.splice(destination.index, 0, draggableId)
+    } else {
+      const newColumn = data!.columns[destination.droppableId]
+      const newDestinationTaskIds = Array.from(newColumn.taskIds)
+      newDestinationTaskIds.splice(destination.index, 0, draggableId)
+      const newColumns = {
+        ...data!.columns,
+        [source.droppableId]: {
+          ...column,
+          taskIds: newTaskIds
+        },
+        [destination.droppableId]: {
+          ...newColumn,
+          taskIds: newDestinationTaskIds
+        }
+      }
+      setData({
+        ...data!,
+        columns: newColumns
+      })
+      return
+    }
+    const newColumn = {
+      ...column,
+      taskIds: newTaskIds
+    }
+    const newData = {
+      ...data!,
+      columns: {
+        ...data!.columns,
+        [source.droppableId]: newColumn
+      }
+    }
+    setData(newData)
+  }
+
   return (
-    <>
-      <OnGoingTab
-        data={data}
-        addTask={addTask}
-        deleteTask={deleteTask}
-        startTask={startTask}
-        stopTask={stopTask}
-        changeTaskName={changeTaskName}
-        updateTaskMardownContent={updateTaskMardownContent}
-        changeTaskEstimatedDuration={changeTaskEstimatedDuration}
-        changeTaskElapsedDuration={changeTaskElapsedDuration}
-        delayToNextDay={delayToNextDay}
-        downloadTasks={downloadTasks} />
-    </>
+    <ErrorLog>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <OnGoingTab
+          data={data}
+          addTask={addTask}
+          deleteTask={deleteTask}
+          startTask={startTask}
+          stopTask={stopTask}
+          changeTaskName={changeTaskName}
+          updateTaskMardownContent={updateTaskMardownContent}
+          changeTaskEstimatedDuration={changeTaskEstimatedDuration}
+          changeTaskElapsedDuration={changeTaskElapsedDuration}
+          delayToNextDay={delayToNextDay}
+          downloadTasks={downloadTasks} />
+      </DragDropContext>
+    </ErrorLog>
   )
 }
 
+const ErrorLog = ({ children }: { children: React.ReactNode }) => {
+  const originalConsoleError = console.error;
+  console.error = (...args) => {
+    if (args[0].includes('Support for defaultProps will be removed')) {
+      return;
+    }
+    originalConsoleError.apply(console, args);
+  };
+
+  return children;
+};
