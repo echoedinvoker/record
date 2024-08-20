@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { convertHMStoMilliseconds } from './utils';
 import { Data, Done, Task } from './types';
-import OnGoingTab from './components/OnGoingTab';
+import OnGoingTab, { OnGoingTabRef } from './components/OnGoingTab';
 import yaml from 'js-yaml'
 import { DragDropContext } from 'react-beautiful-dnd';
 
 export default function App() {
 
   const [data, setData] = useState<Data | null>(null)
+  const onGoingTabRef = useRef<OnGoingTabRef>(null);
 
   function addTask(
     task: string,
@@ -39,9 +40,12 @@ export default function App() {
         }
       }
     })
+
+    setTimeout(() => {
+      onGoingTabRef.current?.tasksRef.current?.scrollToBottom();
+    }, 0);
   }
   function deleteTask(taskId: string, columnId: string): void {
-    console.log("deleteTask", taskId)
     if (!data || !data.tasks) {
       throw new Error("Data or tasks are undefined");
     }
@@ -103,6 +107,9 @@ export default function App() {
         }
       }
     })
+    setTimeout(() => {
+      onGoingTabRef.current?.doneListRef.current?.scrollToBottom();
+    }, 0);
   }
 
   function changeTaskName(taskId: string, name: string) {
@@ -340,6 +347,7 @@ export default function App() {
     <ErrorLog>
       <DragDropContext onDragEnd={onDragEnd}>
         <OnGoingTab
+          ref={onGoingTabRef}
           data={data}
           addTask={addTask}
           deleteTask={deleteTask}
