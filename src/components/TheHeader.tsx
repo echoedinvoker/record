@@ -1,10 +1,10 @@
 import styled from "styled-components"
 import { convertMillisecondsToHMS } from "../utils"
 import { CircleButton, ContentWrapper } from "./ui"
-import { Task } from "../types"
+import { Done, Task } from "../types"
 
 interface Props {
-  tasks: Task[]
+  tasks: (Task | Done)[]
   whichDay: number
   switchToNextDay: () => void
   switchToPrevDay: () => void

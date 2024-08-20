@@ -1,11 +1,11 @@
 import { Droppable, DroppableProvided } from "react-beautiful-dnd"
-import { Task } from "../types"
+import { Done as TypeDone } from "../types"
 import Done from "./Done"
 import { TaskGroup, TasksHeader } from "./ui"
 import { convertMillisecondsToHMS } from "../utils"
 
 interface Props {
-  tasks: Task[]
+  tasks: TypeDone[]
   deleteTask: (taskId: string, columnId: string) => void
   changeTaskName: (taskId: string, name: string) => void
   updateTaskMardownContent: (taskId: string, content: string) => void
@@ -34,10 +34,9 @@ export default function DoneList({
             {...provided.droppableProps}
           >
             <TasksHeader>
-              <h2>Done</h2>
-              {tasks?.length !== 0 && <h2>{totalEstimatedDuration}</h2>}
+              <h2>Done{tasks?.length !== 0 && ` : ${totalEstimatedDuration}`}</h2>
             </TasksHeader>
-            {tasks.map((task: Task, index: number) => (
+            {tasks.map((task: TypeDone, index: number) => (
               <Done
                 index={index}
                 key={task.id}

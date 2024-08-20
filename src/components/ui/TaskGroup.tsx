@@ -7,7 +7,7 @@ const TaskGroup = styled.div`
     padding: 1em;
     border-radius: 0.5em;
     background-color: rgba(255, 255, 255, 0.5);
-    max-width: 30em;
+    width: 30em;
   `
 
 export default TaskGroup

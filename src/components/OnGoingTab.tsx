@@ -47,7 +47,9 @@ export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopT
 
   if (!data) return null
 
-  const filteredTasks = data.columns[whichDay].taskIds.map(taskId => data.tasks[taskId])
+  const filteredDayTasks = data.columns[whichDay].taskIds.map(taskId => data.tasks[taskId])
+  const filteredDoneTasks = data.columns["done"].taskIds.map(taskId => data.tasks[taskId])
+  const filteredDayAndDoneTasks = [...filteredDayTasks, ...filteredDoneTasks]
 
   const maxWhichDay = getMaxWhichDay()
   const hasNextDay = maxWhichDay > whichDay
@@ -85,7 +87,7 @@ export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopT
     <>
       <Container>
         <TheHeader
-          tasks={filteredTasks}
+          tasks={filteredDayAndDoneTasks}
           whichDay={whichDay}
           switchToNextDay={() => maxWhichDay > whichDay && setWhichDay(whichDay + 1)}
           switchToPrevDay={() => whichDay > 0 && setWhichDay(whichDay - 1)}
@@ -94,7 +96,7 @@ export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopT
         />
         <Columns>
           <Tasks
-            tasks={filteredTasks}
+            tasks={filteredDayTasks}
             whichDay={whichDay}
             deleteTask={deleteTask}
             startTask={handleStartTask}
@@ -104,7 +106,7 @@ export default function OnGoingTab({ data, addTask, deleteTask, startTask, stopT
             setShowModal={setShowModal}
             changeTaskEstimatedDuration={changeTaskEstimatedDuration} />
           <DoneList
-            tasks={data.columns["done"].taskIds.map(taskId => data.tasks[taskId])}
+            tasks={data.columns["done"].taskIds.map(taskId => data.tasks[taskId]) as Done[]}
             deleteTask={deleteTask}
             changeTaskName={changeTaskName}
             updateTaskMardownContent={updateTaskMardownContent}
@@ -131,15 +133,6 @@ const Columns = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   `
-
-const FixedButtons = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: .5em;
-  position: fixed;
-  top: 40vh;
-  right: 1em;
-`
 
 const Container = styled.div`
   display: flex;
