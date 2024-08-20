@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Task as TypeTask } from "../types";
-import { CircleButton, ContentWrapper, Input, InputWrapper, Task, TextButton } from "./ui";
+import { CircleButton, ContentWrapper, Input, InputWrapper, Task, TaskName, TextButton } from "./ui";
 import { convertMillisecondsToHMS } from "../utils";
 import { useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
@@ -143,13 +143,6 @@ const TaskNameContainer = styled.div`
   align-items: center;
   margin-bottom: 1em;
 `
-
-
-const TaskName = styled.h2`
-    letter-spacing: 0.1em;
-    font-size: 1.5em;
-    margin: 0;
-  `
 
 const TaskActions = styled.div`
     display: flex;

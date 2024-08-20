@@ -104,9 +104,6 @@ export default function App() {
       }
     })
   }
-  useEffect(() => {
-    console.log(data)
-  }, [data])
 
   function changeTaskName(taskId: string, name: string) {
     if (!data || !data.tasks) {
@@ -142,14 +139,18 @@ export default function App() {
     if (!data || !data.tasks) {
       throw new Error("Data or tasks are undefined");
     }
+    const newTask = {
+      ...data.tasks[taskId],
+      estimatedDuration: convertHMStoMilliseconds(elapsedDurationHMS)
+    }
+    if ((data.tasks[taskId] as Done).efficiency) {
+      (newTask as Done).efficiency = data.tasks[taskId].timestampSum / convertHMStoMilliseconds(elapsedDurationHMS)
+    }
     setData({
       ...data!,
       tasks: {
         ...data.tasks,
-        [taskId]: {
-          ...data.tasks[taskId],
-          estimatedDuration: convertHMStoMilliseconds(elapsedDurationHMS)
-        }
+        [taskId]: newTask
       }
     })
   }
@@ -157,14 +158,18 @@ export default function App() {
     if (!data || !data.tasks) {
       throw new Error("Data or tasks are undefined");
     }
+    const newTask = {
+      ...data.tasks[taskId],
+      timestampSum: convertHMStoMilliseconds(elapsedDurationHMS)
+    }
+    if ((data.tasks[taskId] as Done).efficiency) {
+      (newTask as Done).efficiency = data.tasks[taskId].estimatedDuration / convertHMStoMilliseconds(elapsedDurationHMS)
+    }
     setData({
       ...data!,
       tasks: {
         ...data.tasks,
-        [taskId]: {
-          ...data.tasks[taskId],
-          timestampSum: convertHMStoMilliseconds(elapsedDurationHMS)
-        }
+        [taskId]: newTask
       }
     })
   }

@@ -1,6 +1,6 @@
 import styled from "styled-components"
-import { Task as TypeTask } from "../types"
-import { CircleButton, ContentWrapper, Input, InputWrapper, Task } from "./ui"
+import { Done as TypeDone } from "../types"
+import { CircleButton, ContentWrapper, Input, InputWrapper, Task, TaskName } from "./ui"
 import { useState } from "react"
 import { convertMillisecondsToHMS } from "../utils"
 import EditMarkdownModal from "./EditMardownModal"
@@ -8,7 +8,7 @@ import { Draggable, DraggableProvided } from "react-beautiful-dnd"
 
 interface Props {
   index: number
-  task: TypeTask
+  task: TypeDone
   deleteTask: (taskId: string, columnId: string) => void
   changeTaskName: (taskId: string, name: string) => void
   changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void
@@ -131,6 +131,12 @@ export default function Done({
                   )}
                 </PairValueContainer>
               </Pair>
+              <Pair>
+                <Key>Efficiency:</Key>
+                <PairValueContainer>
+                  <Value>{Math.floor(task.efficiency * 100)}%</Value>
+                </PairValueContainer>
+              </Pair>
             </Pairs>
           </Task>
         )}
@@ -183,9 +189,3 @@ const TaskNameContainer = styled.div`
   align-items: center;
   margin-bottom: 1em;
 `
-
-const TaskName = styled.h2`
-    letter-spacing: 0.1em;
-    font-size: 1.5em;
-    margin: 0;
-  `

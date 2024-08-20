@@ -20,7 +20,7 @@ export interface Column {
 }
 
 export interface Data {
-  tasks: { [key: string]: Task }
+  tasks: { [key: string]: Task | Done }
   columns: { [key: string]: Column }
   columnOrder: string[]
 }
