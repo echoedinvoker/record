@@ -53,19 +53,19 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
           >
             <TaskHeader>
               <TaskNameContainer>
-                <CircleButton $ghost onClick={() => setIsEditingTaskName((prev) => !prev)}>
-                  <ContentWrapper $offsetY="-3px" $size="1.5em" style={{ color: 'white' }}>
-                    &#9998;
-                  </ContentWrapper>
-                </CircleButton>
                 {isEditingTaskName ? (
                   <form onSubmit={handleTaskNameSubmit}>
                     <InputWrapper $white>
                       <Input $white type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
+                      <EditPenSpan
+                        onClick={() => setIsEditingTaskName((prev) => !prev)}
+                      >  &#9998;</EditPenSpan>
                     </InputWrapper>
                   </form>
                 ) : (
-                  <TaskName>{task.task}</TaskName>
+                  <TaskName>{task.task}<EditPenSpan
+                    onClick={() => setIsEditingTaskName((prev) => !prev)}
+                  >  &#9998;</EditPenSpan></TaskName>
                 )}
               </TaskNameContainer>
               <TaskActions>
@@ -124,6 +124,11 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
     </>
   )
 }
+
+const EditPenSpan = styled.span`
+  cursor: pointer;
+  margin-left: 0.3em;
+  `
 
 const PairValueContainer = styled.div`
   display: flex;
