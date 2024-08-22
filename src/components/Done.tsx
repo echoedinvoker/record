@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { Done as TypeDone } from "../types"
-import { CircleButton, ContentWrapper, Input, InputWrapper, Task, TaskName } from "./ui"
+import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskName } from "./ui"
 import { useState } from "react"
 import { convertMillisecondsToHMS } from "../utils"
 import EditMarkdownModal from "./EditMardownModal"
@@ -62,20 +62,20 @@ export default function Done({
           >
             <TaskHeader>
               <TaskNameContainer>
-                <CircleButton $ghost onClick={() => setIsEditingTaskName((prev) => !prev)}>
-                  <ContentWrapper $offsetY="-3px" $size="1.5em" style={{ color: 'white' }}>
-                    &#9998;
-                  </ContentWrapper>
-                </CircleButton>
                 {
                   isEditingTaskName ? (
                     <form onSubmit={handleTaskNameSubmit}>
                       <InputWrapper $white>
                         <Input $white type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
+                        <EditPenSpan
+                          onClick={() => setIsEditingTaskName((prev) => !prev)}
+                        >  &#9998;</EditPenSpan>
                       </InputWrapper>
                     </form>
                   ) : (
-                    <TaskName>{task.task}</TaskName>
+                    <TaskName>{task.task}<EditPenSpan
+                      onClick={() => setIsEditingTaskName((prev) => !prev)}
+                    >  &#9998;</EditPenSpan></TaskName>
                   )
                 }
               </TaskNameContainer>

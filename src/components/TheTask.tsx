@@ -1,10 +1,11 @@
 import styled from "styled-components";
 import { Task as TypeTask } from "../types";
-import { CircleButton, ContentWrapper, Input, InputWrapper, Task, TaskName, TextButton } from "./ui";
+import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskName, TextButton } from "./ui";
 import { convertMillisecondsToHMS } from "../utils";
 import { useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
 import { Draggable, DraggableProvided } from "react-beautiful-dnd";
+import { ArrowBigRight } from 'lucide-react';
 
 interface Props {
   task: TypeTask,
@@ -75,8 +76,8 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
                   </ContentWrapper>
                 </CircleButton>
                 <CircleButton onClick={handleDelay}>
-                  <ContentWrapper $size="1.5em" $offsetY="-2px">
-                    &#9202;
+                  <ContentWrapper $offsetY="-1px">
+                    <ArrowBigRight size={28} />
                   </ContentWrapper>
                 </CircleButton>
                 <CircleButton onClick={() => deleteTask(task.id, whichDay.toString())}>
@@ -125,10 +126,6 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
   )
 }
 
-const EditPenSpan = styled.span`
-  cursor: pointer;
-  margin-left: 0.3em;
-  `
 
 const PairValueContainer = styled.div`
   display: flex;
