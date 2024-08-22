@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import { Task as TypeTask } from "../types";
-import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskName, TextButton } from "./ui";
+import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskName, TasksHeader, TextButton } from "./ui";
 import { convertMillisecondsToHMS } from "../utils";
 import { useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
 import { Draggable, DraggableProvided } from "react-beautiful-dnd";
 import { ArrowBigRight } from 'lucide-react';
+import TaskNameContainer from "./ui/TaskNameContainer";
 
 interface Props {
   task: TypeTask,
@@ -52,7 +53,7 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
-            <TaskHeader>
+            <TasksHeader>
               <TaskNameContainer>
                 {isEditingTaskName ? (
                   <form onSubmit={handleTaskNameSubmit}>
@@ -85,8 +86,13 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
                     &#10006;
                   </ContentWrapper>
                 </CircleButton>
+                <CircleButton onClick={() => deleteTask(task.id, whichDay.toString())}>
+                  <ContentWrapper>
+                    &#10006;
+                  </ContentWrapper>
+                </CircleButton>
               </TaskActions>
-            </TaskHeader>
+            </TasksHeader>
             <Pairs>
               <Pair>
                 <Key>Estimated Duration:</Key>
@@ -132,22 +138,9 @@ const PairValueContainer = styled.div`
   align-items: center;
 `
 
-const TaskHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2.5em;
-  `
-
-const TaskNameContainer = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 1em;
-`
-
 const TaskActions = styled.div`
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: .5em;
   `
 
