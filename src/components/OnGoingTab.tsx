@@ -76,7 +76,7 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({
 
   function getMaxWhichDay() {
     let max = 0;
-    while ((max + 1).toString() in data.columns) {
+    while ((max + 1).toString() in data!.columns) {
       max++;
     }
     return max;

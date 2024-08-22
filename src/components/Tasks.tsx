@@ -33,7 +33,7 @@ const Tasks = forwardRef<TasksRef, Props>(({
   whichDay,
   setShowModal
 }, ref) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useImperativeHandle(ref, () => ({
     scrollToBottom: () => {

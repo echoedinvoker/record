@@ -27,7 +27,7 @@ const DoneList = forwardRef<DoneListRef, Props>(({
   changeTaskEstimatedDuration,
   changeTaskElapsedDuration
 }, ref) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useImperativeHandle(ref, () => ({
     scrollToBottom: () => {
