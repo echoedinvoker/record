@@ -4,6 +4,7 @@ import { Data, Done, Task } from './types';
 import OnGoingTab, { OnGoingTabRef } from './components/OnGoingTab';
 import yaml from 'js-yaml'
 import { DragDropContext } from 'react-beautiful-dnd';
+import { getUUID } from './utils/uuid';
 
 export default function App() {
 
@@ -16,7 +17,7 @@ export default function App() {
     markdownText: string,
     columnId: string
   ) {
-    const newId = crypto.randomUUID()
+    const newId = getUUID()
     const newTask = {
       id: newId,
       task: task,
