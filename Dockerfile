@@ -1,5 +1,6 @@
 FROM node:18 AS build
 WORKDIR /app
+ARG CACHEBUST=1
 RUN git clone https://github.com/echoedinvoker/record.git .
 RUN npm install
 RUN npm run build
