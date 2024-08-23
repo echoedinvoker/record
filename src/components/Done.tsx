@@ -1,11 +1,12 @@
 import styled from "styled-components"
 import { Done as TypeDone } from "../types"
-import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskContents, TaskName, TaskNameContainer } from "./ui"
+import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskContents, TaskName, TaskNameContainer, TopRightCorner } from "./ui"
 import { useState } from "react"
 import { convertMillisecondsToHMS } from "../utils"
 import EditMarkdownModal from "./EditMardownModal"
 import { Draggable, DraggableProvided } from "react-beautiful-dnd"
 import { Form, Value } from "./ui/Form"
+import { X } from "lucide-react"
 
 interface Props {
   index: number
@@ -84,11 +85,6 @@ export default function Done({
                     &#128196;
                   </ContentWrapper>
                 </CircleButton>
-                <CircleButton onClick={() => deleteTask(task.id, 'done')}>
-                  <ContentWrapper>
-                    &#10006;
-                  </ContentWrapper>
-                </CircleButton>
               </TaskActions>
               <PairValueContainer>
                 <CircleButton $ghost onClick={() => setIsEditingEstimatedDuration((prev) => !prev)}>
@@ -126,6 +122,7 @@ export default function Done({
                 <Value>{Math.floor(task.efficiency * 100)}%</Value>
               </PairValueContainer>
             </TaskContents>
+            <TopRightCorner onClick={() => deleteTask(task.id, 'done')}><X /></TopRightCorner>
           </Task>
         )}
       </Draggable>
@@ -143,5 +140,6 @@ const PairValueContainer = styled.div`
 
 const TaskActions = styled.div`
     display: flex;
+    align-items: center;
     gap: .5em;
   `

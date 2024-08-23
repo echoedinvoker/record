@@ -38,7 +38,7 @@ export default function TheHeader({ tasks, whichDay, switchToNextDay, switchToPr
         </Stat>
         <Stat>
           <StatName>Completeness:</StatName>
-          <StatValue>{(totalDoneDurationTS / totalDurationTS).toFixed(2) * 100}%</StatValue>
+          <StatValue>{totalDoneDurationTS > 0 ? `${(totalDoneDurationTS / totalDurationTS * 100).toFixed()}%` : ''}</StatValue>
         </Stat>
       </Stats>
       {hasNextDay && (

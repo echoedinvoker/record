@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Task as TypeTask } from "../types";
-import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskContents, TaskName, TextButton } from "./ui";
+import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskContents, TaskName, TextButton, TopRightCorner } from "./ui";
 import { convertMillisecondsToHMS } from "../utils";
 import { useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
@@ -128,12 +128,6 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
   )
 }
 
-const TopRightCorner = styled.div`
-  position: absolute;
-  top: .5em;
-  right: .5em;
-  cursor: pointer;
-`
 
 const PairValueContainer = styled.div`
   display: flex;
