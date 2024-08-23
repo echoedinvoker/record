@@ -7,6 +7,7 @@ import EditMarkdownModal from "./EditMardownModal";
 import { Draggable, DraggableProvided } from "react-beautiful-dnd";
 import { ArrowBigRight } from 'lucide-react';
 import TaskNameContainer from "./ui/TaskNameContainer";
+import { Form, Value } from "./ui/Form";
 
 interface Props {
   task: TypeTask,
@@ -58,11 +59,11 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
                 onClick={() => setIsEditingTaskName((prev) => !prev)}
               >&#9998;</EditPenSpan>
               {isEditingTaskName ? (
-                <form onSubmit={handleTaskNameSubmit}>
+                <Form onSubmit={handleTaskNameSubmit}>
                   <InputWrapper $white>
                     <Input $white type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
                   </InputWrapper>
-                </form>
+                </Form>
               ) : (
                 <TaskName>{task.task}</TaskName>
               )}
@@ -136,9 +137,4 @@ const TaskTimer = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-`
-
-const Value = styled.div`
-font-size: 1.2em;
-font-weight: bold;
 `

@@ -1,5 +1,9 @@
 import styled from "styled-components"
 
+export const Form = styled.form`
+  width: 100%;
+`
+
 export const FormFields = styled.div`
   display: flex;
   flex-direction: column;
@@ -37,12 +41,17 @@ export const InputWrapper = styled.div<{ $white?: boolean }>`
 
 export const Input = styled.input<{ $white?: boolean }>`
   font-size: 1.2em;
-  width: 5em;
+  font-weight: bold;
+  width: 100%;
   border: none;
   background-color: transparent;
   color: ${(props) => props.$white ? '#fff' : '#242424'};
-  margin-bottom: 0.1em;
   &:focus {
     outline: none;
   }
+`
+
+export const Value = styled.div`
+font-size: 1.2em;
+font-weight: bold;
 `

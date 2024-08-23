@@ -5,6 +5,7 @@ import { useState } from "react"
 import { convertMillisecondsToHMS } from "../utils"
 import EditMarkdownModal from "./EditMardownModal"
 import { Draggable, DraggableProvided } from "react-beautiful-dnd"
+import { Form, Value } from "./ui/Form"
 
 interface Props {
   index: number
@@ -66,11 +67,11 @@ export default function Done({
               >&#9998;</EditPenSpan>
               {
                 isEditingTaskName ? (
-                  <form onSubmit={handleTaskNameSubmit}>
+                  <Form onSubmit={handleTaskNameSubmit}>
                     <InputWrapper $white>
                       <Input $white type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
                     </InputWrapper>
-                  </form>
+                  </Form>
                 ) : (
                   <TaskName>{task.task}</TaskName>
                 )
@@ -139,9 +140,6 @@ const PairValueContainer = styled.div`
   align-items: center;
 `
 
-const Value = styled.div`
-font-size: 1.2em;
-`
 
 const TaskActions = styled.div`
     display: flex;

@@ -61,7 +61,13 @@ const DoneList = forwardRef<DoneListRef, Props>(({
     <>
       <TaskGroup >
         <TasksHeader>
-          <h2>Done{tasks?.length !== 0 && ` : ${convertMillisecondsToHMS(totalEstimatedDuration)} | ${convertMillisecondsToHMS(totalElapsedDuration)} | ${totalEfficiency.toFixed(2)}%`}</h2>
+          <h2>Done
+            {
+              tasks?.length !== 0 &&
+              ` : ${convertMillisecondsToHMS(totalEstimatedDuration)}`}
+            {
+              totalElapsedDuration !== 0 &&
+              ` | ${convertMillisecondsToHMS(totalElapsedDuration)} | ${totalEfficiency.toFixed(2)}%`}</h2>
         </TasksHeader>
         <Droppable droppableId="done">
           {(provided: DroppableProvided) => (
