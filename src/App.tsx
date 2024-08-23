@@ -182,6 +182,46 @@ export default function App() {
     })
   }
 
+  function advanceTask(taskId: string) {
+    if (!data) {
+      throw new Error("Data is undefined");
+    }
+    const columnId = getColumnIdByTaskId(taskId)
+    const newColumnId = (parseInt(columnId) - 1).toString()
+    const getNewColumn = () => {
+      if (data.columns[newColumnId]) {
+        return {
+          ...data.columns[newColumnId],
+          taskIds: [...data.columns[newColumnId].taskIds, taskId]
+        }
+      } else {
+        const ts = new Date()
+        ts.setDate(ts.getDate() + parseInt(newColumnId))
+        ts.setHours(0, 0, 0, 0)
+        return {
+          id: newColumnId,
+          title: new Date().toDateString(),
+          ts: ts.getTime(),
+          taskIds: [taskId]
+        }
+      }
+    }
+
+    const newData = {
+      ...data,
+      columns: {
+        ...data.columns,
+        [columnId]: {
+          ...data.columns[columnId],
+          taskIds: data.columns[columnId].taskIds.filter(id => id !== taskId)
+        },
+        [newColumnId]: getNewColumn()
+      }
+    }
+
+    setData(newData)
+  }
+
   function delayToNextDay(taskId: string) {
     if (!data) {
       throw new Error("Data is undefined");
@@ -358,6 +398,7 @@ export default function App() {
           updateTaskMardownContent={updateTaskMardownContent}
           changeTaskEstimatedDuration={changeTaskEstimatedDuration}
           changeTaskElapsedDuration={changeTaskElapsedDuration}
+          advanceTask={advanceTask}
           delayToNextDay={delayToNextDay}
           downloadTasks={downloadTasks} />
       </DragDropContext>

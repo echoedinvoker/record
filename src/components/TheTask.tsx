@@ -5,7 +5,7 @@ import { convertMillisecondsToHMS } from "../utils";
 import { useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
 import { Draggable, DraggableProvided } from "react-beautiful-dnd";
-import { ArrowBigRight } from 'lucide-react';
+import { ArrowBigLeft, ArrowBigRight, X } from 'lucide-react';
 import TaskNameContainer from "./ui/TaskNameContainer";
 import { Form, Value } from "./ui/Form";
 
@@ -17,11 +17,12 @@ interface Props {
   changeTaskName: (taskId: string, name: string) => void
   changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void
   changeMarkdown: (taskId: string, markdown: string) => void
+  advanceTask: (taskId: string) => void
   delayToNextDay: (taskId: string) => void
   index: number
 }
 
-export default function TheTask({ index, task, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, changeMarkdown, delayToNextDay, whichDay }: Props) {
+export default function TheTask({ index, task, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, changeMarkdown, advanceTask, delayToNextDay, whichDay }: Props) {
   const [isEditingTaskName, setIsEditingTaskName] = useState(false);
   const [taskName, setTaskName] = useState(task.task);
   const [isEditingEstimatedDuration, setIsEditingEstimatedDuration] = useState(false);
@@ -39,6 +40,11 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
     e.preventDefault();
     setIsEditingEstimatedDuration(false);
     changeTaskEstimatedDuration(task.id, estimatedDurationHMS);
+  }
+
+  // 處理提前任務
+  const handleAdvance = () => {
+    advanceTask(task.id);
   }
 
   const handleDelay = () => {
@@ -75,14 +81,15 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
                     &#128196;
                   </ContentWrapper>
                 </CircleButton>
+                {whichDay > 0 &&
+                  <CircleButton onClick={handleAdvance}>
+                    <ContentWrapper $offsetY="-1px">
+                      <ArrowBigLeft size={28} />
+                    </ContentWrapper>
+                  </CircleButton>}
                 <CircleButton onClick={handleDelay}>
                   <ContentWrapper $offsetY="-1px">
                     <ArrowBigRight size={28} />
-                  </ContentWrapper>
-                </CircleButton>
-                <CircleButton onClick={() => deleteTask(task.id, whichDay.toString())}>
-                  <ContentWrapper>
-                    &#10006;
                   </ContentWrapper>
                 </CircleButton>
               </TaskActions>
@@ -111,6 +118,7 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
                 </TextButton>
               </TaskTimer>
             </TaskContents>
+            <TopRightCorner onClick={() => deleteTask(task.id, whichDay.toString())}><X /></TopRightCorner>
           </Task >
         )}
       </Draggable>
@@ -119,6 +127,13 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
     </>
   )
 }
+
+const TopRightCorner = styled.div`
+  position: absolute;
+  top: .5em;
+  right: .5em;
+  cursor: pointer;
+`
 
 const PairValueContainer = styled.div`
   display: flex;

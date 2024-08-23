@@ -13,6 +13,7 @@ interface Props {
   changeTaskName: (taskId: string, name: string) => void;
   changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void;
   updateTaskMardownContent: (taskId: string, markdownContent: string) => void;
+  advanceTask: (taskId: string) => void;
   delayToNextDay: (taskId: string) => void;
   setShowModal: (show: boolean) => void;
 }
@@ -29,6 +30,7 @@ const Tasks = forwardRef<TasksRef, Props>(({
   changeTaskName,
   changeTaskEstimatedDuration,
   updateTaskMardownContent,
+  advanceTask,
   delayToNextDay,
   whichDay,
   setShowModal
@@ -86,6 +88,7 @@ const Tasks = forwardRef<TasksRef, Props>(({
                   startTask={startTask}
                   changeTaskName={changeTaskName}
                   changeMarkdown={updateTaskMardownContent}
+                  advanceTask={advanceTask}
                   delayToNextDay={delayToNextDay}
                   changeTaskEstimatedDuration={changeTaskEstimatedDuration}
                 />

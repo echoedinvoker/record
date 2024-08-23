@@ -18,6 +18,7 @@ interface Props {
   changeTaskElapsedDuration: (taskId: string, elapsedDurationHMS: string) => void;
   changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void;
   downloadTasks: () => void;
+  advanceTask: (taskId: string) => void;
   delayToNextDay: (taskId: string) => void;
 }
 
@@ -36,6 +37,7 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({
   updateTaskMardownContent,
   changeTaskElapsedDuration,
   changeTaskEstimatedDuration,
+  advanceTask,
   delayToNextDay
 }, ref) => {
   const isLoadedTasksAtStart = useRef(false);
@@ -117,6 +119,7 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({
             startTask={handleStartTask}
             changeTaskName={changeTaskName}
             updateTaskMardownContent={updateTaskMardownContent}
+            advanceTask={advanceTask}
             delayToNextDay={delayToNextDay}
             setShowModal={setShowModal}
             changeTaskEstimatedDuration={changeTaskEstimatedDuration}
