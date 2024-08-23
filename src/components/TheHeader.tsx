@@ -12,9 +12,13 @@ interface Props {
   hasPrevDay: boolean
 }
 
+function isDone(task: Task | Done): task is Done {
+  return 'ts' in task
+}
+
 export default function TheHeader({ tasks, whichDay, switchToNextDay, switchToPrevDay, hasNextDay, hasPrevDay }: Props) {
   const totalDurationTS = Array.from(tasks.values()).reduce((acc, task) => acc + task.estimatedDuration, 0)
-  const totalElapsedTimeTS = Array.from(tasks.values()).reduce((acc, task) => acc + task.timestampSum, 0)
+  const totalDoneDurationTS = Array.from(tasks.values()).reduce((acc, task) => acc + (isDone(task) ? task.estimatedDuration : 0), 0)
 
   return (
     <Container>
@@ -33,8 +37,8 @@ export default function TheHeader({ tasks, whichDay, switchToNextDay, switchToPr
           <StatValue>{convertMillisecondsToHMS(totalDurationTS)}</StatValue>
         </Stat>
         <Stat>
-          <StatName>Total Elapsed Time:</StatName>
-          <StatValue>{convertMillisecondsToHMS(totalElapsedTimeTS)}</StatValue>
+          <StatName>Completeness:</StatName>
+          <StatValue>{(totalDoneDurationTS / totalDurationTS).toFixed(2) * 100}%</StatValue>
         </Stat>
       </Stats>
       {hasNextDay && (
