@@ -5,7 +5,6 @@ const TaskNameContainer = styled.div`
   justify-content: flex-start;
   max-width: 12em;
   align-items: center;
-  margin-bottom: 1em;
 `
 
 export default TaskNameContainer

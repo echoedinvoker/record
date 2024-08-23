@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Task as TypeTask } from "../types";
-import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskName, TasksHeader, TextButton } from "./ui";
+import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskContents, TaskName, TasksHeader, TextButton } from "./ui";
 import { convertMillisecondsToHMS } from "../utils";
 import { useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
@@ -53,23 +53,21 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
-            <TasksHeader>
-              <TaskNameContainer>
-                {isEditingTaskName ? (
-                  <form onSubmit={handleTaskNameSubmit}>
-                    <InputWrapper $white>
-                      <Input $white type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
-                      <EditPenSpan
-                        onClick={() => setIsEditingTaskName((prev) => !prev)}
-                      >  &#9998;</EditPenSpan>
-                    </InputWrapper>
-                  </form>
-                ) : (
-                  <TaskName>{task.task}<EditPenSpan
-                    onClick={() => setIsEditingTaskName((prev) => !prev)}
-                  >  &#9998;</EditPenSpan></TaskName>
-                )}
-              </TaskNameContainer>
+            <TaskNameContainer>
+              <EditPenSpan
+                onClick={() => setIsEditingTaskName((prev) => !prev)}
+              >&#9998;</EditPenSpan>
+              {isEditingTaskName ? (
+                <form onSubmit={handleTaskNameSubmit}>
+                  <InputWrapper $white>
+                    <Input $white type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
+                  </InputWrapper>
+                </form>
+              ) : (
+                <TaskName>{task.task}</TaskName>
+              )}
+            </TaskNameContainer>
+            <TaskContents>
               <TaskActions>
                 <CircleButton onClick={() => setShowModal(true)}>
                   <ContentWrapper>
@@ -86,43 +84,32 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
                     &#10006;
                   </ContentWrapper>
                 </CircleButton>
-                <CircleButton onClick={() => deleteTask(task.id, whichDay.toString())}>
-                  <ContentWrapper>
-                    &#10006;
+              </TaskActions>
+              <PairValueContainer>
+                <CircleButton $ghost onClick={() => setIsEditingEstimatedDuration((prev) => !prev)}>
+                  <ContentWrapper $offsetY="-3px" $size="1.5em" style={{ color: 'white' }}>
+                    &#9998;
                   </ContentWrapper>
                 </CircleButton>
-              </TaskActions>
-            </TasksHeader>
-            <Pairs>
-              <Pair>
-                <Key>Estimated Duration:</Key>
-                <PairValueContainer>
-                  <CircleButton $ghost onClick={() => setIsEditingEstimatedDuration((prev) => !prev)}>
-                    <ContentWrapper $offsetY="-3px" $size="1.5em" style={{ color: 'white' }}>
-                      &#9998;
-                    </ContentWrapper>
-                  </CircleButton>
-                  {isEditingEstimatedDuration ? (
-                    <form onSubmit={handleEstimatedDurationSubmit}>
-                      <InputWrapper $white>
-                        <Input $white type="text" value={estimatedDurationHMS} onChange={(e) => setEstimatedDurationHMS(e.target.value)} />
-                      </InputWrapper>
-                    </form>
-                  ) : (
-                    <Value>{convertMillisecondsToHMS(task.estimatedDuration)}</Value>
-                  )}
-                </PairValueContainer>
-              </Pair>
+                {isEditingEstimatedDuration ? (
+                  <form onSubmit={handleEstimatedDurationSubmit}>
+                    <InputWrapper $white>
+                      <Input $white type="text" value={estimatedDurationHMS} onChange={(e) => setEstimatedDurationHMS(e.target.value)} />
+                    </InputWrapper>
+                  </form>
+                ) : (
+                  <Value>{convertMillisecondsToHMS(task.estimatedDuration)}</Value>
+                )}
+              </PairValueContainer>
               <TaskTimer>
                 <TextButton
-                  $paddingMultiplier={1.3}
                   onClick={() => startTask(task.id)}>
-                  <ContentWrapper $size="2em" $weight="bold" $offsetY="-2px">
+                  <ContentWrapper $size="1.5em" $weight="bold" $offsetY="-2px">
                     {task.timestampSum === 0 ? 'Start' : convertMillisecondsToHMS(task.timestampSum + (task.timestamp ? Date.now() - task.timestamp : 0))}
                   </ContentWrapper>
                 </TextButton>
               </TaskTimer>
-            </Pairs>
+            </TaskContents>
           </Task >
         )}
       </Draggable>
@@ -132,7 +119,6 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
   )
 }
 
-
 const PairValueContainer = styled.div`
   display: flex;
   align-items: center;
@@ -141,22 +127,9 @@ const PairValueContainer = styled.div`
 const TaskActions = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    align-items: center;
     gap: .5em;
   `
-
-const Pairs = styled.div`
-display: flex;
-flex-direction: row;
-justify-content: space-between;
-gap: 1.5em;
-`
-
-const Pair = styled.div`
-display: flex;
-flex-direction: column;
-justify-content: flex-start;
-margin: 0.5em 0;
-`
 
 const TaskTimer = styled.div`
   display: flex;
@@ -165,10 +138,7 @@ const TaskTimer = styled.div`
   align-items: center;
 `
 
-const Key = styled.div`
-font-weight: bold;
-font-size: 1.2em;
-`
 const Value = styled.div`
 font-size: 1.2em;
+font-weight: bold;
 `

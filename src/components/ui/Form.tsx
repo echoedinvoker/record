@@ -36,7 +36,8 @@ export const InputWrapper = styled.div<{ $white?: boolean }>`
 `
 
 export const Input = styled.input<{ $white?: boolean }>`
-  font-size: 1em;
+  font-size: 1.2em;
+  width: 5em;
   border: none;
   background-color: transparent;
   color: ${(props) => props.$white ? '#fff' : '#242424'};

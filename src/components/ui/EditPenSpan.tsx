@@ -2,7 +2,8 @@ import styled from "styled-components";
 
 const EditPenSpan = styled.span`
   cursor: pointer;
-  margin-left: 0.3em;
+  font-size: 1.5em;
+  margin: 0 0.5em;
   `
 
 export default EditPenSpan;
