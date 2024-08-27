@@ -1,5 +1,5 @@
 export interface Task {
-  id: string
+  id: number
   task: string
   estimatedDuration: number
   timestamp: number | null

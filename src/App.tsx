@@ -5,6 +5,8 @@ import OnGoingTab, { OnGoingTabRef } from './components/OnGoingTab';
 import yaml from 'js-yaml'
 import { DragDropContext } from 'react-beautiful-dnd';
 import { getUUID } from './utils/uuid';
+import { fetchColumn, fetchColumnOrder, fetchTasks } from './services/tasks';
+import { useQuery } from '@tanstack/react-query';
 
 export default function App() {
 
@@ -294,6 +296,26 @@ export default function App() {
     // URL.revokeObjectURL(url);
   };
 
+  // const { isLoading: isLoadingTasks, error: tasksError, data: tasks } = useQuery({
+  //   queryKey: ['tasks'],
+  //   queryFn: async () => {
+  //     const promiseFetchTasks = fetchTasks()
+  //     const promiseFetchColumn = fetchColumn()
+  //     const promiseFetchColumnOrder = fetchColumnOrder()
+  //     const [tasks, column, columnOrder] = await Promise.all([promiseFetchTasks, promiseFetchColumn, promiseFetchColumnOrder])
+  //     const formattedTasks = () => {
+  //       const tasksMap = new Map<number, Task>()
+  //       tasks.forEach((task: Task) => {
+  //         tasksMap.set(task.id, task)
+  //       })
+  //       return tasksMap
+  //     }
+  //     const formattedColumns = () => {
+  //       const columnsMap = new Map<number, any>()
+  //     }
+  //     return { tasks: formattedTasks, column, columnOrder }
+  //   }
+  // })
 
   useEffect(() => {
     const fetchData = async () => {
@@ -387,6 +409,8 @@ export default function App() {
   return (
     <ErrorLog>
       <DragDropContext onDragEnd={onDragEnd}>
+        {/* <div>{JSON.stringify(tasks)}</div> */}
+        {/* <div>{JSON.stringify(data)}</div> */}
         <OnGoingTab
           ref={onGoingTabRef}
           data={data}
