@@ -1,20 +1,13 @@
-import { forwardRef, useImperativeHandle, useRef } from "react";
+import { forwardRef, useContext, useImperativeHandle, useRef } from "react";
 import { Task } from "../types";
 import TheTask from "./TheTask";
 import { CircleButton, ContentWrapper, DroppableArea, TaskGroup, TasksHeader } from "./ui";
 import { Droppable, DroppableProvided } from "react-beautiful-dnd";
 import { convertMillisecondsToHMS } from "../utils";
+import { DayContext } from "../context/dayContext";
+import { TasksContext } from "../context/tasksContext";
 
 interface Props {
-  tasks: Task[];
-  deleteTask: (taskId: string, columnId: string) => void;
-  whichDay: number;
-  startTask: (taskId: string) => void;
-  changeTaskName: (taskId: string, name: string) => void;
-  changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void;
-  updateTaskMardownContent: (taskId: string, markdownContent: string) => void;
-  advanceTask: (taskId: string) => void;
-  delayToNextDay: (taskId: string) => void;
   setShowModal: (show: boolean) => void;
 }
 
@@ -23,23 +16,16 @@ export interface TasksRef {
   scrollToTop: () => void;
 }
 
-const Tasks = forwardRef<TasksRef, Props>(({
-  tasks,
-  deleteTask,
-  startTask,
-  changeTaskName,
-  changeTaskEstimatedDuration,
-  updateTaskMardownContent,
-  advanceTask,
-  delayToNextDay,
-  whichDay,
-  setShowModal
-}, ref) => {
+const Tasks = forwardRef<TasksRef, Props>(({ setShowModal }, ref) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const { day } = useContext(DayContext)
+  const { getTasksByColumnKey, getTotalEstimatedDurationOfOneDay } = useContext(TasksContext)
+  const tasksOfOneDay = getTasksByColumnKey(day)
+  const totalEstimatedDurationOfOneDay = getTotalEstimatedDurationOfOneDay(day)
 
   useImperativeHandle(ref, () => ({
     scrollToBottom: () => {
-      console.log('scrollToBottom() called!'); // 'scroll
       if (scrollRef.current) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
@@ -51,14 +37,11 @@ const Tasks = forwardRef<TasksRef, Props>(({
     }
   }));
 
-  const totalEstimatedDuration = convertMillisecondsToHMS(tasks
-    .reduce((acc, task) => acc + task.estimatedDuration, 0));
-
   return (
     <>
       <TaskGroup>
         <TasksHeader>
-          <h2>To Do{tasks?.length !== 0 && ` : ${totalEstimatedDuration}`}</h2>
+          <h2>To Do{tasksOfOneDay.length !== 0 && ` : ${convertMillisecondsToHMS(totalEstimatedDurationOfOneDay)}`}</h2>
           <CircleButton $ghost onClick={() => setShowModal(true)}>
             <ContentWrapper
               $size="2.5em"
@@ -69,7 +52,7 @@ const Tasks = forwardRef<TasksRef, Props>(({
             >&#43;</ContentWrapper>
           </CircleButton>
         </TasksHeader>
-        <Droppable droppableId={String(whichDay)}>
+        <Droppable droppableId={day}>
           {(provided: DroppableProvided) => (
             <DroppableArea
               ref={(element) => {
@@ -78,19 +61,11 @@ const Tasks = forwardRef<TasksRef, Props>(({
               }}
               {...provided.droppableProps}
             >
-              {tasks.map((task: Task, index: number) => (
+              {tasksOfOneDay.map((task: Task, index: number) => (
                 <TheTask
                   index={index}
-                  key={task.id}
+                  key={task.key}
                   task={task}
-                  whichDay={whichDay}
-                  deleteTask={deleteTask}
-                  startTask={startTask}
-                  changeTaskName={changeTaskName}
-                  changeMarkdown={updateTaskMardownContent}
-                  advanceTask={advanceTask}
-                  delayToNextDay={delayToNextDay}
-                  changeTaskEstimatedDuration={changeTaskEstimatedDuration}
                 />
               ))}
               {provided.placeholder}

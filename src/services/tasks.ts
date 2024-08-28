@@ -1,18 +1,28 @@
 import axios from "axios";
-import { ColumnRequest, ColumnResponse, TaskBody, TaskResponse } from "../types";
+import { ColumnRequest, ColumnResponse, TaskBody, TaskRequest, TaskResponse } from "../types";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 console.log("API Base URL", BASE_URL);
 
-if (!BASE_URL) {
-  throw new Error("VITE_API_URL is not set");
-}
-
 const api = axios.create({
-  baseURL: "http://44.201.114.25:8000",
-  // baseURL: BASE_URL || "http://localhost:8000",
+  // baseURL: "http://44.201.114.25:8000",
+  baseURL: BASE_URL || "http://localhost:8000",
   withCredentials: true
 });
+
+export async function updateTask(taskId: number, newTask: TaskBody) {
+  const body: TaskRequest = {
+    key: newTask.key,
+    name: newTask.task,
+    estimated_duration: newTask.estimatedDuration,
+    consume_timestamp: newTask.timestampSum,
+    markdown_content: newTask.markdownContent,
+  }
+  if (newTask.timestamp) {
+    body["start_timestamp"] = newTask.timestamp
+  }
+  await api.put(`/tasks/${taskId}`, body);
+}
 
 
 export async function fetchTasks() {
@@ -20,15 +30,35 @@ export async function fetchTasks() {
   return data as TaskResponse[]
 }
 
+export async function fetchTaskByKey(key: string) {
+  const { data } = await api.get(`/tasks/key/${key}`);
+  return data as TaskResponse
+}
+
+export async function fetchColumnByKey(key: string) {
+  const { data } = await api.get(`/columns/key/${key}`);
+  return data as ColumnResponse
+}
+
 export async function createTask(request: TaskBody) {
-  const body = {
+  const body: TaskRequest = {
+    key: request.key,
     name: request.task,
     estimated_duration: request.estimatedDuration,
-    consumed_duration: request.timestampSum,
+    consume_timestamp: request.timestampSum,
     markdown_content: request.markdownContent,
   }
+
+  if (request.timestamp) {
+    body["start_timestamp"] = request.timestamp
+  }
+
   const { data } = await api.post("/tasks", body);
   return data as { id: number }
+}
+
+export async function createColumn(request: ColumnRequest) {
+  await api.post("/columns", request);
 }
 
 export async function deleteTask(taskId: number) {
@@ -62,5 +92,5 @@ export async function removeTaskIdFromColumn(columnId: number, taskId: number) {
 
 export async function fetchColumnOrder() {
   const { data } = await api.get("/column_order");
-  return data as number[]
+  return data as string[]
 }

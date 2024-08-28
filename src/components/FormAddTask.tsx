@@ -3,24 +3,29 @@ import CodeMirror from '@uiw/react-codemirror';
 import { markdown } from '@codemirror/lang-markdown';
 import { vim } from '@replit/codemirror-vim';
 import { CircleButton, ContentWrapper, FormField, FormFields, Input, InputWrapper, Label, ModalCloseCorner, ModalContainer, ModalOverlay, TextButton } from "./ui";
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import styled from 'styled-components';
+import { TasksContext } from '../context/tasksContext';
+import { DayContext } from '../context/dayContext';
 
 interface Props {
   setShowModal: (show: boolean) => void
-  addTask: (task: string, estimatedDurationHMS: string, markdownText: string) => void
 }
 
-export default function FormAddTask({ setShowModal, addTask }: Props) {
+export default function FormAddTask({ setShowModal }: Props) {
   const [taskName, setTaskName] = useState('');
   const [estimatedDurationHMS, setEstimatedDurationHMS] = useState('');
   const [isEditing, setIsEditing] = useState(true);
   const [markdownText, setMarkdownText] = useState('');
 
+  const { addTask } = useContext(TasksContext)
+  const { day } = useContext(DayContext)
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    addTask(taskName, estimatedDurationHMS, markdownText);
+    addTask(taskName, estimatedDurationHMS, markdownText, day);
     setMarkdownText('');
+    setShowModal(false)
   }
 
   const handleChange = (value: string) => {

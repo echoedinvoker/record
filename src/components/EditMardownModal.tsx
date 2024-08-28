@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { CircleButton, ContentWrapper, ModalCloseCorner, ModalContainer, ModalOverlay, TextButton } from "./ui"
 import { Task } from "../types"
 import ReactMarkdown from 'react-markdown';
@@ -6,18 +6,20 @@ import CodeMirror from '@uiw/react-codemirror';
 import { markdown } from '@codemirror/lang-markdown';
 import { vim } from '@replit/codemirror-vim';
 import styled from "styled-components";
+import { TasksContext } from "../context/tasksContext";
 
 interface Props {
   task: Task
-  changeMarkdown: (taskId: string, markdownContent: string) => void
   setShowModal: (show: boolean) => void
 }
 
-export default function EditMarkdownModal({ task, changeMarkdown, setShowModal }: Props) {
+export default function EditMarkdownModal({ task, setShowModal }: Props) {
   const [markdownText, setMarkdownText] = useState(task.markdownContent)
   const [isEditing, setIsEditing] = useState(task.markdownContent ? false : true)
+  const { updateTask } = useContext(TasksContext)
   const handleMarkdownSubmit = () => {
-    changeMarkdown(task.id, markdownText)
+    const newTask = { ...task, markdownContent: markdownText }
+    updateTask(newTask)
     setShowModal(false)
   }
   const handleChange = (value: string) => {

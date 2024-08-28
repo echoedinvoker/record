@@ -1,59 +1,60 @@
 import styled from "styled-components";
 import { Task as TypeTask } from "../types";
 import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskContents, TaskName, TextButton, TopRightCorner } from "./ui";
-import { convertMillisecondsToHMS } from "../utils";
-import { useState } from "react";
+import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils";
+import { useContext, useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
 import { Draggable, DraggableProvided } from "react-beautiful-dnd";
 import { ArrowBigLeft, ArrowBigRight, X } from 'lucide-react';
 import TaskNameContainer from "./ui/TaskNameContainer";
 import { Form, Value } from "./ui/Form";
+import { TasksContext } from "../context/tasksContext";
+import { DayContext } from "../context/dayContext";
 
 interface Props {
   task: TypeTask,
-  deleteTask: (taskId: string, columnId: string) => void
-  whichDay: number
-  startTask: (taskId: string) => void
-  changeTaskName: (taskId: string, name: string) => void
-  changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void
-  changeMarkdown: (taskId: string, markdown: string) => void
-  advanceTask: (taskId: string) => void
-  delayToNextDay: (taskId: string) => void
   index: number
 }
 
-export default function TheTask({ index, task, deleteTask, startTask, changeTaskName, changeTaskEstimatedDuration, changeMarkdown, advanceTask, delayToNextDay, whichDay }: Props) {
+export default function TheTask({ index, task }: Props) {
   const [isEditingTaskName, setIsEditingTaskName] = useState(false);
   const [taskName, setTaskName] = useState(task.task);
   const [isEditingEstimatedDuration, setIsEditingEstimatedDuration] = useState(false);
   const [estimatedDurationHMS, setEstimatedDurationHMS] = useState(convertMillisecondsToHMS(task.estimatedDuration));
   const [showModal, setShowModal] = useState(false);
 
+  const { updateTask, moveTaskToOtherColumn, startTask, deleteTask } = useContext(TasksContext)
+  const { day } = useContext(DayContext)
+
 
   const handleTaskNameSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsEditingTaskName(false);
-    changeTaskName(task.id, taskName);
+    const newTask = { ...task, task: taskName }
+    updateTask(newTask)
   }
 
   const handleEstimatedDurationSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsEditingEstimatedDuration(false);
-    changeTaskEstimatedDuration(task.id, estimatedDurationHMS);
+    const newTask = { ...task, estimatedDuration: convertHMStoMilliseconds(estimatedDurationHMS) }
+    updateTask(newTask)
   }
 
-  // 處理提前任務
   const handleAdvance = () => {
-    advanceTask(task.id);
+    const intPrevDay = parseInt(day) - 1;
+    if (intPrevDay < 0) return;
+    moveTaskToOtherColumn(task.key, intPrevDay.toString());
   }
 
   const handleDelay = () => {
-    delayToNextDay(task.id);
+    const intNextDay = parseInt(day) + 1;
+    moveTaskToOtherColumn(task.key, intNextDay.toString());
   }
 
   return (
     <>
-      <Draggable draggableId={task.id} index={index}>
+      <Draggable draggableId={task.key} index={index}>
         {(provided: DraggableProvided) => (
           <Task
             ref={provided.innerRef}
@@ -81,7 +82,7 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
                     &#128196;
                   </ContentWrapper>
                 </CircleButton>
-                {whichDay > 0 &&
+                {parseInt(day) > 0 &&
                   <CircleButton onClick={handleAdvance}>
                     <ContentWrapper $offsetY="-1px">
                       <ArrowBigLeft size={28} />
@@ -111,18 +112,18 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
               </PairValueContainer>
               <TaskTimer>
                 <TextButton
-                  onClick={() => startTask(task.id)}>
+                  onClick={() => startTask(task.key)}>
                   <ContentWrapper $size="1.5em" $weight="bold" $offsetY="-2px">
                     {!task.timestampSum ? 'Start' : convertMillisecondsToHMS(task.timestampSum + (task.timestamp ? Date.now() - task.timestamp : 0))}
                   </ContentWrapper>
                 </TextButton>
               </TaskTimer>
             </TaskContents>
-            <TopRightCorner onClick={() => deleteTask(task.id, whichDay.toString())}><X /></TopRightCorner>
+            <TopRightCorner onClick={() => deleteTask(task.key)}><X /></TopRightCorner>
           </Task >
         )}
       </Draggable>
-      {showModal && <EditMarkdownModal task={task} setShowModal={setShowModal} changeMarkdown={changeMarkdown} />
+      {showModal && <EditMarkdownModal task={task} setShowModal={setShowModal} />
       }
     </>
   )

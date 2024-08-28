@@ -1,5 +1,6 @@
 export interface Task {
-  id: string
+  id?: number
+  key: string
   task: string
   estimatedDuration: number
   timestamp: number | null
@@ -8,15 +9,16 @@ export interface Task {
 }
 
 export interface TaskBody {
+  key: string
   task: string
   estimatedDuration: number
-  timestamp: number | null
+  timestamp?: number
   timestampSum: number
   markdownContent: string
-  columnId: number
 }
 
 export interface TaskRequest {
+  key: string
   name: string
   estimated_duration: number
   start_timestamp?: number | null
@@ -30,7 +32,8 @@ export interface Done extends Task {
 }
 
 export interface Column {
-  id: string
+  id?: number
+  key: string
   title: string
   taskIds: string[]
   ts?: number
@@ -44,6 +47,7 @@ export interface Data {
 
 export interface TaskResponse {
   id: number
+  key: string
   name: string
   status: string
   estimated_duration: number
@@ -53,11 +57,13 @@ export interface TaskResponse {
 }
 
 export interface ColumnRequest {
-  task_order: number[]
+  key: string
+  task_order: string
 }
 
 export interface ColumnResponse {
-  id: number
+  id?: number
+  key: string
   task_order: string
 }
 
