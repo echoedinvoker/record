@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { convertHMStoMilliseconds } from './utils';
-import { Data, Done, Task } from './types';
+import { Data, Done } from './types';
 import OnGoingTab, { OnGoingTabRef } from './components/OnGoingTab';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { useTasks } from './hooks/useTasks';
