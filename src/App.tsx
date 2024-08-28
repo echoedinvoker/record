@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { convertHMStoMilliseconds } from './utils';
-import { Data, Done, OnDragEndResultType, Task } from './types';
+import { Data, Done, Task } from './types';
 import OnGoingTab, { OnGoingTabRef } from './components/OnGoingTab';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { useTasks } from './hooks/useTasks';
@@ -295,60 +295,6 @@ export default function App() {
 
   function onDragEnd(result: any) {
     dropOnColumn(result)
-  }
-
-  function dropToTheSameColumn(newTaskIds: string[], source: any, destination: any, draggableId: string, column: any) {
-    newTaskIds.splice(destination.index, 0, draggableId)
-    const newColumn = {
-      ...column,
-      taskIds: newTaskIds
-    }
-    const newData = {
-      ...data!,
-      columns: {
-        ...data!.columns,
-        [source.droppableId]: newColumn
-      }
-    }
-    setData(newData)
-  }
-  function dropToDifferentColumn(newTaskIds: string[], source: any, destination: any, draggableId: string, column: any) {
-    const newColumn = data!.columns[destination.droppableId]
-    const newColumnId = newColumn.id
-    const newDestinationTaskIds = Array.from(newColumn.taskIds)
-    newDestinationTaskIds.splice(destination.index, 0, draggableId)
-    const newColumns = {
-      ...data!.columns,
-      [source.droppableId]: {
-        ...column,
-        taskIds: newTaskIds
-      },
-      [destination.droppableId]: {
-        ...newColumn,
-        taskIds: newDestinationTaskIds
-      }
-    }
-
-    let newTask = null
-    if (newColumnId === "done") {
-      newTask = {
-        ...data!.tasks[draggableId],
-        ts: Date.now(),
-        efficiency: data!.tasks[draggableId].estimatedDuration / data!.tasks[draggableId].timestampSum
-      } as Done
-    } else {
-      const { ts, efficiency, ...rest } = data!.tasks[draggableId] as Done
-      newTask = rest as Task
-    }
-
-    setData({
-      ...data!,
-      tasks: {
-        ...data!.tasks,
-        [draggableId]: newTask
-      },
-      columns: newColumns
-    })
   }
 
   return (
