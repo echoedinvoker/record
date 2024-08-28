@@ -9,7 +9,7 @@ if (!BASE_URL) {
 }
 
 const api = axios.create({
-  baseURL: "http://172.31.95.142:8000",
+  baseURL: "http://44.201.114.25:8000",
   // baseURL: BASE_URL || "http://localhost:8000",
   withCredentials: true
 });
