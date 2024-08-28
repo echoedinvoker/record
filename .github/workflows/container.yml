@@ -25,3 +25,5 @@ jobs:
         context: .
         push: true
         tags: echoedinvoker/record:latest
+        build-args: |
+          VITE_API_URL=http://api:80
