@@ -1,37 +1,24 @@
 import { Droppable, DroppableProvided } from "react-beautiful-dnd"
 import { Done as TypeDone } from "../types"
-import Done from "./Done"
 import { DroppableArea, TaskGroup, TasksHeader } from "./ui"
 import { convertMillisecondsToHMS } from "../utils"
-import { forwardRef, useImperativeHandle, useRef } from "react"
+import { forwardRef, useContext, useImperativeHandle, useRef } from "react"
+import { TasksContext } from "../context/tasksContext"
+import Done from "./Done"
 
-interface Props {
-  tasks: TypeDone[]
-  deleteTask: (taskId: string, columnId: string) => void
-  changeTaskName: (taskId: string, name: string) => void
-  updateTaskMardownContent: (taskId: string, content: string) => void
-  changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void
-  changeTaskElapsedDuration: (taskId: string, elapsedDurationHMS: string) => void
-}
+
+interface Props { }
 
 export interface DoneListRef {
   scrollToBottom: () => void;
   scrollToTop: () => void;
 }
 
-const DoneList = forwardRef<DoneListRef, Props>(({
-  tasks,
-  deleteTask,
-  changeTaskName,
-  updateTaskMardownContent,
-  changeTaskEstimatedDuration,
-  changeTaskElapsedDuration
-}, ref) => {
+const DoneList = forwardRef<DoneListRef, Props>(({ }, ref) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useImperativeHandle(ref, () => ({
     scrollToBottom: () => {
-      console.log('scrollToBottom() called!'); // 'scroll
       if (scrollRef.current) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
@@ -43,19 +30,11 @@ const DoneList = forwardRef<DoneListRef, Props>(({
     }
   }));
 
-  const totalEstimatedDuration = tasks
-    .reduce((acc, task) => {
-      return acc + task.estimatedDuration
-    }, 0)
-
-  const totalElapsedDuration = tasks
-    .reduce((acc, task) => {
-      return acc + task.timestampSum
-    }, 0)
-
+  const { getTasksByColumnKey, getTotalEstimatedDurationOfOneDay, getTotalElapsedDurationOfOneDay } = useContext(TasksContext)
+  const totalEstimatedDuration = getTotalEstimatedDurationOfOneDay("done")
+  const totalElapsedDuration = getTotalElapsedDurationOfOneDay("done")
   const totalEfficiency = totalEstimatedDuration / totalElapsedDuration * 100
-
-
+  const tasks = getTasksByColumnKey("done") as TypeDone[]
 
   return (
     <>
@@ -81,13 +60,9 @@ const DoneList = forwardRef<DoneListRef, Props>(({
               {tasks.map((task: TypeDone, index: number) => (
                 <Done
                   index={index}
-                  key={task.id}
+                  key={task.key}
                   task={task}
-                  deleteTask={deleteTask}
-                  changeTaskName={changeTaskName}
-                  updateTaskMardownContent={updateTaskMardownContent}
-                  changeTaskEstimatedDuration={changeTaskEstimatedDuration}
-                  changeTaskElapsedDuration={changeTaskElapsedDuration} />
+                />
               ))}
               {provided.placeholder}
             </DroppableArea>

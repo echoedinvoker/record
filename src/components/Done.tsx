@@ -1,32 +1,22 @@
 import styled from "styled-components"
 import { Done as TypeDone } from "../types"
 import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskContents, TaskName, TaskNameContainer, TopRightCorner } from "./ui"
-import { useState } from "react"
-import { convertMillisecondsToHMS } from "../utils"
+import { useContext, useState } from "react"
+import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils"
 import EditMarkdownModal from "./EditMardownModal"
 import { Draggable, DraggableProvided } from "react-beautiful-dnd"
 import { Form, Value } from "./ui/Form"
 import { X } from "lucide-react"
-import { useDeleteTask } from "../hooks/useDeleteTask"
+import { TasksContext } from "../context/tasksContext"
 
 interface Props {
-  index: number
-  task: TypeDone
-  deleteTask: (taskId: string, columnId: string) => void
-  changeTaskName: (taskId: string, name: string) => void
-  changeTaskEstimatedDuration: (taskId: string, estimatedDurationHMS: string) => void
-  changeTaskElapsedDuration: (taskId: string, elapsedDurationHMS: string) => void
-  updateTaskMardownContent: (taskId: string, content: string) => void
+  index: number;
+  task: TypeDone;
 }
 
-export default function Done({
-  index,
-  task,
-  changeTaskName,
-  changeTaskEstimatedDuration,
-  changeTaskElapsedDuration,
-  updateTaskMardownContent
-}: Props) {
+export default function Done({ index, task }: Props) {
+
+  const { updateTask, deleteTask } = useContext(TasksContext)
 
   const [isEditingTaskName, setIsEditingTaskName] = useState(false);
   const [taskName, setTaskName] = useState(task.task);
@@ -35,28 +25,29 @@ export default function Done({
   const [estimatedDurationHMS, setEstimatedDurationHMS] = useState(convertMillisecondsToHMS(task.estimatedDuration));
   const [isEditingElapsedDuration, setIsEditingElapsedDuration] = useState(false);
   const [elapsedDurationHMS, setElapsedDurationHMS] = useState(convertMillisecondsToHMS(task.timestampSum));
-  const { mutate: deleteTask } = useDeleteTask()
 
   const handleTaskNameSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsEditingTaskName(false);
-    changeTaskName(task.id, taskName);
+    const newTask = { ...task, task: taskName }
+    updateTask(newTask)
   }
   const handleEstimatedDurationSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('estimatedDurationHMS', estimatedDurationHMS)
     setIsEditingEstimatedDuration(false);
-    changeTaskEstimatedDuration(task.id, estimatedDurationHMS);
+    const newTask = { ...task, estimatedDuration: convertHMStoMilliseconds(estimatedDurationHMS) }
+    updateTask(newTask)
   }
   const handleElapsedDurationSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsEditingElapsedDuration(false);
-    changeTaskElapsedDuration(task.id, elapsedDurationHMS)
+    const newTask = { ...task, timestampSum: convertHMStoMilliseconds(elapsedDurationHMS) }
+    updateTask(newTask)
   }
 
   return (
     <>
-      <Draggable draggableId={task.id} index={index}>
+      <Draggable draggableId={task.key} index={index}>
         {(provided: DraggableProvided) => (
           <Task
             ref={provided.innerRef}
@@ -123,14 +114,11 @@ export default function Done({
                 <Value>{Math.floor(task.efficiency * 100)}%</Value>
               </PairValueContainer>
             </TaskContents>
-            <TopRightCorner onClick={() => deleteTask({
-              taskId: Number(task.id),
-              columnId: 1
-            })}><X /></TopRightCorner>
+            <TopRightCorner onClick={() => deleteTask(task.key)}><X /></TopRightCorner>
           </Task>
         )}
       </Draggable>
-      {showModal && <EditMarkdownModal task={task} setShowModal={setShowModal} changeMarkdown={updateTaskMardownContent} />
+      {showModal && <EditMarkdownModal task={task} setShowModal={setShowModal} />
       }
     </>
   )

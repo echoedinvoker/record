@@ -1,36 +1,29 @@
 import styled from "styled-components"
 import { convertMillisecondsToHMS } from "../utils"
 import { CircleButton, ContentWrapper } from "./ui"
-import { Done, Task } from "../types"
+import { useContext } from "react"
+import { DayContext } from "../context/dayContext"
+import { TasksContext } from "../context/tasksContext"
 
-interface Props {
-  tasks: (Task | Done)[]
-  whichDay: number
-  switchToNextDay: () => void
-  switchToPrevDay: () => void
-  hasNextDay: boolean
-  hasPrevDay: boolean
-}
+interface Props { }
 
-function isDone(task: Task | Done): task is Done {
-  return 'ts' in task
-}
-
-export default function TheHeader({ tasks, whichDay, switchToNextDay, switchToPrevDay, hasNextDay, hasPrevDay }: Props) {
-  const totalDurationTS = Array.from(tasks.values()).reduce((acc, task) => acc + task.estimatedDuration, 0)
-  const totalDoneDurationTS = Array.from(tasks.values()).reduce((acc, task) => acc + (isDone(task) ? task.estimatedDuration : 0), 0)
+export default function TheHeader({ }: Props) {
+  const { day, hasPrevDay, hasNextDay, toPrevDay, toNextDay } = useContext(DayContext)
+  const { getTotalEstimatedDurationOfOneDay } = useContext(TasksContext)
+  const totalDurationTS = getTotalEstimatedDurationOfOneDay(day)
+  const totalDoneDurationTS = getTotalEstimatedDurationOfOneDay("done")
 
   return (
     <Container>
       {hasPrevDay && (
-        <CircleButton $counter onClick={switchToPrevDay}>
+        <CircleButton $counter onClick={toPrevDay}>
           <ContentWrapper
             $size="2em"
             $offsetY="-4px"
           >&laquo;</ContentWrapper>
         </CircleButton>
       )}
-      <h1>{whichDay === 0 ? 'Today' : whichDay === 1 ? 'Tomorrow' : `In ${whichDay} days`}</h1>
+      <h1>{day === "0" ? 'Today' : day === "1" ? 'Tomorrow' : `In ${day} days`}</h1>
       <Stats>
         <Stat>
           <StatName>Total Duration:</StatName>
@@ -42,7 +35,7 @@ export default function TheHeader({ tasks, whichDay, switchToNextDay, switchToPr
         </Stat>
       </Stats>
       {hasNextDay && (
-        <CircleButton $counter onClick={switchToNextDay}>
+        <CircleButton $counter onClick={toNextDay}>
           <ContentWrapper
             $size="2em"
             $offsetY="-4px"
@@ -50,7 +43,6 @@ export default function TheHeader({ tasks, whichDay, switchToNextDay, switchToPr
         </CircleButton>
       )}
     </Container>
-
   )
 }
 

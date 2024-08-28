@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Task } from "../types";
 import { convertMillisecondsToHMS } from "../utils";
 import { CircleButton, ContentWrapper, Input, InputWrapper, ModalCloseCorner, ModalContainer, ModalOverlay, TextButton } from "./ui";
@@ -7,17 +7,14 @@ import CodeMirror from '@uiw/react-codemirror';
 import { markdown } from '@codemirror/lang-markdown';
 import { vim } from '@replit/codemirror-vim';
 import styled from "styled-components";
+import { TasksContext } from "../context/tasksContext";
 
 
 interface Props {
   task: Task
-  setActiveTaskId: (taskId: string | null) => void
-  stopTask: (taskId: string) => void
-  changeTaskName: (taskId: string, name: string) => void
-  updateTaskMardownContent: (taskId: string, content: string) => void
 }
 
-export default function TheTimer({ task, setActiveTaskId, stopTask, changeTaskName, updateTaskMardownContent }: Props) {
+export default function TheTimer({ task }: Props) {
   const isFirstRender = useRef(true)
   const interval = useRef<NodeJS.Timeout | null>(null)
   const [time, setTime] = useState(task.timestampSum)
@@ -26,6 +23,8 @@ export default function TheTimer({ task, setActiveTaskId, stopTask, changeTaskNa
   const [isMarkdownTextDirty, setIsMarkdownTextDirty] = useState(false)
   const [isEditingTaskName, setIsEditingTaskName] = useState(false);
   const [taskName, setTaskName] = useState(task.task);
+
+  const { updateTask, stopTask } = useContext(TasksContext)
 
   useEffect(() => {
     interval.current = setInterval(() => {
@@ -48,20 +47,27 @@ export default function TheTimer({ task, setActiveTaskId, stopTask, changeTaskNa
   const handleHeaderSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsEditingTaskName(false);
-    changeTaskName(task.id, taskName);
+    const newTask = { ...task, task: taskName }
+    updateTask(newTask)
+
   }
   const handleSaveMarkdown = () => {
     if (isMarkdownTextDirty) {
-      updateTaskMardownContent(task.id, markdownText);
+      const newTask = { ...task, markdownContent: markdownText }
+      updateTask(newTask)
       setIsMarkdownTextDirty(false);
     }
+  }
+
+  const handleStopTask = () => {
+    stopTask(task.key)
   }
 
   return (
     <ModalOverlay>
       <ModalContainer>
         <ModalCloseCorner>
-          <CircleButton $ghost onClick={() => setActiveTaskId(null)}>
+          <CircleButton $ghost onClick={handleStopTask}>
             <ContentWrapper $size="1.5em">
               &#10006;
             </ContentWrapper>
@@ -85,7 +91,7 @@ export default function TheTimer({ task, setActiveTaskId, stopTask, changeTaskNa
         </Header>
         <TimerContainer>
           <Timer>{convertMillisecondsToHMS(time)}</Timer>
-          <TextButton $counter onClick={() => stopTask(task.id)}>
+          <TextButton $counter onClick={handleStopTask}>
             <ContentWrapper $size="1.5em" $weight="bold">Done</ContentWrapper>
           </TextButton>
         </TimerContainer>
