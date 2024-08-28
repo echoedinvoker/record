@@ -2,7 +2,8 @@ import axios from "axios";
 import { ColumnRequest, ColumnResponse, TaskBody, TaskResponse } from "../types";
 
 // 设置基础 URL
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+// const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+const BASE_URL = "http://api:8000";
 
 // 创建一个 axios 实例
 const api = axios.create({
