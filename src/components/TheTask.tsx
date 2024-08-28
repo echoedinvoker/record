@@ -113,7 +113,7 @@ export default function TheTask({ index, task, deleteTask, startTask, changeTask
                 <TextButton
                   onClick={() => startTask(task.id)}>
                   <ContentWrapper $size="1.5em" $weight="bold" $offsetY="-2px">
-                    {task.timestampSum === 0 ? 'Start' : convertMillisecondsToHMS(task.timestampSum + (task.timestamp ? Date.now() - task.timestamp : 0))}
+                    {!task.timestampSum ? 'Start' : convertMillisecondsToHMS(task.timestampSum + (task.timestamp ? Date.now() - task.timestamp : 0))}
                   </ContentWrapper>
                 </TextButton>
               </TaskTimer>

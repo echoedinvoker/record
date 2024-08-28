@@ -1,15 +1,37 @@
 import { useEffect, useRef, useState } from 'react'
 import { convertHMStoMilliseconds } from './utils';
-import { Data, Done, Task } from './types';
+import { Data, Done, OnDragEndResultType, Task } from './types';
 import OnGoingTab, { OnGoingTabRef } from './components/OnGoingTab';
-import yaml from 'js-yaml'
 import { DragDropContext } from 'react-beautiful-dnd';
-import { getUUID } from './utils/uuid';
+import { useTasks } from './hooks/useTasks';
+import { useAddTask } from './hooks/useAddTask';
+import { useDeleteTask } from './hooks/useDeleteTask';
+import { useDropOnColumn } from './hooks/useDropOnColumn';
 
 export default function App() {
 
   const [data, setData] = useState<Data | null>(null)
   const onGoingTabRef = useRef<OnGoingTabRef>(null);
+
+  const { isLoading, error, data: fetchedData } = useTasks()
+  const { mutate: addTaskMutate } = useAddTask()
+  const { mutate: removeTaskMutate } = useDeleteTask()
+  const { mutate: dropOnColumn } = useDropOnColumn()
+
+  useEffect(() => {
+    if (fetchedData) {
+      setData(fetchedData)
+    }
+  }, [fetchedData])
+
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+  if (error) {
+    return <div>Error: {error.message}</div>
+  }
+
 
   function addTask(
     task: string,
@@ -17,50 +39,27 @@ export default function App() {
     markdownText: string,
     columnId: string
   ) {
-    const newId = getUUID()
-    const newTask = {
-      id: newId,
-      task: task,
-      status: 'pending',
+    addTaskMutate({
+      task,
       estimatedDuration: convertHMStoMilliseconds(estimatedDurationHMS),
+      markdownContent: markdownText,
       timestamp: null,
       timestampSum: 0,
-      markdownContent: markdownText,
-    }
-    setData({
-      ...data!,
-      tasks: {
-        ...data!.tasks,
-        [newId]: newTask
-      },
-      columns: {
-        ...data!.columns,
-        [columnId]: {
-          ...data!.columns[columnId],
-          taskIds: [...data!.columns[columnId].taskIds, newId]
-        }
+      columnId: parseInt(columnId) + 2
+    }, {
+      onSuccess: () => {
+        console.log("onSuccess")
+        setTimeout(() => {
+          onGoingTabRef.current?.tasksRef.current?.scrollToBottom();
+        }, 0);
       }
     })
-
-    setTimeout(() => {
-      onGoingTabRef.current?.tasksRef.current?.scrollToBottom();
-    }, 0);
   }
+
   function deleteTask(taskId: string, columnId: string): void {
-    if (!data || !data.tasks) {
-      throw new Error("Data or tasks are undefined");
-    }
-    const { [taskId]: _, ...rest } = data.tasks
-    setData({
-      ...data,
-      tasks: rest,
-      columns: {
-        ...data.columns,
-        [columnId]: {
-          ...data.columns[columnId],
-          taskIds: data.columns[columnId].taskIds.filter(id => id !== taskId)
-        }
-      }
+    removeTaskMutate({
+      taskId: parseInt(taskId),
+      columnId: parseInt(columnId) + 2
     })
   }
   function startTask(taskId: string) {
@@ -294,40 +293,8 @@ export default function App() {
     // URL.revokeObjectURL(url);
   };
 
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/data.yaml')
-        const text = await response.text()
-        const parsedData = yaml.load(text) as Data
-        parsedData && setData(parsedData)
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    fetchData()
-  }, [])
-
   function onDragEnd(result: any) {
-    const { destination, source, draggableId } = result
-    if (!destination) {
-      return
-    }
-    if (destination.droppableId === source.droppableId && destination.index === source.index) {
-      return
-    }
-
-    const column = data!.columns[source.droppableId]
-    const newTaskIds = Array.from(column.taskIds)
-    newTaskIds.splice(source.index, 1)
-
-    if (destination.droppableId === source.droppableId) {
-      dropToTheSameColumn(newTaskIds, source, destination, draggableId, column)
-    } else {
-      dropToDifferentColumn(newTaskIds, source, destination, draggableId, column)
-    }
+    dropOnColumn(result)
   }
 
   function dropToTheSameColumn(newTaskIds: string[], source: any, destination: any, draggableId: string, column: any) {
