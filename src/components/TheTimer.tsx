@@ -19,7 +19,7 @@ interface Props {
 
 export default function TheTimer({ task, setActiveTaskId, stopTask, changeTaskName, updateTaskMardownContent }: Props) {
   const isFirstRender = useRef(true)
-  const interval = useRef<number | null>(null)
+  const interval = useRef<NodeJS.Timeout | null>(null)
   const [time, setTime] = useState(task.timestampSum)
   const [isEditing, setIsEditing] = useState(false);
   const [markdownText, setMarkdownText] = useState(task.markdownContent);
