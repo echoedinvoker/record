@@ -19,6 +19,7 @@ export interface OnGoingTabRef {
 
 const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({ }, ref) => {
   const [showModal, setShowModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const tasksRef = useRef<TasksRef>(null);
   const doneListRef = useRef<DoneListRef>(null);
@@ -29,8 +30,10 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({ }, ref) => {
   }));
 
   const { data } = useContext(TasksContext);
-  function handleSave() {
-    saveData(data);
+  async function handleSave() {
+    setIsSaving(true);
+    await saveData(data);
+    setIsSaving(false);
   }
 
 
@@ -45,7 +48,7 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({ }, ref) => {
           <Tasks ref={tasksRef} setShowModal={setShowModal} />
           <DoneList ref={doneListRef} />
         </Columns>
-        <AbsoluteRightTop>
+        <AbsoluteRightTop $isSaving={isSaving}>
           <ContentWrapper $offsetY="-1px">
             <Save onClick={handleSave}
               size={28} />
@@ -60,8 +63,9 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({ }, ref) => {
 
 export default OnGoingTab;
 
-const AbsoluteRightTop = styled.div`
+const AbsoluteRightTop = styled.div<{ $isSaving?: boolean }>`
   position: absolute;
+  color: ${(props) => props.$isSaving ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.87)'};
   top: 0;
   right: 0;
   padding: 1em;
