@@ -1,19 +1,18 @@
 import axios from "axios";
 import { ColumnRequest, ColumnResponse, TaskBody, TaskResponse } from "../types";
 
-// 设置基础 URL
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
-console.log(BASE_URL)
+const BASE_URL = import.meta.env.VITE_API_URL;
+if (!BASE_URL) {
+  throw new Error("VITE_API_URL is not set");
+}
 
-// 创建一个 axios 实例
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: BASE_URL || "http://localhost:8000",
   withCredentials: true
 });
 
 
 export async function fetchTasks() {
-  console.log("fetchTasks from:", `${BASE_URL}/tasks`)
   const { data } = await api.get("/tasks");
   return data as TaskResponse[]
 }
