@@ -43,7 +43,7 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({
   const isLoadedTasksAtStart = useRef(false);
   const [showModal, setShowModal] = useState(false);
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
-  const [whichDay, setWhichDay] = useState(0);
+  const [whichDay, setWhichDay] = useState("0");
 
   const tasksRef = useRef<TasksRef>(null);
   const doneListRef = useRef<DoneListRef>(null);
@@ -59,7 +59,8 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({
     isLoadedTasksAtStart.current = true;
     for (const taskId of data.columns["0"].taskIds) {
       const task = data.tasks[taskId];
-      if (task.timestamp) {
+
+      if (task && task.timestamp) {
         setActiveTaskId(task.id);
         break;
       }
@@ -68,13 +69,19 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({
 
   if (!data) return null;
 
-  const filteredDayTasks = data.columns[whichDay].taskIds.map(taskId => data.tasks[taskId]);
-  const filteredDoneTasks = data.columns["done"].taskIds.map(taskId => data.tasks[taskId]);
-  const filteredDayAndDoneTasks = [...filteredDayTasks, ...filteredDoneTasks];
-
+  const getTasksFilterByColumnId = (columnId: string) => {
+    const tasks = []
+    for (const taskId of data.columns[columnId].taskIds) {
+      if (data.tasks[taskId]) {
+        tasks.push(data.tasks[taskId]);
+      }
+    }
+    return tasks;
+  }
+  const filteredDayAndDoneTasks = [...getTasksFilterByColumnId(whichDay), ...getTasksFilterByColumnId("done")];
   const maxWhichDay = getMaxWhichDay();
-  const hasNextDay = maxWhichDay > whichDay;
-  const hasPrevDay = whichDay > 0;
+  const hasNextDay = maxWhichDay > parseInt(whichDay);
+  const hasPrevDay = parseInt(whichDay) > 0;
 
   function getMaxWhichDay() {
     let max = 0;
@@ -104,17 +111,17 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({
       <Container>
         <TheHeader
           tasks={filteredDayAndDoneTasks}
-          whichDay={whichDay}
-          switchToNextDay={() => maxWhichDay > whichDay && setWhichDay(whichDay + 1)}
-          switchToPrevDay={() => whichDay > 0 && setWhichDay(whichDay - 1)}
+          whichDay={parseInt(whichDay)}
+          switchToNextDay={() => maxWhichDay > parseInt(whichDay) && setWhichDay(whichDay + 1)}
+          switchToPrevDay={() => parseInt(whichDay) > 0 && setWhichDay((parseInt(whichDay) - 1).toString())}
           hasNextDay={hasNextDay}
           hasPrevDay={hasPrevDay}
         />
         <Columns>
           <Tasks
             ref={tasksRef}
-            tasks={filteredDayTasks}
-            whichDay={whichDay}
+            tasks={getTasksFilterByColumnId(whichDay)}
+            whichDay={parseInt(whichDay)}
             deleteTask={deleteTask}
             startTask={handleStartTask}
             changeTaskName={changeTaskName}
@@ -126,7 +133,7 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({
           />
           <DoneList
             ref={doneListRef}
-            tasks={data.columns["done"].taskIds.map(taskId => data.tasks[taskId]) as Done[]}
+            tasks={getTasksFilterByColumnId("done") as Done[]}
             deleteTask={deleteTask}
             changeTaskName={changeTaskName}
             updateTaskMardownContent={updateTaskMardownContent}

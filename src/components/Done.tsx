@@ -7,6 +7,7 @@ import EditMarkdownModal from "./EditMardownModal"
 import { Draggable, DraggableProvided } from "react-beautiful-dnd"
 import { Form, Value } from "./ui/Form"
 import { X } from "lucide-react"
+import { useDeleteTask } from "../hooks/useDeleteTask"
 
 interface Props {
   index: number
@@ -21,7 +22,6 @@ interface Props {
 export default function Done({
   index,
   task,
-  deleteTask,
   changeTaskName,
   changeTaskEstimatedDuration,
   changeTaskElapsedDuration,
@@ -35,6 +35,7 @@ export default function Done({
   const [estimatedDurationHMS, setEstimatedDurationHMS] = useState(convertMillisecondsToHMS(task.estimatedDuration));
   const [isEditingElapsedDuration, setIsEditingElapsedDuration] = useState(false);
   const [elapsedDurationHMS, setElapsedDurationHMS] = useState(convertMillisecondsToHMS(task.timestampSum));
+  const { mutate: deleteTask } = useDeleteTask()
 
   const handleTaskNameSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -122,7 +123,10 @@ export default function Done({
                 <Value>{Math.floor(task.efficiency * 100)}%</Value>
               </PairValueContainer>
             </TaskContents>
-            <TopRightCorner onClick={() => deleteTask(task.id, 'done')}><X /></TopRightCorner>
+            <TopRightCorner onClick={() => deleteTask({
+              taskId: Number(task.id),
+              columnId: 1
+            })}><X /></TopRightCorner>
           </Task>
         )}
       </Draggable>
