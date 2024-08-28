@@ -2,12 +2,15 @@ import axios from "axios";
 import { ColumnRequest, ColumnResponse, TaskBody, TaskResponse } from "../types";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
+console.log("API Base URL", BASE_URL);
+
 if (!BASE_URL) {
   throw new Error("VITE_API_URL is not set");
 }
 
 const api = axios.create({
-  baseURL: BASE_URL || "http://localhost:8000",
+  baseURL: "http://api",
+  // baseURL: BASE_URL || "http://localhost:8000",
   withCredentials: true
 });
 
