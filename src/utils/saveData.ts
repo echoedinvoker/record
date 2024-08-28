@@ -1,7 +1,13 @@
-import { createColumn, createTask, fetchColumnByKey, fetchTaskByKey, updateColumn, updateTask } from "../services/tasks"
+import { createColumn, createTask, deleteTask, fetchColumnByKey, fetchTaskByKey, updateColumn, updateTask } from "../services/tasks"
 import { Data, TaskBody } from "../types"
 
 export async function saveData(data: Data) {
+  await saveTasks(data)
+  await saveColumns(data)
+  await removeNoLinkedTasks(data)
+}
+
+async function saveTasks(data: Data) {
   const taskKeys = Object.keys(data.tasks)
   for (const key of taskKeys) {
     const task = data.tasks[key]
@@ -35,6 +41,8 @@ export async function saveData(data: Data) {
       }
     }
   }
+}
+async function saveColumns(data: Data) {
   const columnKeys = Object.keys(data.columns)
   for (const key of columnKeys) {
     const column = data.columns[key]
@@ -53,4 +61,26 @@ export async function saveData(data: Data) {
       }
     }
   }
+}
+async function removeNoLinkedTasks(data: Data) {
+  const keysFromAllColumns = getKeysFromAllColumns(data)
+  const taskKeys = Object.keys(data.tasks)
+  for (const key of taskKeys) {
+    if (!keysFromAllColumns.includes(key)) {
+      await removeTaskByKey(key)
+    }
+  }
+}
+
+function getKeysFromAllColumns(data: Data) {
+  const columnKeys = Object.keys(data.columns)
+  const keys: string[] = []
+  for (const key of columnKeys) {
+    keys.push(...data.columns[key].taskIds)
+  }
+  return keys
+}
+async function removeTaskByKey(key: string) {
+  const fetchedTask = await fetchTaskByKey(key)
+  await deleteTask(fetchedTask.id!)
 }
