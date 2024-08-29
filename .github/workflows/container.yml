@@ -36,3 +36,13 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           docker-compose pull && docker-compose up -d
+
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+        HOST: ${{ secrets.EC2_HOST }}
+        USER: ${{ secrets.EC2_USERNAME }}
+      run: |
+        echo "$PRIVATE_KEY" > private_key && chmod 400 private_key
+        ssh -o StrictHostKeyChecking=no -i private_key ${USER}@${HOST} '
+          docker-compose pull &&
+          docker-compose up -d
