@@ -10,8 +10,9 @@ interface Props { }
 export default function TheHeader({ }: Props) {
   const { day, hasPrevDay, hasNextDay, toPrevDay, toNextDay } = useContext(DayContext)
   const { getTotalEstimatedDurationOfOneDay } = useContext(TasksContext)
-  const totalDurationTS = getTotalEstimatedDurationOfOneDay(day)
+  const totalDayDurationTS = getTotalEstimatedDurationOfOneDay(day)
   const totalDoneDurationTS = getTotalEstimatedDurationOfOneDay("done")
+  const totalDurationTS = totalDayDurationTS + totalDoneDurationTS
 
   return (
     <Container>
