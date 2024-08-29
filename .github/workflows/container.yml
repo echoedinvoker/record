@@ -35,6 +35,7 @@ jobs:
         USER: ${{ secrets.EC2_USERNAME }}
       run: |
         echo "$PRIVATE_KEY" > private_key && chmod 400 private_key
-        ssh -o StrictHostKeyChecking=no -i private_key ${USER}@${HOST} '
-          docker-compose pull &&
-          docker-compose up -d
+        ssh -o StrictHostKeyChecking=no -i private_key ${USER}@${HOST} << 'ENDSSH'
+          cd /path/to/your/project
+          docker-compose up --pull always -d
+        ENDSSH
