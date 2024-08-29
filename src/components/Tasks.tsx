@@ -21,7 +21,7 @@ const Tasks = forwardRef<TasksRef, Props>(({ setShowModal }, ref) => {
 
   const { day } = useContext(DayContext)
   const { getTasksByColumnKey, getTotalEstimatedDurationOfOneDay } = useContext(TasksContext)
-  const tasksOfOneDay = getTasksByColumnKey(day)
+  const tasksOfOneDay = getTasksByColumnKey(day) as Task[]
   const totalEstimatedDurationOfOneDay = getTotalEstimatedDurationOfOneDay(day)
 
   useImperativeHandle(ref, () => ({

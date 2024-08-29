@@ -86,7 +86,7 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
   }
 
   function stopTask(taskKey: string) {
-    const task = data.tasks[taskKey]
+    const task = data.tasks[taskKey] as Task
     if (!task || !task.timestamp) return
     const timestampSum = task.timestampSum + (Date.now() - task.timestamp)
     const newTask = {
