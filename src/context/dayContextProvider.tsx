@@ -18,7 +18,7 @@ export default function DayContextProvider({ children }: DayContextProviderProps
   const [day, setDay] = useState("0")
   const ts = getStartTimestampOfDay(parseInt(day))
   const { data } = useContext(TasksContext)
-  const dayList = Object.keys(data.columns).filter((columnKey) => columnKey !== "done")
+  const dayList = Object.keys(data.columns).filter((columnKey) => ["done", "archived"].includes(columnKey) === false)
   const hasNextDay = checkIfHasNextDay()
   const hasPrevDay = checkIfHasPrevDay()
   function checkIfHasNextDay() {

@@ -33,6 +33,17 @@ export interface Done extends Task {
   efficiency: number
 }
 
+export interface Archive {
+  id?: number
+  key: string
+  task: string
+  estimatedDuration: number
+  timestampSum: number
+  markdownContent: string
+  ts: number
+  efficiency: number
+}
+
 export interface Column {
   id?: number
   key: string
@@ -42,7 +53,7 @@ export interface Column {
 }
 
 export interface Data {
-  tasks: { [key: string]: Task | Done }
+  tasks: { [key: string]: Task | Done | Archive }
   columns: { [key: string]: Column }
   columnOrder: string[]
 }

@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { Data, Task } from '../types';
+import { Archive, Data, Done, Task } from '../types';
 import { DropResult } from 'react-beautiful-dnd';
 
 interface TaskContextType {
@@ -12,10 +12,11 @@ interface TaskContextType {
   updateTask: (task: Task) => void;
   onDragEnd: (result: DropResult) => void;
   runningTask: Task | null;
-  getTasksByColumnKey: (columnKey: string) => Task[];
+  getTasksByColumnKey: (columnKey: string) => (Task | Done | Archive)[];
   getTotalEstimatedDurationOfOneDay: (columnKey: string) => number;
   getTotalElapsedDurationOfOneDay: (columnKey: string) => number;
   moveTaskToOtherColumn: (taskKey: string, destinationColumnKey: string) => void;
+  doneToArchive: (taskKey: string) => void;
 }
 
 export const TasksContext = createContext<TaskContextType>({} as TaskContextType);
