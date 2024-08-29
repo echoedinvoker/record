@@ -1,5 +1,5 @@
 import { createColumn, createTask, deleteTask, fetchColumnByKey, fetchTaskByKey, updateColumn, updateTask } from "../services/tasks"
-import { Data, TaskBody } from "../types"
+import { Data, Done, Task, TaskBody } from "../types"
 
 export async function saveData(data: Data) {
   await saveTasks(data)
@@ -23,6 +23,9 @@ async function saveTasks(data: Data) {
       if (task.timestamp) {
         newTask.timestamp = task.timestamp
       }
+      if (isDone(task)) {
+        newTask.ts = task.ts
+      }
       await updateTask(fetchedTask.id, newTask)
 
     } catch (error) {
@@ -36,6 +39,9 @@ async function saveTasks(data: Data) {
         }
         if (task.timestamp) {
           newTask.timestamp = task.timestamp
+        }
+        if (isDone(task)) {
+          newTask.ts = task.ts
         }
         await createTask(newTask)
       }
@@ -83,4 +89,8 @@ function getKeysFromAllColumns(data: Data) {
 async function removeTaskByKey(key: string) {
   const fetchedTask = await fetchTaskByKey(key)
   await deleteTask(fetchedTask.id!)
+}
+
+function isDone(task: Task | Done): task is Done {
+  return 'ts' in task;
 }
