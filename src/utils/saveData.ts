@@ -1,11 +1,13 @@
 import { createColumn, createTask, deleteTask, fetchColumnByKey, fetchTaskByKey, updateColumn, updateTask } from "../services/tasks"
-import { Data, Done, Task, TaskBody } from "../types"
+import { Archive, Data, Done, Task, TaskBody } from "../types"
 
 export async function saveData(data: Data) {
   await saveTasks(data)
   await saveColumns(data)
   await removeNoLinkedTasks(data)
 }
+
+
 
 async function saveTasks(data: Data) {
   const taskKeys = Object.keys(data.tasks)
@@ -20,7 +22,7 @@ async function saveTasks(data: Data) {
         timestampSum: task.timestampSum,
         markdownContent: task.markdownContent
       }
-      if (task.timestamp) {
+      if (isTask(task) && task.timestamp) {
         newTask.timestamp = task.timestamp
       }
       if (isDone(task)) {
@@ -37,7 +39,7 @@ async function saveTasks(data: Data) {
           timestampSum: task.timestampSum,
           markdownContent: task.markdownContent
         }
-        if (task.timestamp) {
+        if (isTask(task) && task.timestamp) {
           newTask.timestamp = task.timestamp
         }
         if (isDone(task)) {
@@ -91,6 +93,10 @@ async function removeTaskByKey(key: string) {
   await deleteTask(fetchedTask.id!)
 }
 
-function isDone(task: Task | Done): task is Done {
+function isDone(task: Task | Done | Archive): task is Done {
   return 'ts' in task;
+}
+
+function isTask(task: Task | Done | Archive): task is Task {
+  return !('timestamp' in task);
 }
