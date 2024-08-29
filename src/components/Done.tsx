@@ -6,7 +6,7 @@ import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils"
 import EditMarkdownModal from "./EditMardownModal"
 import { Draggable, DraggableProvided } from "react-beautiful-dnd"
 import { Form, Value } from "./ui/Form"
-import { X } from "lucide-react"
+import { Archive, X } from "lucide-react"
 import { TasksContext } from "../context/tasksContext"
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 
 export default function Done({ index, task }: Props) {
 
-  const { updateTask, deleteTask } = useContext(TasksContext)
+  const { updateTask, deleteTask, doneToArchive } = useContext(TasksContext)
 
   const [isEditingTaskName, setIsEditingTaskName] = useState(false);
   const [taskName, setTaskName] = useState(task.task);
@@ -75,6 +75,11 @@ export default function Done({ index, task }: Props) {
                 <CircleButton onClick={() => setShowModal(true)}>
                   <ContentWrapper>
                     &#128196;
+                  </ContentWrapper>
+                </CircleButton>
+                <CircleButton>
+                  <ContentWrapper onClick={() => doneToArchive(task.key)}>
+                    <Archive size={20} />
                   </ContentWrapper>
                 </CircleButton>
               </TaskActions>

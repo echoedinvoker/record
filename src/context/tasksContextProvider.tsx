@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TasksContext } from "./tasksContext";
-import { Column, Data, Done, Task } from "../types";
+import { Archive, Column, Data, Done, Task } from "../types";
 import { convertHMStoMilliseconds } from "../utils";
 import { DropResult } from "react-beautiful-dnd";
 
@@ -223,12 +223,12 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     return [newSourceColumn, newDestinationColumn]
   }
 
-  function findRunningTask() {
+  function findRunningTask(): Task | null {
     let columnKey = "0"
     while (columnKey in data.columns) {
       const column = data.columns[columnKey]
       for (const taskKey of column.taskIds) {
-        const task = data.tasks[taskKey]
+        const task = data.tasks[taskKey] as Task
         if (task.timestamp) return task
       }
       columnKey = (parseInt(columnKey) + 1).toString()
@@ -259,14 +259,14 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     const newSourceColumn = removeTaskFromSourceColumn(taskKey, sourceColumn.key)
     const newDestinationColumn = addTaskToDestinationColumn(taskKey, destinationColumnKey)
     if (!newSourceColumn || !newDestinationColumn) return
-    setData({
-      ...data,
+    setData(prev => ({
+      ...prev,
       columns: {
-        ...data.columns,
+        ...prev.columns,
         [sourceColumn.key]: newSourceColumn,
         [destinationColumnKey]: newDestinationColumn
       }
-    })
+    }))
   }
 
   function removeTaskFromSourceColumn(taskKey: string, sourceColumnKey: string): Column | undefined {
@@ -287,6 +287,31 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     }
   }
 
+  function doneToArchive(taskKey: string): void {
+    moveTaskToOtherColumn(taskKey, "archived")
+    convertDoneToArchive(taskKey)
+  }
+
+  function convertDoneToArchive(taskKey: string): void {
+    const task = data.tasks[taskKey] as Done
+    const newTask: Archive = {
+      key: task.key,
+      task: task.task,
+      estimatedDuration: task.estimatedDuration,
+      timestampSum: task.timestampSum,
+      markdownContent: task.markdownContent,
+      ts: task.ts,
+      efficiency: task.efficiency,
+    }
+    setData(prev => ({
+      ...prev,
+      tasks: {
+        ...prev.tasks,
+        [taskKey]: newTask
+      }
+    }))
+  }
+
   const value = {
     data,
     setData,
@@ -300,7 +325,8 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     getTasksByColumnKey,
     getTotalEstimatedDurationOfOneDay,
     getTotalElapsedDurationOfOneDay,
-    moveTaskToOtherColumn
+    moveTaskToOtherColumn,
+    doneToArchive
   }
 
 
