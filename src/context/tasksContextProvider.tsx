@@ -93,6 +93,7 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
       ...task,
       timestamp: null,
       timestampSum,
+      ts: Date.now(),
       efficiency: task.estimatedDuration / timestampSum
     } as Done
     const sourceColumn = getColumnWithTask(taskKey)
@@ -141,47 +142,85 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
       return;
     }
     if (result.destination.droppableId === result.source.droppableId) {
-      const column = data.columns[result.source.droppableId]
-      if (!column) return
-      const taskIds = Array.from(column.taskIds)
-      taskIds.splice(result.source.index, 1)
-      taskIds.splice(result.destination.index, 0, result.draggableId)
-      const newColumn = {
-        ...column,
-        taskIds
-      }
-      setData({
-        ...data!,
-        columns: {
-          ...data!.columns,
-          [result.source.droppableId]: newColumn
-        }
-      })
+      setDataWhenSameColumn(result)
     } else {
-      const sourceColumn = data.columns[result.source.droppableId]
-      const destinationColumn = data.columns[result.destination.droppableId]
-      if (!sourceColumn || !destinationColumn) return
-      const sourceTaskIds = Array.from(sourceColumn.taskIds)
-      sourceTaskIds.splice(result.source.index, 1)
-      const destinationTaskIds = Array.from(destinationColumn.taskIds)
-      destinationTaskIds.splice(result.destination.index, 0, result.draggableId)
-      const newSourceColumn = {
-        ...sourceColumn,
-        taskIds: sourceTaskIds
-      }
-      const newDestinationColumn = {
-        ...destinationColumn,
-        taskIds: destinationTaskIds
-      }
-      setData({
-        ...data!,
-        columns: {
-          ...data!.columns,
-          [result.source.droppableId]: newSourceColumn,
-          [result.destination.droppableId]: newDestinationColumn
-        }
-      })
+      setDataWhenDifferentColumn(result)
     }
+  }
+
+  function setDataWhenSameColumn(result: DropResult) {
+    const column = data.columns[result.source.droppableId]
+    if (!column) return
+    const taskIds = Array.from(column.taskIds)
+    taskIds.splice(result.source.index, 1)
+    taskIds.splice(result.destination!.index, 0, result.draggableId)
+    const newColumn = {
+      ...column,
+      taskIds
+    }
+    setData({
+      ...data!,
+      columns: {
+        ...data!.columns,
+        [result.source.droppableId]: newColumn
+      }
+    })
+  }
+
+  function setDataWhenDifferentColumn(result: DropResult) {
+    const [newSourceColumn, newDestinationColumn] = generateNewColumnsWithMutatedTaskIds(result)
+    const newTask = getNewTaskWhenDifferentColumnDnd(result)
+    setData({
+      ...data!,
+      tasks: {
+        ...data!.tasks,
+        [newTask.key]: newTask
+      },
+      columns: {
+        ...data!.columns,
+        [result.source.droppableId]: newSourceColumn,
+        [result.destination!.droppableId]: newDestinationColumn
+      }
+    })
+  }
+
+  function getNewTaskWhenDifferentColumnDnd(result: DropResult) {
+    const task = data.tasks[result.draggableId]
+    const destColumn = data.columns[result.destination!.droppableId]
+    if (destColumn.key !== "done") {
+      const newTask = {
+        key: task.key,
+        task: task.task,
+        estimatedDuration: task.estimatedDuration,
+        timestamp: null,
+        timestampSum: task.timestampSum,
+        markdownContent: task.markdownContent,
+      } as Task
+      return newTask
+    }
+    return {
+      ...task,
+      ts: Date.now(),
+      efficiency: task.estimatedDuration / task.timestampSum
+    } as Done
+  }
+
+  function generateNewColumnsWithMutatedTaskIds(result: DropResult): [Column, Column] {
+    const sourceColumn = data.columns[result.source.droppableId]
+    const destinationColumn = data.columns[result.destination!.droppableId]
+    const sourceTaskIds = Array.from(sourceColumn.taskIds)
+    sourceTaskIds.splice(result.source.index, 1)
+    const destinationTaskIds = Array.from(destinationColumn.taskIds)
+    destinationTaskIds.splice(result.destination!.index, 0, result.draggableId)
+    const newSourceColumn = {
+      ...sourceColumn,
+      taskIds: sourceTaskIds
+    }
+    const newDestinationColumn = {
+      ...destinationColumn,
+      taskIds: destinationTaskIds
+    }
+    return [newSourceColumn, newDestinationColumn]
   }
 
   function findRunningTask() {

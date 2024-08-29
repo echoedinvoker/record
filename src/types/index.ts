@@ -15,6 +15,7 @@ export interface TaskBody {
   timestamp?: number
   timestampSum: number
   markdownContent: string
+  ts?: number
 }
 
 export interface TaskRequest {
@@ -22,6 +23,7 @@ export interface TaskRequest {
   name: string
   estimated_duration: number
   start_timestamp?: number | null
+  ts?: number | null
   consume_timestamp: number
   markdown_content: string
 }

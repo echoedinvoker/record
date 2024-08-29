@@ -21,6 +21,9 @@ export async function updateTask(taskId: number, newTask: TaskBody) {
   if (newTask.timestamp) {
     body["start_timestamp"] = newTask.timestamp
   }
+  if (newTask.ts) {
+    body["ts"] = newTask.ts
+  }
   await api.put(`/tasks/${taskId}`, body);
 }
 
@@ -51,6 +54,9 @@ export async function createTask(request: TaskBody) {
 
   if (request.timestamp) {
     body["start_timestamp"] = request.timestamp
+  }
+  if (request.ts) {
+    body["ts"] = request.ts
   }
 
   const { data } = await api.post("/tasks", body);
