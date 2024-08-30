@@ -8,7 +8,7 @@ export default function App() {
 
   const onGoingTabRef = useRef<OnGoingTabRef>(null);
 
-  const { data, onDragEnd, setData } = useContext(TasksContext)
+  const { onDragEnd, setData } = useContext(TasksContext)
   const { isLoading, error, data: fetchedData } = useTasks()
   const [isFirst, setIsFirst] = useState(true)
 
@@ -28,7 +28,6 @@ export default function App() {
 
   return (
     <ErrorLog>
-      <button onClick={() => console.log(data)}>TEST</button>
       <DragDropContext onDragEnd={onDragEnd}>
         <OnGoingTab ref={onGoingTabRef} />
       </DragDropContext>
