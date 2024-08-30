@@ -1,13 +1,15 @@
 import styled from "styled-components"
 import { Done as TypeDone } from "../types"
-import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskContents, TaskName, TaskNameContainer, TopRightCorner } from "./ui"
+import { CircleButton, ContentWrapper, Task, TaskContents, TaskNameContainer, TopRightCorner } from "./ui"
 import { useContext, useState } from "react"
 import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils"
 import EditMarkdownModal from "./EditMardownModal"
 import { Draggable, DraggableProvided } from "react-beautiful-dnd"
-import { Form, Value } from "./ui/Form"
+import { Value } from "./ui/Form"
 import { Archive, X } from "lucide-react"
 import { TasksContext } from "../context/tasksContext"
+import MyCodeMirrorComponent from "./MyCodeMirrorComponent"
+import ReactMarkdown from 'react-markdown';
 
 interface Props {
   index: number;
@@ -26,23 +28,54 @@ export default function Done({ index, task }: Props) {
   const [isEditingElapsedDuration, setIsEditingElapsedDuration] = useState(false);
   const [elapsedDurationHMS, setElapsedDurationHMS] = useState(convertMillisecondsToHMS(task.timestampSum));
 
-  const handleTaskNameSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsEditingTaskName(false);
-    const newTask = { ...task, task: taskName }
+  const handleSaveTaskName = (value: string) => {
+    setTaskName(value)
+    setIsEditingTaskName(false)
+    updateTask({ ...task, task: value })
+  }
+
+  const toggleEditTaskName = () => {
+    setIsEditingTaskName((prev) => {
+      if (!prev) {
+        setIsEditingEstimatedDuration(false)
+        setIsEditingElapsedDuration(false)
+      }
+      return !prev
+    })
+  }
+
+  const handleEstimatedDurationSave = (value: string) => {
+    setEstimatedDurationHMS(value)
+    setIsEditingEstimatedDuration(false)
+    const newTask = { ...task, estimatedDuration: convertHMStoMilliseconds(value) }
     updateTask(newTask)
   }
-  const handleEstimatedDurationSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsEditingEstimatedDuration(false);
-    const newTask = { ...task, estimatedDuration: convertHMStoMilliseconds(estimatedDurationHMS) }
+
+  const toggleEditEstimatedDuration = () => {
+    setIsEditingEstimatedDuration((prev) => {
+      if (!prev) {
+        setIsEditingTaskName(false)
+        setIsEditingElapsedDuration(false)
+      }
+      return !prev
+    })
+  }
+
+  const handleElapsedDurationSave = (value: string) => {
+    setElapsedDurationHMS(value)
+    setIsEditingElapsedDuration(false)
+    const newTask = { ...task, timestampSum: convertHMStoMilliseconds(value) }
     updateTask(newTask)
   }
-  const handleElapsedDurationSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsEditingElapsedDuration(false);
-    const newTask = { ...task, timestampSum: convertHMStoMilliseconds(elapsedDurationHMS) }
-    updateTask(newTask)
+
+  const toggleEditElapsedDuration = () => {
+    setIsEditingElapsedDuration((prev) => {
+      if (!prev) {
+        setIsEditingTaskName(false)
+        setIsEditingEstimatedDuration(false)
+      }
+      return !prev
+    })
   }
 
   return (
@@ -54,21 +87,19 @@ export default function Done({ index, task }: Props) {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
-            <TaskNameContainer>
-              <EditPenSpan
-                onClick={() => setIsEditingTaskName((prev) => !prev)}
-              >&#9998;</EditPenSpan>
-              {
-                isEditingTaskName ? (
-                  <Form onSubmit={handleTaskNameSubmit}>
-                    <InputWrapper $white>
-                      <Input $white type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
-                    </InputWrapper>
-                  </Form>
-                ) : (
-                  <TaskName>{task.task}</TaskName>
-                )
-              }
+            <TaskNameContainer onDoubleClick={toggleEditTaskName}>
+              {isEditingTaskName ? (
+                <CodeMirrorContainer>
+                  <MyCodeMirrorComponent
+                    initialValue={taskName}
+                    handleSave={handleSaveTaskName}
+                  />
+                </CodeMirrorContainer>
+              ) : (
+                <ReactMarkdownContainer>
+                  <ReactMarkdown>{taskName}</ReactMarkdown>
+                </ReactMarkdownContainer>
+              )}
             </TaskNameContainer>
             <TaskContents>
               <TaskActions>
@@ -83,37 +114,24 @@ export default function Done({ index, task }: Props) {
                   </ContentWrapper>
                 </CircleButton>
               </TaskActions>
-              <PairValueContainer>
-                <CircleButton $ghost onClick={() => setIsEditingEstimatedDuration((prev) => !prev)}>
-                  <ContentWrapper $offsetY="-3px" $size="1.5em" style={{ color: 'white' }}>
-                    &#9998;
-                  </ContentWrapper>
-                </CircleButton>
+              <PairValueContainer onDoubleClick={toggleEditEstimatedDuration}>
                 {isEditingEstimatedDuration ? (
-                  <form onSubmit={handleEstimatedDurationSubmit}>
-                    <InputWrapper $white>
-                      <Input $white type="text" value={estimatedDurationHMS} onChange={(e) => setEstimatedDurationHMS(e.target.value)} />
-                    </InputWrapper>
-                  </form>
+                  <CodeMirrorContainer>
+                    <MyCodeMirrorComponent initialValue={estimatedDurationHMS} handleSave={handleEstimatedDurationSave} />
+                  </CodeMirrorContainer>
                 ) : (
                   <Value>{convertMillisecondsToHMS(task.estimatedDuration)}</Value>
                 )}
               </PairValueContainer>
-              <PairValueContainer>
-                <CircleButton $ghost onClick={() => setIsEditingElapsedDuration((prev) => !prev)}>
-                  <ContentWrapper $offsetY="-3px" $size="1.5em" style={{ color: 'white' }}>
-                    &#9998;
-                  </ContentWrapper>
-                </CircleButton>
+              <PairValueContainer onDoubleClick={toggleEditElapsedDuration}>
                 {isEditingElapsedDuration ? (
-                  <form onSubmit={handleElapsedDurationSubmit}>
-                    <InputWrapper $white>
-                      <Input $white type="text" value={elapsedDurationHMS} onChange={(e) => setElapsedDurationHMS(e.target.value)} />
-                    </InputWrapper>
-                  </form>
+                  <CodeMirrorContainer>
+                    <MyCodeMirrorComponent initialValue={elapsedDurationHMS} handleSave={handleElapsedDurationSave} />
+                  </CodeMirrorContainer>
                 ) : (
-                  <Value>{convertMillisecondsToHMS(task.timestampSum)}</Value>
+                  <Value>{task.timestampSum ? convertMillisecondsToHMS(task.timestampSum) : 'none'}</Value>
                 )}
+
               </PairValueContainer>
               <PairValueContainer>
                 <Value>{Math.floor(task.efficiency * 100)}%</Value>
@@ -129,13 +147,27 @@ export default function Done({ index, task }: Props) {
   )
 }
 
+const CodeMirrorContainer = styled.div`
+  color: black;
+  width: 70%;
+  height: 100%;
+  margin-top: 1.5em;
+`
+
+const ReactMarkdownContainer = styled.div`
+  margin-left: 1.5em;
+`
+
 const PairValueContainer = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
 `
 
 
 const TaskActions = styled.div`
+    flex: 1;
     display: flex;
     align-items: center;
     gap: .5em;

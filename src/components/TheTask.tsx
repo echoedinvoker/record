@@ -1,15 +1,17 @@
 import styled from "styled-components";
 import { Task as TypeTask } from "../types";
-import { CircleButton, ContentWrapper, EditPenSpan, Input, InputWrapper, Task, TaskContents, TaskName, TextButton, TopRightCorner } from "./ui";
+import { CircleButton, ContentWrapper, Task, TaskContents, TextButton, TopRightCorner } from "./ui";
 import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils";
 import { useContext, useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
 import { Draggable, DraggableProvided } from "react-beautiful-dnd";
 import { ArrowBigLeft, ArrowBigRight, X } from 'lucide-react';
 import TaskNameContainer from "./ui/TaskNameContainer";
-import { Form, Value } from "./ui/Form";
+import { Value } from "./ui/Form";
 import { TasksContext } from "../context/tasksContext";
 import { DayContext } from "../context/dayContext";
+import ReactMarkdown from 'react-markdown';
+import MyCodeMirrorComponent from "./MyCodeMirrorComponent";
 
 interface Props {
   task: TypeTask,
@@ -26,21 +28,6 @@ export default function TheTask({ index, task }: Props) {
   const { updateTask, moveTaskToOtherColumn, startTask, deleteTask } = useContext(TasksContext)
   const { day } = useContext(DayContext)
 
-
-  const handleTaskNameSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsEditingTaskName(false);
-    const newTask = { ...task, task: taskName }
-    updateTask(newTask)
-  }
-
-  const handleEstimatedDurationSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsEditingEstimatedDuration(false);
-    const newTask = { ...task, estimatedDuration: convertHMStoMilliseconds(estimatedDurationHMS) }
-    updateTask(newTask)
-  }
-
   const handleAdvance = () => {
     const intPrevDay = parseInt(day) - 1;
     if (intPrevDay < 0) return;
@@ -52,6 +39,27 @@ export default function TheTask({ index, task }: Props) {
     moveTaskToOtherColumn(task.key, intNextDay.toString());
   }
 
+  const handleSave = (value: string) => {
+    setTaskName(value)
+    setIsEditingTaskName(false)
+    updateTask({ ...task, task: value })
+  }
+
+  const handleEstimatedDurationSave = (value: string) => {
+    setEstimatedDurationHMS(value)
+    setIsEditingEstimatedDuration(false)
+    const newTask = { ...task, estimatedDuration: convertHMStoMilliseconds(value) }
+    updateTask(newTask)
+  }
+
+  const toggleEditTaskName = () => {
+    setIsEditingTaskName((prev) => !prev)
+  }
+
+  const toggleEditEstimatedDuration = () => {
+    setIsEditingEstimatedDuration((prev) => !prev)
+  }
+
   return (
     <>
       <Draggable draggableId={task.key} index={index}>
@@ -61,18 +69,18 @@ export default function TheTask({ index, task }: Props) {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
-            <TaskNameContainer>
-              <EditPenSpan
-                onClick={() => setIsEditingTaskName((prev) => !prev)}
-              >&#9998;</EditPenSpan>
+            <TaskNameContainer onDoubleClick={toggleEditTaskName}>
               {isEditingTaskName ? (
-                <Form onSubmit={handleTaskNameSubmit}>
-                  <InputWrapper $white>
-                    <Input $white type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
-                  </InputWrapper>
-                </Form>
+                <CodeMirrorContainer>
+                  <MyCodeMirrorComponent
+                    initialValue={taskName}
+                    handleSave={handleSave}
+                  />
+                </CodeMirrorContainer>
               ) : (
-                <TaskName>{task.task}</TaskName>
+                <ReactMarkdownContainer>
+                  <ReactMarkdown>{taskName}</ReactMarkdown>
+                </ReactMarkdownContainer>
               )}
             </TaskNameContainer>
             <TaskContents>
@@ -94,18 +102,11 @@ export default function TheTask({ index, task }: Props) {
                   </ContentWrapper>
                 </CircleButton>
               </TaskActions>
-              <PairValueContainer>
-                <CircleButton $ghost onClick={() => setIsEditingEstimatedDuration((prev) => !prev)}>
-                  <ContentWrapper $offsetY="-3px" $size="1.5em" style={{ color: 'white' }}>
-                    &#9998;
-                  </ContentWrapper>
-                </CircleButton>
+              <PairValueContainer onDoubleClick={toggleEditEstimatedDuration}>
                 {isEditingEstimatedDuration ? (
-                  <form onSubmit={handleEstimatedDurationSubmit}>
-                    <InputWrapper $white>
-                      <Input $white type="text" value={estimatedDurationHMS} onChange={(e) => setEstimatedDurationHMS(e.target.value)} />
-                    </InputWrapper>
-                  </form>
+                  <CodeMirrorContainer>
+                    <MyCodeMirrorComponent initialValue={estimatedDurationHMS} handleSave={handleEstimatedDurationSave} />
+                  </CodeMirrorContainer>
                 ) : (
                   <Value>{convertMillisecondsToHMS(task.estimatedDuration)}</Value>
                 )}
@@ -129,13 +130,26 @@ export default function TheTask({ index, task }: Props) {
   )
 }
 
+const CodeMirrorContainer = styled.div`
+  color: black;
+  width: 70%;
+  height: 100%;
+  margin-top: 1.5em;
+`
+
+const ReactMarkdownContainer = styled.div`
+  margin-left: 1.5em;
+`
+
 
 const PairValueContainer = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
 `
 
 const TaskActions = styled.div`
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     align-items: center;
