@@ -10,7 +10,7 @@ interface EditorContextProviderProps {
 
 export default function EditorContextProvider({ children }: EditorContextProviderProps) {
   const [id, setId] = useState(0)
-  const [isEditing, setIsEditing] = useState(true)
+  const [isEditing, setIsEditing] = useState(false)
   const [taskName, setTaskName] = useState('');
   const [estimatedDurationHMS, setEstimatedDurationHMS] = useState('');
   const [consumeTimeHMS, setConsumeTimeHMS] = useState('');

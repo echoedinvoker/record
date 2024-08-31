@@ -24,6 +24,8 @@ function MyCodeMirrorComponent({ initialValue, handleSave }: MyCodeMirrorCompone
         parent: editorRef.current,
       });
 
+      view.focus();
+
       viewRef.current = view;
 
       Vim.defineEx('wq', 'wq', () => {
