@@ -26,17 +26,19 @@ export default function TheTask({ index, task }: Props) {
   const [showModal, setShowModal] = useState(false);
 
   const { updateTask, moveTaskToOtherColumn, startTask, deleteTask } = useContext(TasksContext)
-  const { day } = useContext(DayContext)
+  const { day, setDay } = useContext(DayContext)
 
   const handleAdvance = () => {
-    const intPrevDay = parseInt(day) - 1;
-    if (intPrevDay < 0) return;
-    moveTaskToOtherColumn(task.key, intPrevDay.toString());
+    const prevDay = (Number(day) - 1).toString();
+    if (Number(prevDay) < 0) return;
+    moveTaskToOtherColumn(task.key, prevDay);
+    setDay(prevDay)
   }
 
   const handleDelay = () => {
-    const intNextDay = parseInt(day) + 1;
-    moveTaskToOtherColumn(task.key, intNextDay.toString());
+    const nextDay = (Number(day) + 1).toString();
+    moveTaskToOtherColumn(task.key, nextDay);
+    setDay(nextDay)
   }
 
   const handleSave = (value: string) => {

@@ -128,7 +128,7 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
   }
 
   function getColumnWithTask(taskKey: string) {
-    for (const columnId of data.columnOrder) {
+    for (const columnId of Object.keys(data.columns)) {
       const column = data.columns[columnId]
       if (column.taskIds.includes(taskKey)) {
         return column
@@ -259,14 +259,26 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     const newSourceColumn = removeTaskFromSourceColumn(taskKey, sourceColumn.key)
     const newDestinationColumn = addTaskToDestinationColumn(taskKey, destinationColumnKey)
     if (!newSourceColumn || !newDestinationColumn) return
-    setData(prev => ({
-      ...prev,
-      columns: {
-        ...prev.columns,
-        [sourceColumn.key]: newSourceColumn,
-        [destinationColumnKey]: newDestinationColumn
-      }
-    }))
+    if (newSourceColumn.taskIds.length === 0 && sourceColumn.key !== "0" && sourceColumn.key !== "done") {
+      const newColumns = { ...data.columns }
+      delete newColumns[sourceColumn.key]
+      setData(prev => ({
+        ...prev,
+        columns: {
+          ...newColumns,
+          [destinationColumnKey]: newDestinationColumn
+        },
+      }))
+    } else {
+      setData(prev => ({
+        ...prev,
+        columns: {
+          ...prev.columns,
+          [sourceColumn.key]: newSourceColumn,
+          [destinationColumnKey]: newDestinationColumn
+        }
+      }))
+    }
   }
 
   function removeTaskFromSourceColumn(taskKey: string, sourceColumnKey: string): Column | undefined {
@@ -280,7 +292,14 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
 
   function addTaskToDestinationColumn(taskKey: string, destinationColumnKey: string): Column | undefined {
     const destinationColumn = data.columns[destinationColumnKey]
-    if (!destinationColumn) return
+    if (!destinationColumn) {
+      return {
+        key: destinationColumnKey,
+        title: destinationColumnKey,
+        taskIds: [taskKey],
+        ts: (new Date()).setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000
+      }
+    }
     return {
       ...destinationColumn,
       taskIds: [...destinationColumn.taskIds, taskKey]
