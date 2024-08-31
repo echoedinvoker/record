@@ -6,6 +6,7 @@ import { Droppable, DroppableProvided } from "react-beautiful-dnd";
 import { convertMillisecondsToHMS } from "../utils";
 import { DayContext } from "../context/dayContext";
 import { TasksContext } from "../context/tasksContext";
+import { EditorContext } from "../context/editorContext";
 
 interface Props {
   setShowModal: (show: boolean) => void;
@@ -20,6 +21,7 @@ const Tasks = forwardRef<TasksRef, Props>(({ setShowModal }, ref) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const { day } = useContext(DayContext)
+  const { startCreateTask } = useContext(EditorContext)
   const { getTasksByColumnKey, getTotalEstimatedDurationOfOneDay } = useContext(TasksContext)
   const tasksOfOneDay = getTasksByColumnKey(day) as Task[]
   const totalEstimatedDurationOfOneDay = getTotalEstimatedDurationOfOneDay(day)
@@ -42,7 +44,7 @@ const Tasks = forwardRef<TasksRef, Props>(({ setShowModal }, ref) => {
       <TaskGroup>
         <TasksHeader>
           <h2>To Do{tasksOfOneDay.length !== 0 && ` : ${convertMillisecondsToHMS(totalEstimatedDurationOfOneDay)}`}</h2>
-          <CircleButton $ghost onClick={() => setShowModal(true)}>
+          <CircleButton $ghost onClick={startCreateTask}>
             <ContentWrapper
               $size="2.5em"
               $weight="bold"
