@@ -93,12 +93,12 @@ export default function TheTask({ index, task }: Props) {
                 {parseInt(day) > 0 &&
                   <CircleButton onClick={handleAdvance}>
                     <ContentWrapper $offsetY="-1px">
-                      <ArrowBigLeft size={28} />
+                      <ArrowBigLeft size={24} />
                     </ContentWrapper>
                   </CircleButton>}
                 <CircleButton onClick={handleDelay}>
                   <ContentWrapper $offsetY="-1px">
-                    <ArrowBigRight size={28} />
+                    <ArrowBigRight size={24} />
                   </ContentWrapper>
                 </CircleButton>
               </TaskActions>
