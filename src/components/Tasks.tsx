@@ -17,7 +17,7 @@ export interface TasksRef {
   scrollToTop: () => void;
 }
 
-const Tasks = forwardRef<TasksRef, Props>(({ setShowModal }, ref) => {
+const Tasks = forwardRef<TasksRef, Props>(({ }, ref) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const { day } = useContext(DayContext)

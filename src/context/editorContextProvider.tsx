@@ -1,7 +1,6 @@
 import { useContext, useState } from "react";
 import { EditorContext, Mode } from "./editorContext";
 import { TasksContext } from "./tasksContext";
-import { convertHMStoMilliseconds } from "../utils";
 import { DayContext } from "./dayContext";
 
 interface EditorContextProviderProps {

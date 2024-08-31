@@ -1,5 +1,5 @@
 import React from "react";
-import { CircleButton, ContentWrapper, FormField, FormFields, Input, InputWrapper, Label, ModalCloseCorner, ModalContainer, ModalOverlay, TextButton } from "./ui";
+import { CircleButton, ContentWrapper, Label, ModalCloseCorner, ModalContainer, ModalOverlay, TextButton } from "./ui";
 import styled from 'styled-components';
 import { useContext, useState } from 'react';
 import { EditorContext, Mode } from '../context/editorContext';
@@ -24,7 +24,7 @@ function CloseModelX({ onClick }: { onClick: () => void }) {
   )
 }
 
-function EditorContent({ title, fieldsData }: { title: string, fieldsData: (FieldData<string> | FieldData<number>)[] }) {
+function EditorContent({ title, fieldsData }: { title: string, fieldsData: FieldData[] }) {
   return (
     <EditorContentContainer>
       <EditorContentHeader>
