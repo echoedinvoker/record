@@ -1,5 +1,5 @@
 import { markdown } from "@codemirror/lang-markdown";
-import { Vim, vim, getCM } from "@replit/codemirror-vim";
+import { vim } from "@replit/codemirror-vim";
 import { EditorView } from "@uiw/react-codemirror";
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
