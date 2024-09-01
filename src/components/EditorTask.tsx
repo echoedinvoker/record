@@ -24,71 +24,35 @@ function CloseModelX({ onClick }: { onClick: () => void }) {
   )
 }
 
-function EditorContent({ title, fieldsData }: { title: string, fieldsData: FieldData[] }) {
-  return (
-    <EditorContentContainer>
-      <EditorContentHeader>
-        <EditorTitle>{title}</EditorTitle>
-      </EditorContentHeader>
-      <EditorFields fieldsData={fieldsData} />
-    </EditorContentContainer>
-  )
+interface EditorFieldProps {
+  label: string
+  fieldData: FieldData
+  handleTabLabel: () => void
 }
 
-const EditorTitle = styled.h2`
-  font-size: 1.5em;
-  font-weight: bold;
-  text-transform: uppercase;
-  margin: 0;
-  `
+function EditorField({ label, fieldData, handleTabLabel }: EditorFieldProps) {
+  const { label: currentLabel, value, setValue } = fieldData
+  // const [isEditing, setIsEditing] = useState(false)
 
-const EditorContentContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-`
-
-const EditorContentHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-`
-
-
-function EditorFields({ fieldsData }: { fieldsData: FieldData[] }) {
-  return (
-    <EditorFieldsContainer>
-      {fieldsData.map((fieldData) => <EditorField key={fieldData.label} fieldData={fieldData} />)}
-    </EditorFieldsContainer>
-  )
-}
-
-function EditorField({ fieldData }: { fieldData: FieldData }) {
-  const { label, value, setValue } = fieldData
-  const [isEditing, setIsEditing] = useState(false)
-
-  function toggleEditing() {
-    setIsEditing(prev => !prev)
-  }
+  // function toggleEditing() {
+  //   setIsEditing(prev => !prev)
+  // }
 
   const handleSave = (newValue: string) => {
     setValue(newValue)
-    setIsEditing(false)
+    // setIsEditing(false)
   }
 
-
   return (
-    <FieldContainer onDoubleClick={toggleEditing}>
-      <Label>{label}</Label>
-      {isEditing ? (
+    <FieldContainer>
+      <Label>{currentLabel}</Label>
+      {label === currentLabel ? (
         <MyCodeMirrorComponentContainer>
-          <MyCodeMirrorComponent initialValue={String(value)} handleSave={handleSave} />
+          <MyCodeMirrorComponent
+            initialValue={String(value)}
+            handleSave={handleSave}
+            handleTabLabel={handleTabLabel}
+          />
         </MyCodeMirrorComponentContainer>
       ) : (
         <ReactMarkdownContainer>
@@ -99,27 +63,36 @@ function EditorField({ fieldData }: { fieldData: FieldData }) {
   )
 }
 
-const ReactMarkdownContainer = styled.div`
-  margin: 0 1em 0;
-  `
+function EditorFields({ fieldsData }: { fieldsData: FieldData[] }) {
+  const labels = fieldsData.map(fieldData => fieldData.label)
+  const [selectedLabel, setSelectedLabel] = useState(labels[0])
+  function handleTabLabel() {
+    const currentIndex = labels.indexOf(selectedLabel)
+    const nextIndex = (currentIndex + 1) % labels.length
+    setSelectedLabel(labels[nextIndex])
+  }
+  return (
+    <EditorFieldsContainer>
+      {fieldsData.map((fieldData) => <EditorField
+        key={fieldData.label}
+        label={selectedLabel}
+        fieldData={fieldData}
+        handleTabLabel={handleTabLabel}
+      />)}
+    </EditorFieldsContainer>
+  )
+}
 
-const MyCodeMirrorComponentContainer = styled.div`
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  overflow: hidden;
-  `
-
-const FieldContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`
-
-const EditorFieldsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`
+function EditorContent({ title, fieldsData }: { title: string, fieldsData: FieldData[] }) {
+  return (
+    <EditorContentContainer>
+      <EditorContentHeader>
+        <EditorTitle>{title}</EditorTitle>
+      </EditorContentHeader>
+      <EditorFields fieldsData={fieldsData} />
+    </EditorContentContainer>
+  )
+}
 
 export default function EditorTask() {
   const { isEditing, setIsEditing, closeEditor, addTaskEditor, mode, taskName, setTaskName, estimatedDurationHMS, setEstimatedDurationHMS, markdownText, setMarkdownText } = useContext(EditorContext)
@@ -158,3 +131,49 @@ const ActionsContainer = styled.div`
   gap: 1em;
 `
 
+const EditorTitle = styled.h2`
+  font-size: 1.5em;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+  `
+
+const EditorContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+`
+
+const EditorContentHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`
+
+const ReactMarkdownContainer = styled.div`
+  margin: 0 1em 0;
+  `
+
+const MyCodeMirrorComponentContainer = styled.div`
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  `
+
+const FieldContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+const EditorFieldsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`
