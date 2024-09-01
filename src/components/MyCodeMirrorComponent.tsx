@@ -1,5 +1,5 @@
 import { markdown } from "@codemirror/lang-markdown";
-import { Vim, vim } from "@replit/codemirror-vim";
+import { Vim, vim, getCM } from "@replit/codemirror-vim";
 import { EditorView } from "@uiw/react-codemirror";
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
@@ -7,9 +7,10 @@ import styled from "styled-components";
 interface MyCodeMirrorComponentProps {
   initialValue: string;
   handleSave: (value: string) => void;
+  handleTabLabel?: () => void;
 }
 
-function MyCodeMirrorComponent({ initialValue, handleSave }: MyCodeMirrorComponentProps) {
+function MyCodeMirrorComponent({ initialValue, handleSave, handleTabLabel }: MyCodeMirrorComponentProps) {
   const editorRef = useRef(null);
   const viewRef = useRef<EditorView | null>(null);
 
@@ -28,10 +29,13 @@ function MyCodeMirrorComponent({ initialValue, handleSave }: MyCodeMirrorCompone
 
       viewRef.current = view;
 
-      Vim.defineEx('wq', 'wq', () => {
-        const content = view.state.doc.toString();
-        handleSave(content);
-        view.destroy();
+      view.dom.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const content = view.state.doc.toString();
+          handleSave(content);
+          if (handleTabLabel) handleTabLabel();
+          view.destroy();
+        }
       });
 
       return () => {
