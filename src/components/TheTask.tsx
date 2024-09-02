@@ -71,7 +71,7 @@ export default function TheTask({ index, task }: Props) {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
-            <TaskNameContainer onDoubleClick={toggleEditTaskName}>
+            <TaskNameContainer onClick={toggleEditTaskName}>
               {isEditingTaskName ? (
                 <CodeMirrorContainer>
                   <MyCodeMirrorComponent
@@ -104,7 +104,7 @@ export default function TheTask({ index, task }: Props) {
                   </ContentWrapper>
                 </CircleButton>
               </TaskActions>
-              <PairValueContainer onDoubleClick={toggleEditEstimatedDuration}>
+              <PairValueContainer onClick={toggleEditEstimatedDuration}>
                 {isEditingEstimatedDuration ? (
                   <CodeMirrorContainer>
                     <MyCodeMirrorComponent initialValue={estimatedDurationHMS} handleSave={handleEstimatedDurationSave} />
