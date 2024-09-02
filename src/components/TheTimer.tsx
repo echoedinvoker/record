@@ -86,7 +86,7 @@ export default function TheTimer({ task }: Props) {
             </ContentWrapper>
           </CircleButton>
         </ModalCloseCorner>
-        <Header onDoubleClick={toggleEditTaskName}>
+        <Header onClick={toggleEditTaskName}>
           {isEditingTaskName ? (
             <CodeMirrorContainer>
               <MyCodeMirrorComponent
@@ -106,7 +106,7 @@ export default function TheTimer({ task }: Props) {
             <ContentWrapper $size="1.5em" $weight="bold">Done</ContentWrapper>
           </TextButton>
         </TimerContainer>
-        <EditorContainer onDoubleClick={toggleEditMarkdownContent}>
+        <EditorContainer onClick={toggleEditMarkdownContent}>
           {isEditing ? (
             <CodeMirrorContainer>
               <MyCodeMirrorComponent
