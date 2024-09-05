@@ -10,7 +10,7 @@ function Logo() {
 }
 
 function RootHeader() {
-  const [isSaving, setIsSaving] = useState(false);
+  const [_, setIsSaving] = useState(false);
   const { data } = useContext(TasksContext);
 
   async function handleSave() {
