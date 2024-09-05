@@ -1,16 +1,16 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import OnGoingTab, { OnGoingTabRef } from './components/OnGoingTab';
+import OnGoingTab, { OnGoingTabRef } from '../components/OnGoingTab';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { useTasks } from './hooks/useTasks';
-import { TasksContext } from './context/tasksContext';
-import EditorTask from './components/EditorTask';
-import { EditorContext } from './context/editorContext';
+import { useTasks } from '../hooks/useTasks';
+import { TasksContext } from '../context/tasksContext';
+import EditorTask from '../components/EditorTask';
+import { EditorContext } from '../context/editorContext';
 
-export default function App() {
+export default function Todos() {
 
   const onGoingTabRef = useRef<OnGoingTabRef>(null);
 
-  const { data, onDragEnd, setData } = useContext(TasksContext)
+  const { onDragEnd, setData } = useContext(TasksContext)
   const { isEditing } = useContext(EditorContext)
   const { isLoading, error, data: fetchedData } = useTasks()
   const [isFirst, setIsFirst] = useState(true)
@@ -31,7 +31,6 @@ export default function App() {
 
   return (
     <ErrorLog>
-      <button onClick={() => console.log(data)}>data</button>
       <DragDropContext onDragEnd={onDragEnd}>
         <OnGoingTab ref={onGoingTabRef} />
       </DragDropContext>
