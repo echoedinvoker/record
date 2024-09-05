@@ -10,7 +10,7 @@ function Logo() {
 }
 
 function RootHeader() {
-  const [_, setIsSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { data } = useContext(TasksContext);
 
   async function handleSave() {
@@ -29,9 +29,8 @@ function RootHeader() {
         <PageButton to="/todos">Todos</PageButton>
       </Pages>
       <ActionGroup>
-        <ActionButton onClick={() => console.log("click")}>
-          <Save onClick={handleSave}
-            size={20} />
+        <ActionButton onClick={handleSave} disabled={isSaving}>
+          <Save size={20} />
         </ActionButton>
       </ActionGroup>
     </Header>
