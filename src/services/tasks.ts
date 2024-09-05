@@ -1,12 +1,12 @@
 import axios from "axios";
-import { ColumnRequest, ColumnResponse, TaskBody, TaskRequest, TaskResponse } from "../types";
+import { ColumnRequest, ColumnResponse, HopeResponse, TaskBody, TaskRequest, TaskResponse } from "../types";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 console.log("API Base URL", BASE_URL);
 
 const api = axios.create({
-  baseURL: "http://44.201.114.25:8000",
-  // baseURL: BASE_URL || "http://localhost:8000",
+  // baseURL: "http://44.201.114.25:8000",
+  baseURL: BASE_URL || "http://localhost:8000",
   withCredentials: true
 });
 
@@ -26,7 +26,6 @@ export async function updateTask(taskId: number, newTask: TaskBody) {
   }
   await api.put(`/tasks/${taskId}`, body);
 }
-
 
 export async function fetchTasks() {
   const { data } = await api.get("/tasks");
@@ -99,4 +98,9 @@ export async function removeTaskIdFromColumn(columnId: number, taskId: number) {
 export async function fetchColumnOrder() {
   const { data } = await api.get("/column_order");
   return data as string[]
+}
+
+export async function fetchHopes() {
+  const { data } = await api.get("/hopes");
+  return data as HopeResponse[]
 }

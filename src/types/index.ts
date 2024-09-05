@@ -94,3 +94,18 @@ export interface OnDragEndResultType {
     droppableId: string;
   };
 }
+
+export interface HopeResponse {
+  id: number
+  name: string
+  markdown_content: string
+  parent_name: number | null
+  task_order: string
+}
+
+export interface Hope {
+  name: string
+  markdownContent: string
+  parentName: number | null
+  taskOrder: string[]
+}
