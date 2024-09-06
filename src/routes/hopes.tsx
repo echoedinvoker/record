@@ -2,9 +2,11 @@ import { useEffect, useState } from "react"
 import { fetchHopes } from "../services/tasks"
 import { Hope, HopeResponse } from "../types"
 import styled from "styled-components"
+import FormAddHope from "../components/FormAddHope"
 
 export default function Hopes() {
   const [hopes, setHopes] = useState<Hope[]>([])
+  const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
     getHopes()
@@ -26,9 +28,10 @@ export default function Hopes() {
 
   if (hopes.length === 0) {
     return <Container>
-      <Button>
+      <Button onClick={() => setShowModal(true)}>
         Start your first hope
       </Button>
+      {showModal && <FormAddHope setShowModal={setShowModal} />}
     </Container>
   }
 
