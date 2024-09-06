@@ -1,12 +1,5 @@
-import ReactMarkdown from 'react-markdown';
-import CodeMirror from '@uiw/react-codemirror';
-import { markdown } from '@codemirror/lang-markdown';
-import { vim } from '@replit/codemirror-vim';
-import { CircleButton, ContentWrapper, FormField, FormFields, Input, InputWrapper, Label, ModalCloseCorner, ModalContainer, ModalOverlay, TextButton } from "./ui";
-import { useContext, useState } from 'react';
-import styled from 'styled-components';
-import { TasksContext } from '../context/tasksContext';
-import { DayContext } from '../context/dayContext';
+import { CircleButton, ContentWrapper, FormField, FormFields, Input, InputWrapper, Label, ModalCloseCorner, ModalContainer, ModalOverlay } from "./ui";
+import { useState } from 'react';
 
 interface Props {
   setShowModal: (show: boolean) => void
