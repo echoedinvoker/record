@@ -99,13 +99,18 @@ export interface HopeResponse {
   id: number
   name: string
   markdown_content: string
-  parent_name: number | null
+  parent_name: string | null
   task_order: string
 }
 
 export interface Hope {
   name: string
   markdownContent: string
-  parentName: number | null
+  parentName: string | null
   taskOrder: string[]
+}
+
+export interface CreateHopePayload {
+  name: string
+  parent_name?: string | null
 }

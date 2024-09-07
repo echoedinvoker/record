@@ -34,6 +34,12 @@ const BaseButton = styled.button<{
     props.$counter ? '#000' : props.$ghost ? 'transparent' : '#e0e0e0'};
     borderColor: ${(props) => (props.$primary || props.$ghost || props.$counter) ? 'none' : 'rgba(255, 255, 255, 0.87)'};
   }
+  &:disabled {
+    background-color: #f0f0f0;
+    color: #a0a0a0;
+    border-color: #f0f0f0;
+    cursor: not-allowed;
+      }
   `
 export const CircleButton = styled(BaseButton)`
   height: 2.5em;

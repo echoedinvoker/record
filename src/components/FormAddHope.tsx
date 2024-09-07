@@ -1,5 +1,8 @@
-import { CircleButton, ContentWrapper, FormField, FormFields, Input, InputWrapper, Label, ModalCloseCorner, ModalContainer, ModalOverlay } from "./ui";
-import { useState } from 'react';
+import styled from "styled-components";
+import { HopesContext } from "../context/hopesContext";
+import { Hope } from "../types";
+import { CircleButton, ContentWrapper, FormField, FormFields, Input, InputWrapper, Label, ModalCloseCorner, ModalContainer, ModalOverlay, TextButton } from "./ui";
+import { useContext, useState } from 'react';
 
 interface Props {
   setShowModal: (show: boolean) => void
@@ -9,12 +12,30 @@ export default function FormAddHope({ setShowModal }: Props) {
   const [hopeName, setHopeName] = useState('');
   const [parentName, setParentName] = useState('');
 
+  const { addHope, hopesNames } = useContext(HopesContext)
+  const isValidationDisabled = hopeName.length === 0 || !!parentName && !hopesNames.includes(parentName)
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // addHope(hopeName, parentName)
+
+    addNewHopeToContext()
+    initModal(false)
+  }
+
+  function addNewHopeToContext() {
+    const newHope: Hope = {
+      name: hopeName,
+      markdownContent: '',
+      parentName: parentName || null,
+      taskOrder: []
+    }
+    addHope(newHope)
+  }
+
+  function initModal(show: boolean = false) {
     setHopeName('');
     setParentName('');
-    setShowModal(false)
+    setShowModal(show)
   }
 
   return (
@@ -45,8 +66,31 @@ export default function FormAddHope({ setShowModal }: Props) {
               </FormField>
             </FormField>
           </FormFields>
+          <FormActions>
+            <TextButton
+              $counterSecondary
+              type="button"
+              onClick={() => initModal(false)}
+            >
+              <ContentWrapper $weight="bold">
+                Cancel
+              </ContentWrapper>
+            </TextButton>
+            <TextButton $counter disabled={isValidationDisabled} type="submit">
+              <ContentWrapper $weight="bold">
+                Add Task
+              </ContentWrapper>
+            </TextButton>
+          </FormActions>
         </form>
       </ModalContainer>
     </ModalOverlay>
   )
 }
+
+const FormActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 1em;
+  padding-top: 1em;
+  `

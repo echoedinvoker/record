@@ -1,30 +1,13 @@
-import { useEffect, useState } from "react"
-import { fetchHopes } from "../services/tasks"
-import { Hope, HopeResponse } from "../types"
+import { useContext, useState } from "react"
 import styled from "styled-components"
 import FormAddHope from "../components/FormAddHope"
+import { useHopes } from "../hooks/hopes/useHopes"
+import { HopesContext } from "../context/hopesContext"
 
 export default function Hopes() {
-  const [hopes, setHopes] = useState<Hope[]>([])
+  useHopes()
   const [showModal, setShowModal] = useState(false)
-
-  useEffect(() => {
-    getHopes()
-  }, [])
-
-  async function getHopes() {
-    const data = await fetchHopes()
-    const hopes = data.map((hopeResponse: HopeResponse) => {
-      const hope: Hope = {
-        name: hopeResponse.name,
-        markdownContent: hopeResponse.markdown_content,
-        parentName: hopeResponse.parent_name,
-        taskOrder: JSON.parse(hopeResponse.task_order),
-      }
-      return hope
-    })
-    setHopes(hopes)
-  }
+  const { hopes } = useContext(HopesContext)
 
   if (hopes.length === 0) {
     return <Container>

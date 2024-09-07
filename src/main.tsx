@@ -11,6 +11,7 @@ import {
 import Root from "./routes/root.tsx"
 import Todos from "./routes/todos.tsx"
 import Hopes from "./routes/hopes.tsx"
+import HopesContextProvider from './context/hopesContextProvider.tsx'
 
 const router = createBrowserRouter([
   {
@@ -34,11 +35,13 @@ const queryClient = new QueryClient()
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
     <TasksContextProvider>
-      <DayContextProvider>
-        <EditorContextProvider>
-          <RouterProvider router={router} />
-        </EditorContextProvider>
-      </DayContextProvider>
+      <HopesContextProvider>
+        <DayContextProvider>
+          <EditorContextProvider>
+            <RouterProvider router={router} />
+          </EditorContextProvider>
+        </DayContextProvider>
+      </HopesContextProvider>
     </TasksContextProvider>
   </QueryClientProvider>
 )
