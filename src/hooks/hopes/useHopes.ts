@@ -5,13 +5,13 @@ import { HopesContext } from "../../context/hopesContext";
 import { Hope, HopeResponse } from "../../types";
 
 export function useHopes() {
-  const { setHopes } = useContext(HopesContext)
+  const { hopes, setHopes } = useContext(HopesContext)
   const { data, isSuccess } = useQuery({
     queryKey: ['hopes'],
     queryFn: fetchHopes,
   })
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && hopes.length === 0) {
       const hopes = data.map((hope: HopeResponse) => {
         const formattedHope: Hope = {
           name: hope.name,

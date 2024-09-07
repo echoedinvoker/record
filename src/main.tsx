@@ -12,6 +12,7 @@ import Root from "./routes/root.tsx"
 import Todos from "./routes/todos.tsx"
 import Hopes from "./routes/hopes.tsx"
 import HopesContextProvider from './context/hopesContextProvider.tsx'
+import ModalHopeContextProvider from './context/modalHopeContextProvider.tsx'
 
 const router = createBrowserRouter([
   {
@@ -38,7 +39,9 @@ createRoot(document.getElementById('root')!).render(
       <HopesContextProvider>
         <DayContextProvider>
           <EditorContextProvider>
-            <RouterProvider router={router} />
+            <ModalHopeContextProvider>
+              <RouterProvider router={router} />
+            </ModalHopeContextProvider>
           </EditorContextProvider>
         </DayContextProvider>
       </HopesContextProvider>
