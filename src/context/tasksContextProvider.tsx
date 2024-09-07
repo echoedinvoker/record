@@ -46,25 +46,31 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     setData(newdata)
   }
 
-  function deleteTask(taskKey: string) {
+  function deleteTask(taskKey: string): boolean {
     const column = getColumnWithTask(taskKey)
-    if (!column) return
+    let isDayEmpty = false
+    if (!column) return false
     const newColumn = {
       ...column,
       taskIds: column.taskIds.filter((taskId) => taskId !== taskKey)
+    }
+    const columns = { ...data.columns }
+    if (newColumn.taskIds.length === 0 && !["0", "done", "archived"].includes(column.key)) {
+      delete columns[column.key]
+      isDayEmpty = true
+    } else {
+      columns[column.key] = newColumn
     }
     const tasks = { ...data.tasks }
     delete tasks[taskKey]
     const newdata = {
       ...data,
       tasks,
-      columns: {
-        ...data.columns,
-        [column.key]: newColumn
-      }
+      columns
     }
 
     setData(newdata)
+    return isDayEmpty
   }
 
   function startTask(taskKey: string) {

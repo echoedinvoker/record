@@ -62,6 +62,13 @@ export default function TheTask({ index, task }: Props) {
     setIsEditingEstimatedDuration((prev) => !prev)
   }
 
+  const handleDeteteTask = () => {
+    const isDayEmpty = deleteTask(task.key)
+    if (isDayEmpty) {
+      setDay("0")
+    }
+  }
+
   return (
     <>
       <Draggable draggableId={task.key} index={index}>
@@ -122,7 +129,7 @@ export default function TheTask({ index, task }: Props) {
                 </TextButton>
               </TaskTimer>
             </TaskContents>
-            <TopRightCorner onClick={() => deleteTask(task.key)}><X /></TopRightCorner>
+            <TopRightCorner onClick={handleDeteteTask}><X /></TopRightCorner>
           </Task >
         )}
       </Draggable>

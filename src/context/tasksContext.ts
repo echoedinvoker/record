@@ -6,7 +6,7 @@ interface TaskContextType {
   data: Data;
   setData: React.Dispatch<React.SetStateAction<Data>>;
   addTask: (task: string, estimatedDurationHMS: string, markdownText: string, columnKey: string) => void;
-  deleteTask: (taskKey: string) => void;
+  deleteTask: (taskKey: string) => boolean;
   startTask: (taskKey: string) => void;
   stopTask: (taskKey: string) => void;
   updateTask: (task: Task) => void;
