@@ -1,36 +1,51 @@
-import { useContext, useState } from "react"
+import { useContext } from "react"
 import styled from "styled-components"
 import FormAddHope from "../components/FormAddHope"
 import { useHopes } from "../hooks/hopes/useHopes"
 import { HopesContext } from "../context/hopesContext"
+import HopeTree from "../components/HopeTree"
+import { ModalHopeContext } from "../context/modalHopeContext"
 
 export default function Hopes() {
   useHopes()
-  const [showModal, setShowModal] = useState(false)
   const { hopes, hopeTree } = useContext(HopesContext)
+  const { showModal, setShowModal } = useContext(ModalHopeContext)
 
   if (hopes.length === 0) {
     return <Container>
-      <Button onClick={() => setShowModal(true)}>
-        Start your first hope
-      </Button>
+      <ButtonContainer>
+        <Button onClick={() => setShowModal(true)}>
+          Start your first hope
+        </Button>
+      </ButtonContainer>
       {showModal && <FormAddHope setShowModal={setShowModal} />}
     </Container>
   }
 
   return (
     <>
-      <div>Hopes</div>
-      <button onClick={() => console.log(hopeTree)}>show tree</button>
+      <Container>
+        {hopeTree.map((hope) => (
+          <HopeTree hope={hope} key={hope.name} />
+        ))}
+      </Container>
+      {showModal && <FormAddHope setShowModal={setShowModal} />}
     </>
   )
 }
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 50em;
+  gap: 1em;
+  `
+
+const ButtonContainer = styled.div`
+  display: flex;
   justify-content: center;
-  align-items: center;
-  margin-top: 10em;
+  margin-top: 2em;
   `
 
 const Button = styled.button`

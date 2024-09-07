@@ -2,24 +2,24 @@ import styled from "styled-components";
 import { HopesContext } from "../context/hopesContext";
 import { Hope } from "../types";
 import { CircleButton, ContentWrapper, FormField, FormFields, Input, InputWrapper, Label, ModalCloseCorner, ModalContainer, ModalOverlay, TextButton } from "./ui";
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
+import { ModalHopeContext } from "../context/modalHopeContext";
 
 interface Props {
   setShowModal: (show: boolean) => void
 }
 
 export default function FormAddHope({ setShowModal }: Props) {
-  const [hopeName, setHopeName] = useState('');
-  const [parentName, setParentName] = useState('');
 
   const { addHope, hopesNames } = useContext(HopesContext)
+  const { hopeName, parentName, setHopeName, setParentName, initModal } = useContext(ModalHopeContext)
   const isValidationDisabled = hopeName.length === 0 || !!parentName && !hopesNames.includes(parentName)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     addNewHopeToContext()
-    initModal(false)
+    initModal()
   }
 
   function addNewHopeToContext() {
@@ -32,11 +32,6 @@ export default function FormAddHope({ setShowModal }: Props) {
     addHope(newHope)
   }
 
-  function initModal(show: boolean = false) {
-    setHopeName('');
-    setParentName('');
-    setShowModal(show)
-  }
 
   return (
     <ModalOverlay>
