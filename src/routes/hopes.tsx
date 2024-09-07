@@ -7,7 +7,7 @@ import { HopesContext } from "../context/hopesContext"
 export default function Hopes() {
   useHopes()
   const [showModal, setShowModal] = useState(false)
-  const { hopes } = useContext(HopesContext)
+  const { hopes, hopeTree } = useContext(HopesContext)
 
   if (hopes.length === 0) {
     return <Container>
@@ -18,7 +18,12 @@ export default function Hopes() {
     </Container>
   }
 
-  return <div>Hopes</div>
+  return (
+    <>
+      <div>Hopes</div>
+      <button onClick={() => console.log(hopeTree)}>show tree</button>
+    </>
+  )
 }
 
 const Container = styled.div`
