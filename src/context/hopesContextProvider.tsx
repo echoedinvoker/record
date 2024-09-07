@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { HopesContext } from "./hopesContext";
 import { Hope } from "../types";
+import { buildHopeTree } from "../utils/hopes";
 
 interface HopesContextProviderProps {
   children: React.ReactNode
 }
+
 
 export default function HopesContextProvider({ children }: HopesContextProviderProps) {
   const [hopes, setHopes] = useState<Hope[]>([])
@@ -14,11 +16,14 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     setHopes(prevHopes => [...prevHopes, newHope])
   }
 
+  const hopeTree = buildHopeTree(hopes)
+
   const value = {
     hopes,
     setHopes,
     addHope,
-    hopesNames
+    hopesNames,
+    hopeTree
   }
 
   return (
