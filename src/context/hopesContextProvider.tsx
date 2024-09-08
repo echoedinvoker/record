@@ -10,6 +10,7 @@ interface HopesContextProviderProps {
 
 export default function HopesContextProvider({ children }: HopesContextProviderProps) {
   const [hopes, setHopes] = useState<Hope[]>([])
+  const [selectedHope, setSelectedHope] = useState<string>("")
   const hopesNames = hopes.map(hope => hope.name)
   const hopeTree = buildHopeTree(hopes)
 
@@ -49,6 +50,10 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     return targetNode ? collectNames(targetNode) : [];
   };
 
+  const selectHope = (name: string) => {
+    setSelectedHope(name)
+  }
+
   const value = {
     hopes,
     setHopes,
@@ -56,6 +61,8 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     deleteHope,
     hopesNames,
     hopeTree,
+    selectedHope,
+    selectHope,
   }
 
   return (

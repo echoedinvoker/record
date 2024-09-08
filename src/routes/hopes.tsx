@@ -8,7 +8,7 @@ import { ModalHopeContext } from "../context/modalHopeContext"
 
 export default function Hopes() {
   useHopes()
-  const { hopes, hopeTree } = useContext(HopesContext)
+  const { hopes, hopeTree, selectedHope } = useContext(HopesContext)
   const { showModal, setShowModal } = useContext(ModalHopeContext)
 
   if (hopes.length === 0) {
@@ -25,20 +25,42 @@ export default function Hopes() {
   return (
     <>
       <Container>
-        {hopeTree.map((hope) => (
-          <HopeTree hope={hope} key={hope.name} />
-        ))}
+        <TreeContainer>
+          {hopeTree.map((hope) => (
+            <HopeTree
+              hope={hope} key={hope.name} />
+          ))}
+        </TreeContainer>
+        {selectedHope && <HopeContaniner>
+          <HopeHeader>{selectedHope}</HopeHeader>
+        </HopeContaniner>}
       </Container>
       {showModal && <FormAddHope setShowModal={setShowModal} />}
     </>
   )
 }
 
-const Container = styled.div`
+const HopeHeader = styled.h2`
+  font-size: 1.5em;
+  font-weight: 500;
+`
+
+const TreeContainer = styled.div`
+  flex: 1;
+`
+
+const HopeContaniner = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 1em;
+`
+
+const Container = styled.div`
+  display: flex;
   margin: 0 auto;
-  max-width: 50em;
+  padding: 1em;
+  max-width: 80em;
   gap: 1em;
   `
 
