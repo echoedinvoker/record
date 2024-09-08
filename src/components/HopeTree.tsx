@@ -13,7 +13,7 @@ interface HopeTreeProps {
 export default function HopeTree({ hope }: HopeTreeProps) {
   const treeRef = useRef<Tree>(null);
   const { initModal } = useContext(ModalHopeContext)
-  const { deleteHope } = useContext(HopesContext)
+  const { deleteHope, selectedHope, selectHope } = useContext(HopesContext)
   const renderCustomNodeElement: RenderCustomNodeElementFn = ({ nodeDatum, toggleNode }) => {
 
     const handleClickCircle = (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
@@ -21,13 +21,23 @@ export default function HopeTree({ hope }: HopeTreeProps) {
       toggleNode();
     }
 
+    const handleAddHope = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.stopPropagation();
+      initModal(true, nodeDatum.name);
+    }
+
+    const handleDeleteHope = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.stopPropagation();
+      deleteHope(nodeDatum.name);
+    }
+
 
     return (
       <>
         <NodeGroup>
-          <NodeCircle r={10} onClick={handleClickCircle} />
+          <NodeCircle r={10} onClick={handleClickCircle} isSelected={selectedHope === nodeDatum.name} />
           <foreignObject x={-50} y={10} width={100} height={120}>
-            <NodeInfoContainer>
+            <NodeInfoContainer onClick={() => selectHope(nodeDatum.name)}>
               <NodeName>{nodeDatum.name}</NodeName>
               {nodeDatum.attributes && (
                 <NodeAttributesContainer>
@@ -37,10 +47,10 @@ export default function HopeTree({ hope }: HopeTreeProps) {
                 </NodeAttributesContainer>
               )}
               <NodeButtonGroup>
-                <NodeButton onClick={() => initModal(true, nodeDatum.name)}>
+                <NodeButton onClick={handleAddHope}>
                   <CirclePlus size={16} />
                 </NodeButton>
-                <NodeButton onClick={() => deleteHope(nodeDatum.name)}>
+                <NodeButton onClick={handleDeleteHope}>
                   <CircleMinus size={16} />
                 </NodeButton>
                 <NodeButton>
@@ -116,15 +126,14 @@ const NodeGroup = styled.g`
   cursor: pointer;
 `;
 
-const NodeCircle = styled.circle`
-  fill: #fff;
+const NodeCircle = styled.circle<{ isSelected: boolean }>`
+  fill: ${props => props.isSelected ? "#c0c0c0" : "#fff"};
   stroke: #000;
   stroke-width: 1.5px;
 `;
 
 const TreeContainer = styled.div`
   background-color: white;
-  margin-top: 2em;
   border-radius: 1em;
   height: 20em;
   `;

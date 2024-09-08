@@ -8,6 +8,8 @@ interface HopeContextType {
   hopesNames: string[];
   hopeTree: HopeMapValue[]
   deleteHope: (name: string) => void;
+  selectedHope: string;
+  selectHope: (name: string) => void;
 }
 
 export const HopesContext = createContext<HopeContextType>({} as HopeContextType);
