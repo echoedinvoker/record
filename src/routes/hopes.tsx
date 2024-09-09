@@ -1,15 +1,41 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import styled from "styled-components"
 import FormAddHope from "../components/FormAddHope"
 import { useHopes } from "../hooks/hopes/useHopes"
 import { HopesContext } from "../context/hopesContext"
 import HopeTree from "../components/HopeTree"
 import { ModalHopeContext } from "../context/modalHopeContext"
+import MyCodeMirrorComponent from "../components/MyCodeMirrorComponent"
+import ReactMarkdown from 'react-markdown';
 
 export default function Hopes() {
+  const [isEditing, setIsEditing] = useState(false)
   useHopes()
-  const { hopes, hopeTree, selectedHope } = useContext(HopesContext)
+  const { hopes, setHopes, hopeTree, selectedHope } = useContext(HopesContext)
   const { showModal, setShowModal } = useContext(ModalHopeContext)
+  const getSelectedHopeContent = () => {
+    if (!selectedHope) return ''
+    const hope = hopes.find((hope) => hope.name === selectedHope)
+    if (!hope) return ''
+    return hope.markdownContent
+  }
+  const initialValue = getSelectedHopeContent()
+
+  const handleSave = (value: string) => {
+    const newHopes = hopes.map((hope) => {
+      if (hope.name === selectedHope) {
+        return { ...hope, markdownContent: value }
+      }
+      return hope
+    })
+    setHopes(newHopes)
+    setIsEditing(false)
+  }
+
+  const toggleEdit = () => {
+    setIsEditing((prev) => !prev)
+  }
+
 
   if (hopes.length === 0) {
     return <Container>
@@ -31,8 +57,15 @@ export default function Hopes() {
               hope={hope} key={hope.name} />
           ))}
         </TreeContainer>
-        {selectedHope && <HopeContaniner>
-          <HopeHeader>{selectedHope}</HopeHeader>
+        {selectedHope && <HopeContaniner onClick={toggleEdit}>
+          {isEditing ?
+            <MyCodeMirrorComponent
+              initialValue={initialValue}
+              handleSave={handleSave}
+            /> : <ReactMarkdown>
+              {hopes.find((hope) => hope.name === selectedHope)?.markdownContent}
+            </ReactMarkdown>
+          }
         </HopeContaniner>}
       </Container>
       {showModal && <FormAddHope setShowModal={setShowModal} />}
@@ -40,13 +73,8 @@ export default function Hopes() {
   )
 }
 
-const HopeHeader = styled.h2`
-  font-size: 1.5em;
-  font-weight: 500;
-`
-
 const TreeContainer = styled.div`
-  flex: 1;
+  flex: 1.2;
 `
 
 const HopeContaniner = styled.div`
@@ -61,7 +89,7 @@ const Container = styled.div`
   margin: 0 auto;
   padding: 1em;
   max-width: 80em;
-  gap: 1em;
+  gap: 2em;
   `
 
 const ButtonContainer = styled.div`
