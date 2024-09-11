@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
 import { fetchColumn, fetchColumnOrder, fetchTasks } from "../services/tasks"
 import { Column, Data, Done, Task } from "../types"
+import { useContext, useEffect } from "react"
+import { TasksContext } from "../context/tasksContext"
 
 export function useTasks() {
-  const { isLoading, error, data } = useQuery({
+  const { setData } = useContext(TasksContext)
+  const { isLoading, error, data, isSuccess } = useQuery({
     queryKey: ['tasks'],
     queryFn: async () => {
       const promiseFetchTasks = fetchTasks()
@@ -43,6 +46,11 @@ export function useTasks() {
       return { tasks: formattedTasks(), columns: formattedColumns(), columnOrder } as Data
     }
   })
+
+  useEffect(() => {
+    if (!data || Object.keys(data.tasks || {}).length !== 0) return
+    setData(data)
+  }, [isSuccess])
 
   return { isLoading, error, data }
 }
