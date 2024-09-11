@@ -5,7 +5,7 @@ import { useContext, useEffect } from "react"
 import { TasksContext } from "../context/tasksContext"
 
 export function useTasks() {
-  const { setData } = useContext(TasksContext)
+  const { data: currentData, setData } = useContext(TasksContext)
   const { isLoading, error, data, isSuccess } = useQuery({
     queryKey: ['tasks'],
     queryFn: async () => {
@@ -48,7 +48,7 @@ export function useTasks() {
   })
 
   useEffect(() => {
-    if (!data || Object.keys(data.tasks || {}).length !== 0) return
+    if (!data || Object.keys(currentData.tasks || {}).length !== 0) return
     setData(data)
   }, [isSuccess])
 

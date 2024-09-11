@@ -35,7 +35,7 @@ export default function HopeTree({ hope }: HopeTreeProps) {
     return (
       <>
         <NodeGroup>
-          <NodeCircle r={10} onClick={handleClickCircle} isSelected={selectedHope === nodeDatum.name} />
+          <NodeCircle r={10} onClick={handleClickCircle} $isSelected={selectedHope === nodeDatum.name} />
           <foreignObject x={-50} y={10} width={100} height={120}>
             <NodeInfoContainer onClick={() => selectHope(nodeDatum.name)}>
               <NodeName>{nodeDatum.name}</NodeName>
@@ -126,8 +126,8 @@ const NodeGroup = styled.g`
   cursor: pointer;
 `;
 
-const NodeCircle = styled.circle<{ isSelected: boolean }>`
-  fill: ${props => props.isSelected ? "#c0c0c0" : "#fff"};
+const NodeCircle = styled.circle<{ $isSelected: boolean }>`
+  fill: ${props => props.$isSelected ? "#c0c0c0" : "#fff"};
   stroke: #000;
   stroke-width: 1.5px;
 `;
