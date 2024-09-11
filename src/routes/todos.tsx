@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useRef } from 'react'
 import OnGoingTab, { OnGoingTabRef } from '../components/OnGoingTab';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { useTasks } from '../hooks/useTasks';
@@ -10,17 +10,9 @@ export default function Todos() {
 
   const onGoingTabRef = useRef<OnGoingTabRef>(null);
 
-  const { onDragEnd, setData } = useContext(TasksContext)
+  const { onDragEnd } = useContext(TasksContext)
   const { isEditing } = useContext(EditorContext)
-  const { isLoading, error, data: fetchedData } = useTasks()
-  const [isFirst, setIsFirst] = useState(true)
-
-  useEffect(() => {
-    if (isFirst && fetchedData) {
-      setIsFirst(false)
-      setData(fetchedData)
-    }
-  }, [fetchedData])
+  const { isLoading, error } = useTasks()
 
   if (isLoading) {
     return <div>Loading...</div>
