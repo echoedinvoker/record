@@ -54,6 +54,16 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     setSelectedHope(name)
   }
 
+  const appendTask = (hopeName: string, taskKey: string) => {
+    const newHopes = hopes.map(hope => {
+      if (hope.name === hopeName) {
+        return { ...hope, taskOrder: [...hope.taskOrder, taskKey] }
+      }
+      return hope
+    })
+    setHopes(newHopes)
+  }
+
   const value = {
     hopes,
     setHopes,
@@ -63,6 +73,7 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     hopeTree,
     selectedHope,
     selectHope,
+    appendTask,
   }
 
   return (

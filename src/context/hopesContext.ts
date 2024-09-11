@@ -10,6 +10,7 @@ interface HopeContextType {
   deleteHope: (name: string) => void;
   selectedHope: string;
   selectHope: (name: string) => void;
+  appendTask: (hopeName: string, taskKey: string) => void;
 }
 
 export const HopesContext = createContext<HopeContextType>({} as HopeContextType);
