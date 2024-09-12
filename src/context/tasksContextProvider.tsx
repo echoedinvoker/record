@@ -79,7 +79,8 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
       columns
     }
 
-    mutateDeleteTask.mutate(newdata)
+    mutateDeleteTask.mutate({ oldData: data, newData: newdata })
+    mutateSaveColumn.mutate(newdata)
     setData(newdata)
     return isDayEmpty
   }

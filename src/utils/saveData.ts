@@ -109,9 +109,9 @@ export async function saveColumns(data: Data) {
     }
   }
 }
-export async function removeNoLinkedTasks(data: Data) {
-  const keysFromAllColumns = getKeysFromAllColumns(data)
-  const taskKeys = Object.keys(data.tasks)
+export async function removeNoLinkedTasks({ oldData, newData }: { oldData: Data, newData: Data }) {
+  const keysFromAllColumns = getKeysFromAllColumns(newData)
+  const taskKeys = Object.keys(oldData.tasks)
   for (const key of taskKeys) {
     if (!keysFromAllColumns.includes(key)) {
       await removeTaskByKey(key)
