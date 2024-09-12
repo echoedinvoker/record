@@ -7,9 +7,48 @@ export async function saveData(data: Data) {
   await removeNoLinkedTasks(data)
 }
 
+export async function saveTask({ data, taskKey }: { data: Data, taskKey: string }) {
+  const task = data.tasks[taskKey]
+  try {
+    const fetchedTask = await fetchTaskByKey(taskKey)
+    const newTask: TaskBody = {
+      key: task.key,
+      task: task.task,
+      estimatedDuration: task.estimatedDuration,
+      timestampSum: task.timestampSum,
+      markdownContent: task.markdownContent
+    }
+    if (isTask(task) && task.timestamp) {
+      newTask.timestamp = task.timestamp
+    }
+    if (isDone(task)) {
+      newTask.ts = task.ts
+    }
+    await updateTask(fetchedTask.id, newTask)
+  } catch (error) {
+    if ((error as any).status === 404) {
+      const newTask: TaskBody = {
+        key: task.key,
+        task: task.task,
+        estimatedDuration: task.estimatedDuration,
+        timestampSum: task.timestampSum,
+        markdownContent: task.markdownContent
+      }
+      if (isTask(task) && task.timestamp) {
+        newTask.timestamp = task.timestamp
+      }
+      if (isDone(task)) {
+        newTask.ts = task.ts
+      }
+      await createTask(newTask)
+    } else {
+      throw error
+    }
+  }
+}
 
 
-async function saveTasks(data: Data) {
+export async function saveTasks(data: Data) {
   const taskKeys = Object.keys(data.tasks)
   for (const key of taskKeys) {
     const task = data.tasks[key]
@@ -50,7 +89,7 @@ async function saveTasks(data: Data) {
     }
   }
 }
-async function saveColumns(data: Data) {
+export async function saveColumns(data: Data) {
   const columnKeys = Object.keys(data.columns)
   for (const key of columnKeys) {
     const column = data.columns[key]
@@ -70,7 +109,7 @@ async function saveColumns(data: Data) {
     }
   }
 }
-async function removeNoLinkedTasks(data: Data) {
+export async function removeNoLinkedTasks(data: Data) {
   const keysFromAllColumns = getKeysFromAllColumns(data)
   const taskKeys = Object.keys(data.tasks)
   for (const key of taskKeys) {
@@ -98,5 +137,5 @@ function isDone(task: Task | Done | Archive): task is Done {
 }
 
 function isTask(task: Task | Done | Archive): task is Task {
-  return !('timestamp' in task);
+  return 'timestamp' in task;
 }
