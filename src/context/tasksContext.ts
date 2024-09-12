@@ -17,6 +17,7 @@ interface TaskContextType {
   getTotalElapsedDurationOfOneDay: (columnKey: string) => number;
   moveTaskToOtherColumn: (taskKey: string, destinationColumnKey: string) => void;
   doneToArchive: (taskKey: string) => void;
+  isPending: boolean;
 }
 
 export const TasksContext = createContext<TaskContextType>({} as TaskContextType);

@@ -1,8 +1,7 @@
 import { Outlet, Link } from "react-router-dom";
 import styled from "styled-components";
 import { Save } from 'lucide-react';
-import { useContext, useState } from "react";
-import { saveData } from "../utils/saveData";
+import { useContext } from "react";
 import { TasksContext } from "../context/tasksContext";
 
 function Logo() {
@@ -10,14 +9,7 @@ function Logo() {
 }
 
 function RootHeader() {
-  const [isSaving, setIsSaving] = useState(false);
-  const { data } = useContext(TasksContext);
-
-  async function handleSave() {
-    setIsSaving(true);
-    await saveData(data);
-    setIsSaving(false);
-  }
+  const { isPending } = useContext(TasksContext);
 
   return (
     <Header>
@@ -29,7 +21,7 @@ function RootHeader() {
         <PageButton to="/todos">Todos</PageButton>
       </Pages>
       <ActionGroup>
-        <ActionButton onClick={handleSave} disabled={isSaving}>
+        <ActionButton disabled={isPending}>
           <Save size={20} />
         </ActionButton>
       </ActionGroup>

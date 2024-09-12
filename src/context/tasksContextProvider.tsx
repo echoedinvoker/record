@@ -3,6 +3,8 @@ import { TasksContext } from "./tasksContext";
 import { Archive, Column, Data, Done, Task } from "../types";
 import { convertHMStoMilliseconds } from "../utils";
 import { DropResult } from "react-beautiful-dnd";
+import { useMutation } from "@tanstack/react-query";
+import { removeNoLinkedTasks, saveColumns, saveTask } from "../utils/saveData";
 
 interface TasksContextProviderProps {
   children: React.ReactNode
@@ -11,6 +13,12 @@ interface TasksContextProviderProps {
 export default function TasksContextProvider({ children }: TasksContextProviderProps) {
   const [data, setData] = useState<Data>({ tasks: {}, columns: {}, columnOrder: [] });
   const runningTask = findRunningTask()
+
+  const mutateSaveTask = useMutation({ mutationFn: saveTask })
+  const mutateSaveColumn = useMutation({ mutationFn: saveColumns })
+  const mutateDeleteTask = useMutation({ mutationFn: removeNoLinkedTasks })
+
+  const isPending = mutateSaveTask.isPending || mutateSaveColumn.isPending || mutateDeleteTask.isPending
 
   function addTask(
     task: string,
@@ -43,6 +51,8 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
         [columnKey]: newColumn
       }
     }
+    mutateSaveTask.mutate({ data: newdata, taskKey: newTask.key })
+    mutateSaveColumn.mutate(newdata)
     setData(newdata)
   }
 
@@ -69,26 +79,27 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
       columns
     }
 
+    mutateDeleteTask.mutate(newdata)
     setData(newdata)
     return isDayEmpty
   }
 
   function startTask(taskKey: string) {
-    setData((prev) => {
-      const task = prev.tasks[taskKey]
-      if (!task) return prev
-      const newTask = {
-        ...task,
-        timestamp: Date.now()
+    const task = data.tasks[taskKey] as Task
+    if (!task) return
+    const newTask = {
+      ...task,
+      timestamp: Date.now()
+    }
+    const newData = {
+      ...data,
+      tasks: {
+        ...data.tasks,
+        [taskKey]: newTask
       }
-      return {
-        ...prev,
-        tasks: {
-          ...prev.tasks,
-          [taskKey]: newTask
-        }
-      }
-    })
+    }
+    mutateSaveTask.mutate({ data: newData, taskKey })
+    setData(newData)
   }
 
   function stopTask(taskKey: string) {
@@ -117,6 +128,8 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
         done: newDoneColumn!
       }
     }
+    mutateSaveTask.mutate({ data: newData, taskKey })
+    mutateSaveColumn.mutate(newData)
     setData(newData)
   }
 
@@ -124,13 +137,15 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     if (task.timestampSum && task.estimatedDuration) {
       (task as Done).efficiency = task.estimatedDuration / task.timestampSum
     }
-    setData((prev) => ({
-      ...prev,
+    const newData = {
+      ...data,
       tasks: {
-        ...prev.tasks,
+        ...data.tasks,
         [task.key]: task
       }
-    }))
+    }
+    mutateSaveTask.mutate({ data: newData, taskKey: task.key })
+    setData(newData)
   }
 
   function getColumnWithTask(taskKey: string) {
@@ -164,19 +179,21 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
       ...column,
       taskIds
     }
-    setData({
+    const newData = {
       ...data!,
       columns: {
         ...data!.columns,
         [result.source.droppableId]: newColumn
       }
-    })
+    }
+    mutateSaveColumn.mutate(newData)
+    setData(newData)
   }
 
   function setDataWhenDifferentColumn(result: DropResult) {
     const [newSourceColumn, newDestinationColumn] = generateNewColumnsWithMutatedTaskIds(result)
     const newTask = getNewTaskWhenDifferentColumnDnd(result)
-    setData({
+    const newData = {
       ...data!,
       tasks: {
         ...data!.tasks,
@@ -187,7 +204,10 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
         [result.source.droppableId]: newSourceColumn,
         [result.destination!.droppableId]: newDestinationColumn
       }
-    })
+    }
+    mutateSaveTask.mutate({ data: newData, taskKey: newTask.key })
+    mutateSaveColumn.mutate(newData)
+    setData(newData)
   }
 
   function getNewTaskWhenDifferentColumnDnd(result: DropResult) {
@@ -268,22 +288,26 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     if (newSourceColumn.taskIds.length === 0 && sourceColumn.key !== "0" && sourceColumn.key !== "done") {
       const newColumns = { ...data.columns }
       delete newColumns[sourceColumn.key]
-      setData(prev => ({
-        ...prev,
+      const newData = {
+        ...data,
         columns: {
           ...newColumns,
           [destinationColumnKey]: newDestinationColumn
-        },
-      }))
+        }
+      }
+      mutateSaveColumn.mutate(newData)
+      setData(newData)
     } else {
-      setData(prev => ({
-        ...prev,
+      const newData = {
+        ...data,
         columns: {
-          ...prev.columns,
+          ...data.columns,
           [sourceColumn.key]: newSourceColumn,
           [destinationColumnKey]: newDestinationColumn
         }
-      }))
+      }
+      mutateSaveColumn.mutate(newData)
+      setData(newData)
     }
   }
 
@@ -328,13 +352,16 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
       ts: task.ts,
       efficiency: task.efficiency,
     }
-    setData(prev => ({
-      ...prev,
+    const newData = {
+      ...data,
       tasks: {
-        ...prev.tasks,
+        ...data.tasks,
         [taskKey]: newTask
       }
-    }))
+    }
+    mutateSaveTask.mutate({ data: newData, taskKey })
+    mutateSaveColumn.mutate(newData)
+    setData(newData)
   }
 
   const value = {
@@ -351,7 +378,8 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     getTotalEstimatedDurationOfOneDay,
     getTotalElapsedDurationOfOneDay,
     moveTaskToOtherColumn,
-    doneToArchive
+    doneToArchive,
+    isPending
   }
 
 
