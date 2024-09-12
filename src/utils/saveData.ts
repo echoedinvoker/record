@@ -1,10 +1,10 @@
 import { createColumn, createTask, deleteTask, fetchColumnByKey, fetchTaskByKey, updateColumn, updateTask } from "../services/tasks"
 import { Archive, Data, Done, Task, TaskBody } from "../types"
 
-export async function saveData(data: Data) {
+export async function saveData(oldData: Data, data: Data) {
   await saveTasks(data)
   await saveColumns(data)
-  await removeNoLinkedTasks(data)
+  await removeNoLinkedTasks({ oldData, newData: data })
 }
 
 export async function saveTask({ data, taskKey }: { data: Data, taskKey: string }) {
