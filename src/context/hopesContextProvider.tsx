@@ -28,6 +28,8 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     }
   })
 
+  const isPending = mutateAddHope.isPending || mutateDeleteHope.isPending
+
   const addHope = (newHope: Hope) => {
     mutateAddHope.mutate(newHope)
     setHopes(prevHopes => [...prevHopes, newHope])
@@ -90,6 +92,7 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     selectedHope,
     selectHope,
     appendTask,
+    isPending
   }
 
   return (

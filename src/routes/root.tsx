@@ -3,13 +3,16 @@ import styled from "styled-components";
 import { Save } from 'lucide-react';
 import { useContext } from "react";
 import { TasksContext } from "../context/tasksContext";
+import { HopesContext } from "../context/hopesContext";
 
 function Logo() {
   return <h3>Logo</h3>;
 }
 
 function RootHeader() {
-  const { isPending } = useContext(TasksContext);
+  const { isPending: isPendingTasks } = useContext(TasksContext);
+  const { isPending: isPendingHopes } = useContext(HopesContext);
+  const isPending = isPendingTasks || isPendingHopes;
 
   return (
     <Header>
