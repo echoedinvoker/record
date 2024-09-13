@@ -2,6 +2,8 @@ import { useState } from "react";
 import { HopesContext } from "./hopesContext";
 import { Hope, HopeMapValue } from "../types";
 import { buildHopeTree } from "../utils/hopes";
+import { useMutation } from "@tanstack/react-query";
+import { createHope, deleteHope as deleteHopeService, fetchHopeByName } from "../services/hopes";
 
 interface HopesContextProviderProps {
   children: React.ReactNode
@@ -14,13 +16,27 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
   const hopesNames = hopes.map(hope => hope.name)
   const hopeTree = buildHopeTree(hopes)
 
+  const mutateAddHope = useMutation({
+    mutationFn: createHope
+  })
+
+  const mutateDeleteHope = useMutation({
+    mutationFn: async (name: string) => {
+      const hope = await fetchHopeByName(name)
+      if (!hope) return
+      return deleteHopeService(hope.id)
+    }
+  })
+
   const addHope = (newHope: Hope) => {
+    mutateAddHope.mutate(newHope)
     setHopes(prevHopes => [...prevHopes, newHope])
   }
 
   const deleteHope = (name: string) => {
     const hopeNames = collectHopeNames(name)
     const newHopes = hopes.filter(hope => !hopeNames.includes(hope.name))
+    mutateDeleteHope.mutate(name)
     setHopes(newHopes)
   }
 
