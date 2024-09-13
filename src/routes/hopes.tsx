@@ -11,7 +11,7 @@ import ReactMarkdown from 'react-markdown';
 export default function Hopes() {
   const [isEditing, setIsEditing] = useState(false)
   useHopes()
-  const { hopes, setHopes, hopeTree, selectedHope } = useContext(HopesContext)
+  const { hopes, hopeTree, selectedHope, updateMarkdownContent } = useContext(HopesContext)
   const { showModal, setShowModal } = useContext(ModalHopeContext)
   const getSelectedHopeContent = () => {
     if (!selectedHope) return ''
@@ -22,13 +22,7 @@ export default function Hopes() {
   const initialValue = getSelectedHopeContent()
 
   const handleSave = (value: string) => {
-    const newHopes = hopes.map((hope) => {
-      if (hope.name === selectedHope) {
-        return { ...hope, markdownContent: value }
-      }
-      return hope
-    })
-    setHopes(newHopes)
+    updateMarkdownContent(value)
     setIsEditing(false)
   }
 

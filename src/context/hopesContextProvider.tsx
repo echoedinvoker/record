@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { HopesContext } from "./hopesContext";
-import { Hope, HopeMapValue } from "../types";
+import { CreateHopePayload, Hope, HopeMapValue, UpdateHopePayload } from "../types";
 import { buildHopeTree } from "../utils/hopes";
 import { useMutation } from "@tanstack/react-query";
-import { createHope, deleteHope as deleteHopeService, fetchHopeByName } from "../services/hopes";
+import { createHope, deleteHope as deleteHopeService, fetchHopeByName, updateHope } from "../services/hopes";
 
 interface HopesContextProviderProps {
   children: React.ReactNode
@@ -28,10 +28,18 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     }
   })
 
+  const mutateUpdateHope = useMutation({
+    mutationFn: updateHope
+  })
+
   const isPending = mutateAddHope.isPending || mutateDeleteHope.isPending
 
   const addHope = (newHope: Hope) => {
-    mutateAddHope.mutate(newHope)
+    const payload: CreateHopePayload = {
+      name: newHope.name,
+      parent_name: newHope.parentName
+    }
+    mutateAddHope.mutate(payload)
     setHopes(prevHopes => [...prevHopes, newHope])
   }
 
@@ -39,6 +47,21 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     const hopeNames = collectHopeNames(name)
     const newHopes = hopes.filter(hope => !hopeNames.includes(hope.name))
     mutateDeleteHope.mutate(name)
+    setHopes(newHopes)
+  }
+
+  const updateMarkdownContent = (value: string) => {
+    const newHopes = hopes.map(hope => {
+      if (hope.name === selectedHope) {
+        const payload: UpdateHopePayload = {
+          name: hope.name,
+          markdown_content: value
+        }
+        mutateUpdateHope.mutate(payload)
+        return { ...hope, markdownContent: value }
+      }
+      return hope
+    })
     setHopes(newHopes)
   }
 
@@ -92,7 +115,8 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     selectedHope,
     selectHope,
     appendTask,
-    isPending
+    isPending,
+    updateMarkdownContent
   }
 
   return (

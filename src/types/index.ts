@@ -115,6 +115,13 @@ export interface CreateHopePayload {
   parent_name?: string | null
 }
 
+export interface UpdateHopePayload {
+  name: string
+  parent_name?: string | null
+  markdown_content?: string
+  task_order?: string
+}
+
 export interface HopeMapValue extends Hope {
   children: HopeMapValue[]
   attributes: {

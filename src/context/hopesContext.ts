@@ -12,6 +12,7 @@ interface HopeContextType {
   selectHope: (name: string) => void;
   appendTask: (hopeName: string, taskKey: string) => void;
   isPending: boolean;
+  updateMarkdownContent: (value: string) => void;
 }
 
 export const HopesContext = createContext<HopeContextType>({} as HopeContextType);
