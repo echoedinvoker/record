@@ -17,7 +17,7 @@ export function useHopes() {
           name: hope.name,
           markdownContent: hope.markdown_content,
           parentName: hope.parent_name,
-          taskOrder: JSON.parse(hope.task_order),
+          taskOrder: JSON.parse(hope.task_order)
         }
         return formattedHope
       })

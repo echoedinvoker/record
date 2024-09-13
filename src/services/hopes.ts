@@ -1,5 +1,5 @@
 import api from ".";
-import { CreateHopePayload, HopeResponse } from "../types";
+import { CreateHopePayload, HopeResponse, UpdateHopePayload } from "../types";
 
 
 export async function fetchHopes() {
@@ -20,6 +20,14 @@ export async function fetchHopeByName(name: string) {
   try {
     const { data } = await api.get(`/hopes/name/${name}`);
     return data as HopeResponse;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function updateHope(payload: UpdateHopePayload) {
+  try {
+    await api.put(`/hopes`, payload);
   } catch (error) {
     return null;
   }
