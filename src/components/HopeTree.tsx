@@ -14,7 +14,7 @@ export default function HopeTree({ hope }: HopeTreeProps) {
   const treeRef = useRef<Tree>(null);
   const { initModal } = useContext(ModalHopeContext)
   const { deleteHope, selectedHope, selectHope } = useContext(HopesContext)
-  const renderCustomNodeElement: RenderCustomNodeElementFn = ({ nodeDatum, toggleNode }) => {
+  const renderCustomNodeElement: RenderCustomNodeElementFn = ({ nodeDatum, toggleNode }: any) => {
     const handleClickCircle = (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
       e.stopPropagation();
       toggleNode();
