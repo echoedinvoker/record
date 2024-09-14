@@ -5,8 +5,8 @@ interface ModalHopeContextType {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>
   hopeName: string
   setHopeName: React.Dispatch<React.SetStateAction<string>>
-  parentName: string
-  setParentName: React.Dispatch<React.SetStateAction<string>>
+  parentKey: string
+  setParentKey: React.Dispatch<React.SetStateAction<string>>
   initModal: (show?: boolean, parentName?: string) => void
 }
 

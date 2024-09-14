@@ -27,7 +27,7 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     columnKey: string
   ) {
     const newTask: Task = {
-      key: Math.random().toString(36).substring(7),
+      key: `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       task,
       estimatedDuration: convertHMStoMilliseconds(estimatedDurationHMS),
       markdownContent: markdownText,
