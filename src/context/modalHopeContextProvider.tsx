@@ -8,15 +8,15 @@ interface ModalHopeContextProviderProps {
 export default function ModalHopeContextProvider({ children }: ModalHopeContextProviderProps) {
   const [showModal, setShowModal] = useState(false)
   const [hopeName, setHopeName] = useState('');
-  const [parentName, setParentName] = useState('');
+  const [parentKey, setParentKey] = useState('')
 
 
   function initModal(
     show: boolean = false,
-    parentName: string = '',
+    parentKey: string = '',
   ) {
     setHopeName('');
-    setParentName(parentName)
+    setParentKey(parentKey)
     setShowModal(show)
   }
 
@@ -25,9 +25,9 @@ export default function ModalHopeContextProvider({ children }: ModalHopeContextP
     setShowModal,
     hopeName,
     setHopeName,
-    parentName,
-    setParentName,
     initModal,
+    parentKey,
+    setParentKey
   }
 
   return (

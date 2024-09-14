@@ -2,7 +2,7 @@ import { Hope, HopeMapValue } from "../types"
 
 export const buildHopeTree = (hopes: Hope[]) => {
   const hopeMap = new Map(hopes.map(hope => [
-    hope.name,
+    hope.key,
     {
       ...hope,
       children: [],
@@ -12,10 +12,10 @@ export const buildHopeTree = (hopes: Hope[]) => {
   const rootHopes: HopeMapValue[] = []
 
   hopeMap.forEach(hope => {
-    if (hope.parentName === null) {
+    if (hope.parentKey === null) {
       rootHopes.push(hope)
     } else {
-      const parent = hopeMap.get(hope.parentName)
+      const parent = hopeMap.get(hope.parentKey)
       if (parent) {
         parent.children.push(hope)
       }

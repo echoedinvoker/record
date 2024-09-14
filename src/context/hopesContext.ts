@@ -5,7 +5,7 @@ interface HopeContextType {
   hopes: Hope[];
   setHopes: React.Dispatch<React.SetStateAction<Hope[]>>;
   addHope: (hope: Hope) => void;
-  hopesNames: string[];
+  hopesKeys: string[];
   hopeTree: HopeMapValue[]
   deleteHope: (name: string) => void;
   selectedHope: string;

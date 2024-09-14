@@ -16,9 +16,13 @@ export async function deleteHope(hopeId: number) {
   await api.delete(`/hopes/${hopeId}`);
 }
 
-export async function fetchHopeByName(name: string) {
+export async function deleteHopeByKey(key: string) {
+  await api.delete(`/hopes/key/${key}`);
+}
+
+export async function fetchHopeByKey(key: string) {
   try {
-    const { data } = await api.get(`/hopes/name/${name}`);
+    const { data } = await api.get(`/hopes/key/${key}`);
     return data as HopeResponse;
   } catch (error) {
     return null;

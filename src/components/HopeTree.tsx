@@ -15,7 +15,6 @@ export default function HopeTree({ hope }: HopeTreeProps) {
   const { initModal } = useContext(ModalHopeContext)
   const { deleteHope, selectedHope, selectHope } = useContext(HopesContext)
   const renderCustomNodeElement: RenderCustomNodeElementFn = ({ nodeDatum, toggleNode }) => {
-
     const handleClickCircle = (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
       e.stopPropagation();
       toggleNode();
@@ -23,21 +22,21 @@ export default function HopeTree({ hope }: HopeTreeProps) {
 
     const handleAddHope = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.stopPropagation();
-      initModal(true, nodeDatum.name);
+      initModal(true, nodeDatum.key);
     }
 
     const handleDeleteHope = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.stopPropagation();
-      deleteHope(nodeDatum.name);
+      deleteHope(nodeDatum.key);
     }
 
 
     return (
       <>
         <NodeGroup>
-          <NodeCircle r={10} onClick={handleClickCircle} $isSelected={selectedHope === nodeDatum.name} />
+          <NodeCircle r={10} onClick={handleClickCircle} $isSelected={selectedHope === nodeDatum.key} />
           <foreignObject x={-50} y={10} width={100} height={120}>
-            <NodeInfoContainer onClick={() => selectHope(nodeDatum.name)}>
+            <NodeInfoContainer onClick={() => selectHope(nodeDatum.key)}>
               <NodeName>{nodeDatum.name}</NodeName>
               {nodeDatum.attributes && (
                 <NodeAttributesContainer>

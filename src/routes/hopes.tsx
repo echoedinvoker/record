@@ -48,7 +48,7 @@ export default function Hopes() {
         <TreeContainer>
           {hopeTree.map((hope) => (
             <HopeTree
-              hope={hope} key={hope.name} />
+              hope={hope} key={hope.key} />
           ))}
         </TreeContainer>
         {selectedHope && <HopeContaniner onClick={toggleEdit}>
@@ -57,7 +57,7 @@ export default function Hopes() {
               initialValue={initialValue}
               handleSave={handleSave}
             /> : <ReactMarkdown>
-              {hopes.find((hope) => hope.name === selectedHope)?.markdownContent}
+              {hopes.find((hope) => hope.key === selectedHope)?.markdownContent}
             </ReactMarkdown>
           }
         </HopeContaniner>}

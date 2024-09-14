@@ -15,12 +15,14 @@ export function useHopes() {
       const hopes = data.map((hope: HopeResponse) => {
         const formattedHope: Hope = {
           name: hope.name,
+          key: hope.key,
           markdownContent: hope.markdown_content,
-          parentName: hope.parent_name,
+          parentKey: hope.parent_key,
           taskOrder: JSON.parse(hope.task_order)
         }
         return formattedHope
       })
+      console.log(hopes)
       setHopes(hopes)
     }
   }, [isSuccess])

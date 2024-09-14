@@ -98,26 +98,30 @@ export interface OnDragEndResultType {
 export interface HopeResponse {
   id: number
   name: string
+  key: string
   markdown_content: string
-  parent_name: string | null
+  parent_key: string | null
   task_order: string
 }
 
 export interface Hope {
   name: string
+  key: string
   markdownContent: string
-  parentName: string | null
+  parentKey: string | null
   taskOrder: string[]
 }
 
 export interface CreateHopePayload {
   name: string
-  parent_name?: string | null
+  key: string
+  parent_key?: string | null
 }
 
 export interface UpdateHopePayload {
-  name: string
-  parent_name?: string | null
+  key: string
+  name?: string
+  parent_key?: string | null
   markdown_content?: string
   task_order?: string
 }

@@ -3,7 +3,7 @@ import { HopesContext } from "./hopesContext";
 import { CreateHopePayload, Hope, HopeMapValue, UpdateHopePayload } from "../types";
 import { buildHopeTree } from "../utils/hopes";
 import { useMutation } from "@tanstack/react-query";
-import { createHope, deleteHope as deleteHopeService, fetchHopeByName, updateHope } from "../services/hopes";
+import { createHope, deleteHope as deleteHopeService, fetchHopeByKey, updateHope } from "../services/hopes";
 
 interface HopesContextProviderProps {
   children: React.ReactNode
@@ -13,7 +13,7 @@ interface HopesContextProviderProps {
 export default function HopesContextProvider({ children }: HopesContextProviderProps) {
   const [hopes, setHopes] = useState<Hope[]>([])
   const [selectedHope, setSelectedHope] = useState<string>("")
-  const hopesNames = hopes.map(hope => hope.name)
+  const hopesKeys = hopes.map(hope => hope.key)
   const hopeTree = buildHopeTree(hopes)
 
   const mutateAddHope = useMutation({
@@ -21,8 +21,8 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
   })
 
   const mutateDeleteHope = useMutation({
-    mutationFn: async (name: string) => {
-      const hope = await fetchHopeByName(name)
+    mutationFn: async (key: string) => {
+      const hope = await fetchHopeByKey(key)
       if (!hope) return
       return deleteHopeService(hope.id)
     }
@@ -37,24 +37,25 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
   const addHope = (newHope: Hope) => {
     const payload: CreateHopePayload = {
       name: newHope.name,
-      parent_name: newHope.parentName
+      key: newHope.key,
+      parent_key: newHope.parentKey
     }
     mutateAddHope.mutate(payload)
     setHopes(prevHopes => [...prevHopes, newHope])
   }
 
-  const deleteHope = (name: string) => {
-    const hopeNames = collectHopeNames(name)
-    const newHopes = hopes.filter(hope => !hopeNames.includes(hope.name))
-    mutateDeleteHope.mutate(name)
+  const deleteHope = (key: string) => {
+    const hopeKeys = collectHopeKeys(key)
+    const newHopes = hopes.filter(hope => !hopeKeys.includes(hope.key))
+    mutateDeleteHope.mutate(key)
     setHopes(newHopes)
   }
 
   const updateMarkdownContent = (value: string) => {
     const newHopes = hopes.map(hope => {
-      if (hope.name === selectedHope) {
+      if (hope.key === selectedHope) {
         const payload: UpdateHopePayload = {
-          name: hope.name,
+          key: hope.key,
           markdown_content: value
         }
         mutateUpdateHope.mutate(payload)
@@ -65,21 +66,21 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     setHopes(newHopes)
   }
 
-  const collectHopeNames = (name: string): string[] => {
-    const collectNames = (node: HopeMapValue): string[] => {
-      const names = [node.name];
+  const collectHopeKeys = (key: string): string[] => {
+    const collectKeys = (node: HopeMapValue): string[] => {
+      const keys = [node.key];
       node.children.forEach(child => {
-        names.push(...collectNames(child));
+        keys.push(...collectKeys(child));
       });
-      return names;
+      return keys;
     };
 
-    const findNode = (nodes: HopeMapValue[], targetName: string): HopeMapValue | undefined => {
+    const findNode = (nodes: HopeMapValue[], targetKey: string): HopeMapValue | undefined => {
       for (const node of nodes) {
-        if (node.name === targetName) {
+        if (node.key === targetKey) {
           return node;
         }
-        const found = findNode(node.children, targetName);
+        const found = findNode(node.children, targetKey);
         if (found) {
           return found;
         }
@@ -87,17 +88,17 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
       return undefined;
     };
 
-    const targetNode = findNode(hopeTree, name);
-    return targetNode ? collectNames(targetNode) : [];
+    const targetNode = findNode(hopeTree, key);
+    return targetNode ? collectKeys(targetNode) : [];
   };
 
-  const selectHope = (name: string) => {
-    setSelectedHope(name)
+  const selectHope = (key: string) => {
+    setSelectedHope(key)
   }
 
-  const appendTask = (hopeName: string, taskKey: string) => {
+  const appendTask = (hopeKey: string, taskKey: string) => {
     const newHopes = hopes.map(hope => {
-      if (hope.name === hopeName) {
+      if (hope.key === hopeKey) {
         return { ...hope, taskOrder: [...hope.taskOrder, taskKey] }
       }
       return hope
@@ -110,7 +111,7 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     setHopes,
     addHope,
     deleteHope,
-    hopesNames,
+    hopesKeys,
     hopeTree,
     selectedHope,
     selectHope,

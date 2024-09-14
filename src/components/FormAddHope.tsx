@@ -11,9 +11,9 @@ interface Props {
 
 export default function FormAddHope({ setShowModal }: Props) {
 
-  const { addHope, hopesNames } = useContext(HopesContext)
-  const { hopeName, parentName, setHopeName, setParentName, initModal } = useContext(ModalHopeContext)
-  const isValidationDisabled = hopeName.length === 0 || !!parentName && !hopesNames.includes(parentName)
+  const { addHope, hopesKeys } = useContext(HopesContext)
+  const { hopeName, parentKey, setParentKey, setHopeName, initModal } = useContext(ModalHopeContext)
+  const isValidationDisabled = hopeName.length === 0 || !!parentKey && !hopesKeys.includes(parentKey)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,8 +25,9 @@ export default function FormAddHope({ setShowModal }: Props) {
   function addNewHopeToContext() {
     const newHope: Hope = {
       name: hopeName,
+      key: `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       markdownContent: '',
-      parentName: parentName || null,
+      parentKey: parentKey || null,
       taskOrder: []
     }
     addHope(newHope)
@@ -56,7 +57,7 @@ export default function FormAddHope({ setShowModal }: Props) {
               <FormField>
                 <Label htmlFor="parent">Parent</Label>
                 <InputWrapper>
-                  <Input type="text" id="parent" name="parent" value={parentName} onChange={(e) => setParentName(e.target.value)} />
+                  <Input type="text" id="parent" name="parent" value={parentKey} onChange={(e) => setParentKey(e.target.value)} />
                 </InputWrapper>
               </FormField>
             </FormField>
@@ -73,7 +74,7 @@ export default function FormAddHope({ setShowModal }: Props) {
             </TextButton>
             <TextButton $counter disabled={isValidationDisabled} type="submit">
               <ContentWrapper $weight="bold">
-                Add Task
+                Add Hope
               </ContentWrapper>
             </TextButton>
           </FormActions>
