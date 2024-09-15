@@ -287,28 +287,32 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     const newDestinationColumn = addTaskToDestinationColumn(taskKey, destinationColumnKey)
     if (!newSourceColumn || !newDestinationColumn) return
     if (newSourceColumn.taskIds.length === 0 && sourceColumn.key !== "0" && sourceColumn.key !== "done") {
-      const newColumns = { ...data.columns }
-      delete newColumns[sourceColumn.key]
-      const newData = {
-        ...data,
-        columns: {
-          ...newColumns,
-          [destinationColumnKey]: newDestinationColumn
+      setData(prevData => {
+        const newColumns = { ...prevData.columns }
+        delete newColumns[sourceColumn.key]
+        const newData = {
+          ...prevData,
+          columns: {
+            ...newColumns,
+            [destinationColumnKey]: newDestinationColumn
+          }
         }
-      }
-      mutateSaveColumn.mutate(newData)
-      setData(newData)
+        mutateSaveColumn.mutate(newData)
+        return newData
+      })
     } else {
-      const newData = {
-        ...data,
-        columns: {
-          ...data.columns,
-          [sourceColumn.key]: newSourceColumn,
-          [destinationColumnKey]: newDestinationColumn
+      setData(prevData => {
+        const newData = {
+          ...prevData,
+          columns: {
+            ...prevData.columns,
+            [sourceColumn.key]: newSourceColumn,
+            [destinationColumnKey]: newDestinationColumn
+          }
         }
-      }
-      mutateSaveColumn.mutate(newData)
-      setData(newData)
+        mutateSaveColumn.mutate(newData)
+        return newData
+      })
     }
   }
 
@@ -343,26 +347,28 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
   }
 
   function convertDoneToArchive(taskKey: string): void {
-    const task = data.tasks[taskKey] as Done
-    const newTask: Archive = {
-      key: task.key,
-      task: task.task,
-      estimatedDuration: task.estimatedDuration,
-      timestampSum: task.timestampSum,
-      markdownContent: task.markdownContent,
-      ts: task.ts,
-      efficiency: task.efficiency,
-    }
-    const newData = {
-      ...data,
-      tasks: {
-        ...data.tasks,
-        [taskKey]: newTask
+    setData(prevData => {
+      const task = prevData.tasks[taskKey] as Done
+      const newTask: Archive = {
+        key: task.key,
+        task: task.task,
+        estimatedDuration: task.estimatedDuration,
+        timestampSum: task.timestampSum,
+        markdownContent: task.markdownContent,
+        ts: task.ts,
+        efficiency: task.efficiency,
       }
-    }
-    mutateSaveTask.mutate({ data: newData, taskKey })
-    mutateSaveColumn.mutate(newData)
-    setData(newData)
+      const newData = {
+        ...prevData,
+        tasks: {
+          ...prevData.tasks,
+          [taskKey]: newTask
+        }
+      }
+      mutateSaveTask.mutate({ data: newData, taskKey })
+      mutateSaveColumn.mutate(newData)
+      return newData
+    })
   }
 
   const value = {
