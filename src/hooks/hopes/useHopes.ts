@@ -22,7 +22,6 @@ export function useHopes() {
         }
         return formattedHope
       })
-      console.log(hopes)
       setHopes(hopes)
     }
   }, [isSuccess])

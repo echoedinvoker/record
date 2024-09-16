@@ -11,6 +11,7 @@ import { TasksContext } from "../context/tasksContext"
 import MyCodeMirrorComponent from "./MyCodeMirrorComponent"
 import ReactMarkdown from 'react-markdown';
 import { HopesContext } from "../context/hopesContext"
+import { useHopes } from "../hooks/hopes/useHopes"
 
 interface Props {
   index: number;
@@ -20,6 +21,7 @@ interface Props {
 export default function Done({ index, task }: Props) {
 
   const { updateTask, deleteTask, doneToArchive } = useContext(TasksContext)
+  useHopes()
 
   const [isEditingTaskName, setIsEditingTaskName] = useState(false);
   const [taskName, setTaskName] = useState(task.task);
@@ -29,7 +31,7 @@ export default function Done({ index, task }: Props) {
   const [isEditingElapsedDuration, setIsEditingElapsedDuration] = useState(false);
   const [elapsedDurationHMS, setElapsedDurationHMS] = useState(convertMillisecondsToHMS(task.timestampSum));
   const [showSelectHopeModal, setShowSelectHopeModal] = useState(false);
-  const [selectedHopeName, setSelectedHopeName] = useState('none')
+  const [selectedHopeKey, setSelectedHopeKey] = useState('');
   const { hopes, appendTask } = useContext(HopesContext)
 
   const handleSaveTaskName = (value: string) => {
@@ -84,22 +86,22 @@ export default function Done({ index, task }: Props) {
 
   const handleClickArhiveBtn = () => {
     if (hopes.length === 0) {
-      appendTaskToHope(selectedHopeName, task.key)
+      doneToArchive(task.key)
     } else {
       setShowSelectHopeModal(true)
     }
   }
 
-  const appendTaskToHope = (hopeName: string, taskKey: string) => {
+  const appendTaskToHope = (hopeKey: string, taskKey: string) => {
     doneToArchive(taskKey)
-    if (hopeName !== 'none') {
-      appendTask(hopeName, taskKey)
+    if (hopeKey) {
+      appendTask(hopeKey, taskKey)
     }
   }
 
   const handleCancelSelectHope = () => {
     setShowSelectHopeModal(false)
-    setSelectedHopeName('none')
+    setSelectedHopeKey('')
   }
 
   return (
@@ -172,27 +174,28 @@ export default function Done({ index, task }: Props) {
             <Select
               name="hope"
               id="hope"
-              value={selectedHopeName}
-              onChange={(e) => setSelectedHopeName(e.target.value)}
+              value={selectedHopeKey}
+              onChange={(e) => setSelectedHopeKey(e.target.value)}
             >
               {
                 ([
                   {
                     name: 'none',
+                    key: '',
                     markdownContent: '',
                     parentName: null,
                     taskOrder: []
                   },
                   ...hopes
                 ] as Hope[])
-                  .map(hope => <option key={hope.name} value={hope.name}>{hope.name}</option>)}
+                  .map(hope => <option key={hope.key} value={hope.key}>{hope.name}</option>)}
             </Select>
             <ActionsContainer>
               <TextButton $counterSecondary
                 onClick={handleCancelSelectHope}
               >Cancel</TextButton>
               <TextButton $counter
-                onClick={() => appendTaskToHope(selectedHopeName, task.key)}
+                onClick={() => appendTaskToHope(selectedHopeKey, task.key)}
               >Archive</TextButton>
             </ActionsContainer>
           </Form>
