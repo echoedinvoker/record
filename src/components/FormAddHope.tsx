@@ -10,8 +10,7 @@ interface Props {
 }
 
 export default function FormAddHope({ setShowModal }: Props) {
-
-  const { addHope, hopesKeys } = useContext(HopesContext)
+  const { addHope, hopesKeys, hopes } = useContext(HopesContext)
   const { hopeName, parentKey, setParentKey, setHopeName, initModal } = useContext(ModalHopeContext)
   const isValidationDisabled = hopeName.length === 0 || !!parentKey && !hopesKeys.includes(parentKey)
 
@@ -33,7 +32,6 @@ export default function FormAddHope({ setShowModal }: Props) {
     addHope(newHope)
   }
 
-
   return (
     <ModalOverlay>
       <ModalContainer>
@@ -54,12 +52,20 @@ export default function FormAddHope({ setShowModal }: Props) {
               </InputWrapper>
             </FormField>
             <FormField>
-              <FormField>
-                <Label htmlFor="parent">Parent</Label>
-                <InputWrapper>
-                  <Input type="text" id="parent" name="parent" value={parentKey} onChange={(e) => setParentKey(e.target.value)} />
-                </InputWrapper>
-              </FormField>
+              <Label htmlFor="parent">Parent</Label>
+              <Select
+                id="parent"
+                name="parent"
+                value={parentKey || ''}
+                onChange={(e) => setParentKey(e.target.value)}
+              >
+                <option value="">No Parent</option>
+                {Object.values(hopes).map((hope) => (
+                  <option key={hope.key} value={hope.key}>
+                    {hope.name}
+                  </option>
+                ))}
+              </Select>
             </FormField>
           </FormFields>
           <FormActions>
@@ -89,4 +95,15 @@ const FormActions = styled.div`
   justify-content: flex-end;
   gap: 1em;
   padding-top: 1em;
+  `
+const Select = styled.select`
+  width: 100%;
+  height: 100%;
+  padding: 0.5em;
+  border: none;
+  background-color: #f1f1f1;
+  font-size: 1em;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   `

@@ -16,6 +16,8 @@ export const FormField = styled.div`
 `
 
 export const Label = styled.label`
+  display: flex;
+  align-items: center;
   border: 2px solid #242424;
   border-radius: 0.2em;
   letter-spacing: 1px;
