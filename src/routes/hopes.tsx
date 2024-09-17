@@ -47,8 +47,10 @@ export default function Hopes() {
       <Container>
         <TreeContainer>
           {hopeTree.map((hope) => (
-            <HopeTree
-              hope={hope} key={hope.key} />
+            <>
+              <HopeTree
+                hope={hope} key={hope.key} />
+            </>
           ))}
         </TreeContainer>
         {selectedHope && <HopeContaniner onClick={toggleEdit}>
@@ -69,6 +71,10 @@ export default function Hopes() {
 
 const TreeContainer = styled.div`
   flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  
 `
 
 const HopeContaniner = styled.div`
