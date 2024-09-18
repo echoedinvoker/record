@@ -11,6 +11,8 @@ interface EditorHopeContextType {
   initModal: (showModal?: boolean) => void;
   isValid: boolean;
   updateHope: () => void;
+  key: string;
+  setKey: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const EditorHopeContext = createContext<EditorHopeContextType>({} as EditorHopeContextType);

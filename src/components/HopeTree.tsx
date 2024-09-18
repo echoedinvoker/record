@@ -15,7 +15,11 @@ export default function HopeTree({ hope }: HopeTreeProps) {
   const treeRef = useRef<Tree>(null);
   const { initModal } = useContext(ModalHopeContext)
   const { deleteHope, selectedHope, selectHope } = useContext(HopesContext)
-  const { setShowEditorHope } = useContext(EditorHopeContext)
+  const {
+    setKey,
+    setInputName,
+    setSelectedKey,
+    setShowEditorHope } = useContext(EditorHopeContext)
 
 
 
@@ -37,6 +41,9 @@ export default function HopeTree({ hope }: HopeTreeProps) {
 
     const handleShowModal = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.stopPropagation();
+      setInputName(nodeDatum.name)
+      setKey(nodeDatum.key)
+      setSelectedKey(nodeDatum.parentKey ?? "")
       setShowEditorHope(true)
     }
 

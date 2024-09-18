@@ -36,18 +36,18 @@ const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
-    <EditorHopeContextProvider>
-      <TasksContextProvider>
-        <HopesContextProvider>
-          <DayContextProvider>
+    <TasksContextProvider>
+      <HopesContextProvider>
+        <DayContextProvider>
+          <EditorHopeContextProvider>
             <EditorContextProvider>
               <ModalHopeContextProvider>
                 <RouterProvider router={router} />
               </ModalHopeContextProvider>
             </EditorContextProvider>
-          </DayContextProvider>
-        </HopesContextProvider>
-      </TasksContextProvider>
-    </EditorHopeContextProvider>
+          </EditorHopeContextProvider>
+        </DayContextProvider>
+      </HopesContextProvider>
+    </TasksContextProvider>
   </QueryClientProvider>
 )
