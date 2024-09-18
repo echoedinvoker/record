@@ -10,7 +10,7 @@ interface EditorHopeContextType {
   setSelectedKey: React.Dispatch<React.SetStateAction<string>>;
   initModal: (showModal?: boolean) => void;
   isValid: boolean;
-  updateHope: () => void;
+  updateHope: (e: React.FormEvent<HTMLFormElement>) => void;
   key: string;
   setKey: React.Dispatch<React.SetStateAction<string>>;
 }
