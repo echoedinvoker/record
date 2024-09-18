@@ -28,7 +28,8 @@ export default function FormEditHope({ }: Props) {
           </CircleButton>
         </ModalCloseCorner>
         <form onSubmit={updateHope}>
-          <h2>Edit Hope</h2>
+          {/* <h2>Edit Hope</h2> */}
+          <h2>{selectedKey}</h2>
           <FormFields style={{ margin: '3em 0 2em 0' }}>
             <FormField>
               <Label htmlFor="task">Hope</Label>

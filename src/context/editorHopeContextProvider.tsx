@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { EditorHopeContext } from "./editorHopeContext";
+import { HopesContext } from "./hopesContext";
 
 interface EditorHopeContextProviderProps {
   children: React.ReactNode
@@ -9,17 +10,17 @@ interface EditorHopeContextProviderProps {
 export default function EditorHopeContextProvider({ children }: EditorHopeContextProviderProps) {
   const [showEditorHope, setShowEditorHope] = useState(false)
   const [inputName, setInputName] = useState('')
-  const otherHopes = [
-    { key: '1', name: 'Hope 1' },
-    { key: '2', name: 'Hope 2' },
-    { key: '3', name: 'Hope 3' },
-  ]
-  const [selectedKey, setSelectedKey] = useState('1')
+  const [key, setKey] = useState('')
+  const [selectedKey, setSelectedKey] = useState('')
+  const { hopes } = useContext(HopesContext)
+  const otherHopes = hopes
+    .map(hope => ({ key: hope.key, name: hope.name }))
+    .filter(hope => hope.key !== key)
   const isValid = inputName.length > 0
 
   const initModal = (showModal = false) => {
     setInputName('')
-    setSelectedKey('1')
+    setSelectedKey('')
     setShowEditorHope(showModal)
   }
 
@@ -38,7 +39,9 @@ export default function EditorHopeContextProvider({ children }: EditorHopeContex
     setSelectedKey,
     initModal,
     isValid,
-    updateHope
+    updateHope,
+    key,
+    setKey
   }
 
   return <EditorHopeContext.Provider value={value}>
