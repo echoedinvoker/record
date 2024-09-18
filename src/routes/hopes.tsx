@@ -7,12 +7,15 @@ import HopeTree from "../components/HopeTree"
 import { ModalHopeContext } from "../context/modalHopeContext"
 import MyCodeMirrorComponent from "../components/MyCodeMirrorComponent"
 import ReactMarkdown from 'react-markdown';
+import { EditorHopeContext } from "../context/editorHopeContext"
+import FormEditHope from "../components/FormEditHope"
 
 export default function Hopes() {
   const [isEditing, setIsEditing] = useState(false)
   useHopes()
   const { hopes, hopeTree, selectedHope, updateMarkdownContent } = useContext(HopesContext)
   const { showModal, setShowModal } = useContext(ModalHopeContext)
+  const { showEditorHope } = useContext(EditorHopeContext)
   const getSelectedHopeContent = () => {
     if (!selectedHope) return ''
     const hope = hopes.find((hope) => hope.name === selectedHope)
@@ -46,12 +49,7 @@ export default function Hopes() {
     <>
       <Container>
         <TreeContainer>
-          {hopeTree.map((hope) => (
-            <>
-              <HopeTree
-                hope={hope} key={hope.key} />
-            </>
-          ))}
+          {hopeTree.map((hope) => <HopeTree hope={hope} key={hope.key} />)}
         </TreeContainer>
         {selectedHope && <HopeContaniner onClick={toggleEdit}>
           {isEditing ?
@@ -65,6 +63,7 @@ export default function Hopes() {
         </HopeContaniner>}
       </Container>
       {showModal && <FormAddHope setShowModal={setShowModal} />}
+      {showEditorHope && <FormEditHope />}
     </>
   )
 }

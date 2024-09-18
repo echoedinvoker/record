@@ -5,6 +5,7 @@ import { useContext, useRef } from "react";
 import { ModalHopeContext } from "../context/modalHopeContext";
 import { BookOpen, CircleMinus, CirclePlus } from "lucide-react";
 import { HopesContext } from "../context/hopesContext";
+import { EditorHopeContext } from "../context/editorHopeContext";
 
 interface HopeTreeProps {
   hope: HopeMapValue;
@@ -14,6 +15,10 @@ export default function HopeTree({ hope }: HopeTreeProps) {
   const treeRef = useRef<Tree>(null);
   const { initModal } = useContext(ModalHopeContext)
   const { deleteHope, selectedHope, selectHope } = useContext(HopesContext)
+  const { setShowEditorHope } = useContext(EditorHopeContext)
+
+
+
   const renderCustomNodeElement: RenderCustomNodeElementFn = ({ nodeDatum, toggleNode }: any) => {
     const handleClickCircle = (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
       e.stopPropagation();
@@ -30,6 +35,10 @@ export default function HopeTree({ hope }: HopeTreeProps) {
       deleteHope(nodeDatum.key);
     }
 
+    const handleShowModal = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.stopPropagation();
+      setShowEditorHope(true)
+    }
 
     return (
       <>
@@ -52,14 +61,13 @@ export default function HopeTree({ hope }: HopeTreeProps) {
                 <NodeButton onClick={handleDeleteHope}>
                   <CircleMinus size={16} />
                 </NodeButton>
-                <NodeButton>
+                <NodeButton onClick={handleShowModal}>
                   <BookOpen size={16} />
                 </NodeButton>
               </NodeButtonGroup>
             </NodeInfoContainer>
           </foreignObject>
         </NodeGroup>
-
       </>
     );
   };
