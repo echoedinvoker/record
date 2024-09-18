@@ -13,6 +13,7 @@ import Todos from "./routes/todos.tsx"
 import Hopes from "./routes/hopes.tsx"
 import HopesContextProvider from './context/hopesContextProvider.tsx'
 import ModalHopeContextProvider from './context/modalHopeContextProvider.tsx'
+import EditorHopeContextProvider from './context/editorHopeContextProvider.tsx'
 
 const router = createBrowserRouter([
   {
@@ -35,16 +36,18 @@ const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
-    <TasksContextProvider>
-      <HopesContextProvider>
-        <DayContextProvider>
-          <EditorContextProvider>
-            <ModalHopeContextProvider>
-              <RouterProvider router={router} />
-            </ModalHopeContextProvider>
-          </EditorContextProvider>
-        </DayContextProvider>
-      </HopesContextProvider>
-    </TasksContextProvider>
+    <EditorHopeContextProvider>
+      <TasksContextProvider>
+        <HopesContextProvider>
+          <DayContextProvider>
+            <EditorContextProvider>
+              <ModalHopeContextProvider>
+                <RouterProvider router={router} />
+              </ModalHopeContextProvider>
+            </EditorContextProvider>
+          </DayContextProvider>
+        </HopesContextProvider>
+      </TasksContextProvider>
+    </EditorHopeContextProvider>
   </QueryClientProvider>
 )
