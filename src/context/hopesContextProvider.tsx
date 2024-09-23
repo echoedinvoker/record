@@ -16,6 +16,14 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
   const hopesKeys = hopes.map(hope => hope.key)
   const hopeTree = buildHopeTree(hopes)
 
+  const getSelectedHopeContent = () => {
+    if (!selectedHope) return ''
+    const hope = hopes.find((hope) => hope.key === selectedHope)
+    if (!hope) return ''
+    return hope.markdownContent
+  }
+  const initialValue = getSelectedHopeContent()
+
   const mutateAddHope = useMutation({
     mutationFn: createHope
   })
@@ -123,7 +131,8 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
     selectHope,
     appendTask,
     isPending,
-    updateMarkdownContent
+    updateMarkdownContent,
+    initialValue
   }
 
   return (
