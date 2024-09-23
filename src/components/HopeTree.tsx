@@ -96,7 +96,7 @@ export default function HopeTree({ hope }: HopeTreeProps) {
 }
 
 const DragHandle = ({ onDrag }: { onDrag: (movementY: number) => void }) => {
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = () => {
     const handleMouseMove = (e: MouseEvent) => {
       onDrag(e.movementY);
     };
