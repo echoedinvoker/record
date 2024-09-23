@@ -13,16 +13,9 @@ import FormEditHope from "../components/FormEditHope"
 export default function Hopes() {
   const [isEditing, setIsEditing] = useState(false)
   useHopes()
-  const { hopes, hopeTree, selectedHope, updateMarkdownContent } = useContext(HopesContext)
+  const { hopes, hopeTree, selectedHope, updateMarkdownContent, initialValue } = useContext(HopesContext)
   const { showModal, setShowModal } = useContext(ModalHopeContext)
   const { showEditorHope } = useContext(EditorHopeContext)
-  const getSelectedHopeContent = () => {
-    if (!selectedHope) return ''
-    const hope = hopes.find((hope) => hope.name === selectedHope)
-    if (!hope) return ''
-    return hope.markdownContent
-  }
-  const initialValue = getSelectedHopeContent()
 
   const handleSave = (value: string) => {
     updateMarkdownContent(value)
