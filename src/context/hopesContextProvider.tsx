@@ -97,13 +97,19 @@ export default function HopesContextProvider({ children }: HopesContextProviderP
   }
 
   const appendTask = (hopeKey: string, taskKey: string) => {
-    const newHopes = hopes.map(hope => {
-      if (hope.key === hopeKey) {
-        return { ...hope, taskOrder: [...hope.taskOrder, taskKey] }
-      }
-      return hope
+    setHopes(prevHopes => {
+      return prevHopes.map(hope => {
+        if (hope.key === hopeKey) {
+          const newHope = { ...hope, taskOrder: [...hope.taskOrder, taskKey] }
+          mutateUpdateHope.mutate({
+            key: hope.key,
+            task_order: JSON.stringify(newHope.taskOrder)
+          })
+          return newHope
+        }
+        return hope
+      })
     })
-    setHopes(newHopes)
   }
 
   const value = {
