@@ -1,7 +1,7 @@
+import { useContext, useRef, useState } from "react";
 import Tree, { RenderCustomNodeElementFn } from "react-d3-tree";
 import { HopeMapValue } from "../types";
 import styled from "styled-components";
-import { useContext, useRef } from "react";
 import { ModalHopeContext } from "../context/modalHopeContext";
 import { BookOpen, CircleMinus, CirclePlus } from "lucide-react";
 import { HopesContext } from "../context/hopesContext";
@@ -13,6 +13,7 @@ interface HopeTreeProps {
 
 export default function HopeTree({ hope }: HopeTreeProps) {
   const treeRef = useRef<Tree>(null);
+  const [treeHeight, setTreeHeight] = useState(400); // 初始高度設為 400px
   const { initModal } = useContext(ModalHopeContext)
   const { deleteHope, selectedHope, selectHope } = useContext(HopesContext)
   const {
@@ -21,7 +22,9 @@ export default function HopeTree({ hope }: HopeTreeProps) {
     setSelectedKey,
     setShowEditorHope } = useContext(EditorHopeContext)
 
-
+  const handleDrag = (movementY: number) => {
+    setTreeHeight((prevHeight) => Math.max(200, prevHeight + movementY));
+  };
 
   const renderCustomNodeElement: RenderCustomNodeElementFn = ({ nodeDatum, toggleNode }: any) => {
     const handleClickCircle = (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
@@ -80,16 +83,39 @@ export default function HopeTree({ hope }: HopeTreeProps) {
   };
 
   return (
-    <TreeContainer>
+    <TreeContainer style={{ height: `${treeHeight}px` }}>
       <Tree
         data={hope}
         renderCustomNodeElement={renderCustomNodeElement}
         translate={{ x: 100, y: 100 }}
         ref={treeRef}
       />
+      <DragHandle onDrag={handleDrag} />
     </TreeContainer>
   );
 }
+
+const DragHandle = ({ onDrag }: { onDrag: (movementY: number) => void }) => {
+  const handleMouseDown = () => {
+    const handleMouseMove = (e: MouseEvent) => {
+      onDrag(e.movementY);
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  return (
+    <DragBar onMouseDown={handleMouseDown}>
+      <DragIcon />
+    </DragBar>
+  );
+};
 
 const NodeButtonGroup = styled.div`
   display: flex;
@@ -149,6 +175,26 @@ const NodeCircle = styled.circle<{ $isSelected: boolean }>`
 const TreeContainer = styled.div`
   background-color: white;
   border-radius: 1em;
-  height: 20em;
-  `;
+  position: relative;
+  overflow: hidden;
+`;
 
+const DragBar = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background-color: #f0f0f0;
+  cursor: ns-resize;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DragIcon = styled.div`
+  width: 30px;
+  height: 4px;
+  background-color: #ccc;
+  border-radius: 2px;
+`;
