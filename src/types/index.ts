@@ -130,5 +130,7 @@ export interface HopeMapValue extends Hope {
   children: HopeMapValue[]
   attributes: {
     taskNumber: number
+    estimatedDurationSum: number
+    timestampSum: number
   }
 }

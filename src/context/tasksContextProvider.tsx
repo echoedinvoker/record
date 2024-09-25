@@ -256,7 +256,7 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
       const column = data.columns[columnKey]
       for (const taskKey of column.taskIds) {
         const task = data.tasks[taskKey] as Task
-        if (task.timestamp) return task
+        if (task && task.timestamp) return task
       }
       columnKey = (parseInt(columnKey) + 1).toString()
     }

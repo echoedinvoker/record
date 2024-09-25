@@ -6,6 +6,7 @@ import { ModalHopeContext } from "../context/modalHopeContext";
 import { BookOpen, CircleMinus, CirclePlus } from "lucide-react";
 import { HopesContext } from "../context/hopesContext";
 import { EditorHopeContext } from "../context/editorHopeContext";
+import { convertMillisecondsToHMS } from "../utils";
 
 interface HopeTreeProps {
   hope: HopeMapValue;
@@ -54,14 +55,22 @@ export default function HopeTree({ hope }: HopeTreeProps) {
       <>
         <NodeGroup>
           <NodeCircle r={10} onClick={handleClickCircle} $isSelected={selectedHope === nodeDatum.key} />
-          <foreignObject x={-50} y={10} width={100} height={120}>
+          <foreignObject x={-50} y={10} width={120} height={120}>
             <NodeInfoContainer onClick={() => selectHope(nodeDatum.key)}>
               <NodeName>{nodeDatum.name}</NodeName>
               {nodeDatum.attributes && (
                 <NodeAttributesContainer>
-                  {Object.entries(nodeDatum.attributes).map(([key, value]) => (
-                    <NodeAttribute key={key}>{`${key}: ${value}`}</NodeAttribute>
-                  ))}
+                  {Object.entries(nodeDatum.attributes)
+                    .filter(([_, value]) => !!value)
+                    .map(([key, value]) => (
+                      <NodeAttribute key={key}>{`${key === 'taskNumber' ? key :
+                        key === 'estimatedDurationSum' ? 'estimate' :
+                          key === 'timestampSum' ? 'actual' : key
+                        }: ${key === 'taskNumber' ? value :
+                          key === 'estimatedDurationSum' ? convertMillisecondsToHMS(value as number) :
+                            key === 'timestampSum' ? convertMillisecondsToHMS(value as number) : value
+                        }`}</NodeAttribute>
+                    ))}
                 </NodeAttributesContainer>
               )}
               <NodeButtonGroup>
@@ -147,7 +156,11 @@ const NodeAttributesContainer = styled.div`
 const NodeAttribute = styled.div`
   font-size: 0.8em;
   color: darkgray;
-  `;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+`;
 
 const NodeName = styled.h3`
   color: #333;
