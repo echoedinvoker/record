@@ -51,12 +51,20 @@ export default function HopeTree({ hope }: HopeTreeProps) {
       setShowEditorHope(true)
     }
 
+    const toggleSelectHope = (hopeKey: string) => {
+      if (selectedHope === hopeKey) {
+        selectHope("");
+      } else {
+        selectHope(hopeKey);
+      }
+    }
+
     return (
       <>
         <NodeGroup>
           <NodeCircle r={10} onClick={handleClickCircle} $isSelected={selectedHope === nodeDatum.key} />
           <foreignObject x={-50} y={10} width={120} height={120}>
-            <NodeInfoContainer onClick={() => selectHope(nodeDatum.key)}>
+            <NodeInfoContainer onClick={() => toggleSelectHope(nodeDatum.key)}>
               <NodeName>{nodeDatum.name}</NodeName>
               {nodeDatum.attributes && (
                 <NodeAttributesContainer>
