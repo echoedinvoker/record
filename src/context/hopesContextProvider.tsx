@@ -4,6 +4,7 @@ import { CreateHopePayload, Hope, HopeMapValue, UpdateHopePayload } from "../typ
 import { buildHopeTree } from "../utils/hopes";
 import { useMutation } from "@tanstack/react-query";
 import { createHope, deleteHope as deleteHopeService, fetchHopeByKey, updateHope } from "../services/hopes";
+import { useTasks } from "../hooks/useTasks";
 
 interface HopesContextProviderProps {
   children: React.ReactNode
@@ -11,10 +12,11 @@ interface HopesContextProviderProps {
 
 
 export default function HopesContextProvider({ children }: HopesContextProviderProps) {
+  const { data } = useTasks()
   const [hopes, setHopes] = useState<Hope[]>([])
   const [selectedHope, setSelectedHope] = useState<string>("")
   const hopesKeys = hopes.map(hope => hope.key)
-  const hopeTree = buildHopeTree(hopes)
+  const hopeTree = data ? buildHopeTree(hopes, data) : []
 
   const getSelectedHopeContent = () => {
     if (!selectedHope) return ''
