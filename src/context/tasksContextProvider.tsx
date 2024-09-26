@@ -277,7 +277,12 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
   function getTasksByColumnKey(columnKey: string) {
     const column = data.columns[columnKey]
     if (!column) return []
-    return column.taskIds.map((taskKey) => data.tasks[taskKey])
+    const tasks = []
+    for (const taskKey of column.taskIds) {
+      const task = data.tasks[taskKey]
+      if (task) tasks.push(task)
+    }
+    return tasks
   }
 
   function moveTaskToOtherColumn(taskKey: string, destinationColumnKey: string) {
