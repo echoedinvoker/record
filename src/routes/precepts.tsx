@@ -1,37 +1,45 @@
-import React from 'react';
-import styled from 'styled-components';
+import { DragDropContext, Draggable, DraggableProvided, Droppable, DroppableProvided, DropResult } from "react-beautiful-dnd";
+import { DroppableArea } from "../components/ui";
+import { useState } from "react";
 
-const PreceptsContainer = styled.div`
-  padding: 1rem;
-`;
-
-const PreceptsTitle = styled.h1`
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-`;
-
-const PreceptsList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const PreceptItem = styled.li`
-  margin-bottom: 0.5rem;
-`;
-
-const Precepts: React.FC = () => {
+export default function Precepts() {
+  const [precepts, setprecepts] = useState([
+    { id: "1", content: "First" },
+    { id: "2", content: "Second" },
+    { id: "3", content: "Third" },
+    { id: "4", content: "Fourth" },
+    { id: "5", content: "Fifth" },
+  ]);
+  function onDragEnd(result: DropResult) {
+    console.log(result);
+  }
   return (
-    <PreceptsContainer>
-      <PreceptsTitle>戒律</PreceptsTitle>
-      <PreceptsList>
-        <PreceptItem>1. 不殺生</PreceptItem>
-        <PreceptItem>2. 不偷盜</PreceptItem>
-        <PreceptItem>3. 不邪淫</PreceptItem>
-        <PreceptItem>4. 不妄語</PreceptItem>
-        <PreceptItem>5. 不飲酒</PreceptItem>
-      </PreceptsList>
-    </PreceptsContainer>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="precept-droppable-area">
+        {(provided: DroppableProvided) => (
+          <DroppableArea
+            ref={(element) => {
+              provided.innerRef(element);
+            }}
+            {...provided.droppableProps}
+          >
+            {precepts.map((precent, index) => (
+              <Draggable draggableId={precent.id} index={index} key={precent.id}>
+                {(provided: DraggableProvided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    {precent.content}
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </DroppableArea>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
-};
-
-export default Precepts;
+}
