@@ -22,6 +22,7 @@ function RootHeader() {
       <Pages>
         <PageButton to="/hopes">Hopes</PageButton>
         <PageButton to="/todos">Todos</PageButton>
+        <PageButton to="/precepts">戒律</PageButton>
       </Pages>
       <ActionGroup>
         <ActionButton disabled={isPending}>
