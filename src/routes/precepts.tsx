@@ -3,6 +3,14 @@ import { DroppableArea } from "../components/ui";
 import { useState } from "react";
 import ThePrecept from "../components/ThePrecept";
 
+const containerStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  minHeight: '100vh',
+  padding: '2rem 0',
+};
+
 export default function Precepts() {
   const [precepts, setPrecepts] = useState([
     { id: "1", content: "First" },
@@ -25,24 +33,26 @@ export default function Precepts() {
   }
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="precept-droppable-area">
-        {(provided: DroppableProvided) => (
-          <DroppableArea
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            {precepts.map((precept, index) => (
-              <ThePrecept
-                index={index}
-                key={precept.id}
-                precept={precept}
-              />
-            ))}
-            {provided.placeholder}
-          </DroppableArea>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <div style={containerStyle}>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="precept-droppable-area">
+          {(provided: DroppableProvided) => (
+            <DroppableArea
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {precepts.map((precept, index) => (
+                <ThePrecept
+                  index={index}
+                  key={precept.id}
+                  precept={precept}
+                />
+              ))}
+              {provided.placeholder}
+            </DroppableArea>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </div>
   );
 }
