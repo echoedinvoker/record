@@ -11,6 +11,7 @@ import {
 import Root from "./routes/root.tsx"
 import Todos from "./routes/todos.tsx"
 import Hopes from "./routes/hopes.tsx"
+import Precepts from "./routes/precepts.tsx"
 import HopesContextProvider from './context/hopesContextProvider.tsx'
 import ModalHopeContextProvider from './context/modalHopeContextProvider.tsx'
 import EditorHopeContextProvider from './context/editorHopeContextProvider.tsx'
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "/hopes",
         element: <Hopes />,
+      },
+      {
+        path: "/precepts",
+        element: <Precepts />,
       },
     ]
   },
