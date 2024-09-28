@@ -26,7 +26,7 @@ export default function Precepts() {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="precept-droppable-area" mode="vertical">
+      <Droppable droppableId="precept-droppable-area">
         {(provided: DroppableProvided) => (
           <DroppableArea
             ref={provided.innerRef}
