@@ -1,37 +1,58 @@
-import React from 'react';
-import styled from 'styled-components';
+import { DragDropContext, Droppable, DroppableProvided, DropResult } from "react-beautiful-dnd";
+import { DroppableArea } from "../components/ui";
+import { useState } from "react";
+import ThePrecept from "../components/ThePrecept";
 
-const PreceptsContainer = styled.div`
-  padding: 1rem;
-`;
-
-const PreceptsTitle = styled.h1`
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-`;
-
-const PreceptsList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const PreceptItem = styled.li`
-  margin-bottom: 0.5rem;
-`;
-
-const Precepts: React.FC = () => {
-  return (
-    <PreceptsContainer>
-      <PreceptsTitle>戒律</PreceptsTitle>
-      <PreceptsList>
-        <PreceptItem>1. 不殺生</PreceptItem>
-        <PreceptItem>2. 不偷盜</PreceptItem>
-        <PreceptItem>3. 不邪淫</PreceptItem>
-        <PreceptItem>4. 不妄語</PreceptItem>
-        <PreceptItem>5. 不飲酒</PreceptItem>
-      </PreceptsList>
-    </PreceptsContainer>
-  );
+const containerStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  minHeight: '100vh',
+  padding: '2rem 0',
 };
 
-export default Precepts;
+export default function Precepts() {
+  const [precepts, setPrecepts] = useState([
+    { id: "1", content: "First" },
+    { id: "2", content: "Second" },
+    { id: "3", content: "Third" },
+    { id: "4", content: "Fourth" },
+    { id: "5", content: "Fifth" },
+  ]);
+
+  function onDragEnd(result: DropResult) {
+    if (!result.destination) {
+      return;
+    }
+
+    const items = Array.from(precepts);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setPrecepts(items);
+  }
+
+  return (
+    <div style={containerStyle}>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="precept-droppable-area">
+          {(provided: DroppableProvided) => (
+            <DroppableArea
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {precepts.map((precept, index) => (
+                <ThePrecept
+                  index={index}
+                  key={precept.id}
+                  precept={precept}
+                />
+              ))}
+              {provided.placeholder}
+            </DroppableArea>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </div>
+  );
+}
