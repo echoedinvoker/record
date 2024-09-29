@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { fetchColumn, fetchColumnOrder, fetchTasks } from "../services/tasks"
+import { deleteColumnByKey, fetchColumn, fetchColumnOrder, fetchTasks, updateColumn } from "../services/tasks"
 import { Column, Data, Done, Task } from "../types"
 import { useContext, useEffect } from "react"
 import { TasksContext } from "../context/tasksContext"
@@ -36,25 +36,42 @@ export function useTasks() {
 
       const getFormattedColumns = () => {
         const columnsMap = {} as { [key: string]: Column }
+        const columnsToUpdate: { id: number; key: string; taskOrder: string }[] = []
+        const columnsToDelete: string[] = [] // key
+
         columns.forEach((column) => {
-          const taskIds = JSON.parse(column.task_order)
-          columnsMap[column.key] = {
-            id: column.id,
-            key: column.key,
-            title: column.key,
-            taskIds: taskIds.filter((taskId: string) => taskId in formattedTasks)
+          const originalTaskIds = JSON.parse(column.task_order)
+          const filteredTaskIds = originalTaskIds.filter((taskId: string) => taskId in formattedTasks)
+
+          if (filteredTaskIds.length === 0 && !['done', '0', 'archived'].includes(column.key)) {
+            columnsToDelete.push(column.key)
+          } else {
+            columnsMap[column.key] = {
+              id: column.id,
+              key: column.key,
+              title: column.key,
+              taskIds: filteredTaskIds
+            }
+
+            if (filteredTaskIds.length !== originalTaskIds.length) {
+              columnsToUpdate.push({ id: column.id!, key: column.key, taskOrder: JSON.stringify(filteredTaskIds) })
+            }
           }
         })
-        return columnsMap
+
+        return { columnsMap, columnsToUpdate, columnsToDelete }
       }
 
-      const formattedColumns = getFormattedColumns()
+      const { columnsMap: formattedColumns, columnsToUpdate, columnsToDelete } = getFormattedColumns()
 
-      for (const key in formattedColumns) {
-        console.log(key)
-        if (formattedColumns[key].taskIds.length === 0 && !['done', '0', 'archived'].includes(key)) {
-          delete formattedColumns[key]
-        }
+      if (columnsToUpdate.length > 0) {
+        await Promise.all(columnsToUpdate.map((column) => updateColumn(
+          column.id,
+          { key: column.key, task_order: column.taskOrder })))
+      }
+
+      if (columnsToDelete.length > 0) {
+        await Promise.all(columnsToDelete.map((key) => deleteColumnByKey(key)))
       }
 
       return { tasks: formattedTasks, columns: formattedColumns, columnOrder } as Data
