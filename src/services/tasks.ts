@@ -34,6 +34,10 @@ export async function fetchColumnByKey(key: string) {
   return data as ColumnResponse
 }
 
+export async function deleteColumnByKey(key: string) {
+  await api.delete(`/columns/key/${key}`);
+}
+
 export async function createTask(request: TaskBody) {
   const body: TaskRequest = {
     key: request.key,

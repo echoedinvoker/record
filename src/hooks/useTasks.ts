@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { fetchColumn, fetchColumnOrder, fetchTasks } from "../services/tasks"
+import { deleteColumnByKey, fetchColumn, fetchColumnOrder, fetchTasks, updateColumn } from "../services/tasks"
 import { Column, Data, Done, Task } from "../types"
 import { useContext, useEffect } from "react"
 import { TasksContext } from "../context/tasksContext"
@@ -36,15 +36,15 @@ export function useTasks() {
 
       const getFormattedColumns = () => {
         const columnsMap = {} as { [key: string]: Column }
-        const columnsToUpdate: { id: number; taskOrder: string }[] = []
-        const columnsToDelete: number[] = []
+        const columnsToUpdate: { id: number; key: string; taskOrder: string }[] = []
+        const columnsToDelete: string[] = [] // key
 
         columns.forEach((column) => {
           const originalTaskIds = JSON.parse(column.task_order)
           const filteredTaskIds = originalTaskIds.filter((taskId: string) => taskId in formattedTasks)
 
           if (filteredTaskIds.length === 0 && !['done', '0', 'archived'].includes(column.key)) {
-            columnsToDelete.push(column.id)
+            columnsToDelete.push(column.key)
           } else {
             columnsMap[column.key] = {
               id: column.id,
@@ -54,7 +54,7 @@ export function useTasks() {
             }
 
             if (filteredTaskIds.length !== originalTaskIds.length) {
-              columnsToUpdate.push({ id: column.id, taskOrder: JSON.stringify(filteredTaskIds) })
+              columnsToUpdate.push({ id: column.id!, key: column.key, taskOrder: JSON.stringify(filteredTaskIds) })
             }
           }
         })
@@ -64,12 +64,14 @@ export function useTasks() {
 
       const { columnsMap: formattedColumns, columnsToUpdate, columnsToDelete } = getFormattedColumns()
 
-      // 這裡可以添加更新數據庫的邏輯
-      if (columnsToUpdate.length > 0 || columnsToDelete.length > 0) {
-        // 調用更新數據庫的函數，例如：
-        // await updateDatabaseColumns(columnsToUpdate, columnsToDelete)
-        console.log('Columns to update:', columnsToUpdate)
-        console.log('Columns to delete:', columnsToDelete)
+      if (columnsToUpdate.length > 0) {
+        await Promise.all(columnsToUpdate.map((column) => updateColumn(
+          column.id,
+          { key: column.key, task_order: column.taskOrder })))
+      }
+
+      if (columnsToDelete.length > 0) {
+        await Promise.all(columnsToDelete.map((key) => deleteColumnByKey(key)))
       }
 
       return { tasks: formattedTasks, columns: formattedColumns, columnOrder } as Data
