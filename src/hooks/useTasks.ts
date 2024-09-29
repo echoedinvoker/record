@@ -36,24 +36,40 @@ export function useTasks() {
 
       const getFormattedColumns = () => {
         const columnsMap = {} as { [key: string]: Column }
+        const columnsToUpdate: { id: number; taskOrder: string }[] = []
+        const columnsToDelete: number[] = []
+
         columns.forEach((column) => {
-          const taskIds = JSON.parse(column.task_order)
-          columnsMap[column.key] = {
-            id: column.id,
-            key: column.key,
-            title: column.key,
-            taskIds: taskIds.filter((taskId: string) => taskId in formattedTasks)
+          const originalTaskIds = JSON.parse(column.task_order)
+          const filteredTaskIds = originalTaskIds.filter((taskId: string) => taskId in formattedTasks)
+
+          if (filteredTaskIds.length === 0 && !['done', '0', 'archived'].includes(column.key)) {
+            columnsToDelete.push(column.id)
+          } else {
+            columnsMap[column.key] = {
+              id: column.id,
+              key: column.key,
+              title: column.key,
+              taskIds: filteredTaskIds
+            }
+
+            if (filteredTaskIds.length !== originalTaskIds.length) {
+              columnsToUpdate.push({ id: column.id, taskOrder: JSON.stringify(filteredTaskIds) })
+            }
           }
         })
-        return columnsMap
+
+        return { columnsMap, columnsToUpdate, columnsToDelete }
       }
 
-      const formattedColumns = getFormattedColumns()
+      const { columnsMap: formattedColumns, columnsToUpdate, columnsToDelete } = getFormattedColumns()
 
-      for (const key in formattedColumns) {
-        if (formattedColumns[key].taskIds.length === 0 && !['done', '0', 'archived'].includes(key)) {
-          delete formattedColumns[key]
-        }
+      // 這裡可以添加更新數據庫的邏輯
+      if (columnsToUpdate.length > 0 || columnsToDelete.length > 0) {
+        // 調用更新數據庫的函數，例如：
+        // await updateDatabaseColumns(columnsToUpdate, columnsToDelete)
+        console.log('Columns to update:', columnsToUpdate)
+        console.log('Columns to delete:', columnsToDelete)
       }
 
       return { tasks: formattedTasks, columns: formattedColumns, columnOrder } as Data
