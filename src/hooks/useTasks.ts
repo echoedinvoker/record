@@ -13,7 +13,7 @@ export function useTasks() {
       const promiseFetchColumn = fetchColumn()
       const promiseFetchColumnOrder = fetchColumnOrder()
       const [tasks, columns, columnOrder] = await Promise.all([promiseFetchTasks, promiseFetchColumn, promiseFetchColumnOrder])
-      const formattedTasks = () => {
+      const getFormattedTasks = () => {
         const tasksMap = {} as { [key: string]: Task | Done }
         tasks.forEach((task) => {
           tasksMap[task.key] = {
@@ -31,19 +31,33 @@ export function useTasks() {
         })
         return tasksMap
       }
-      const formattedColumns = () => {
+
+      const formattedTasks = getFormattedTasks()
+
+      const getFormattedColumns = () => {
         const columnsMap = {} as { [key: string]: Column }
         columns.forEach((column) => {
+          const taskIds = JSON.parse(column.task_order)
           columnsMap[column.key] = {
             id: column.id,
             key: column.key,
             title: column.key,
-            taskIds: JSON.parse(column.task_order)
+            taskIds: taskIds.filter((taskId: string) => taskId in formattedTasks)
           }
         })
         return columnsMap
       }
-      return { tasks: formattedTasks(), columns: formattedColumns(), columnOrder } as Data
+
+      const formattedColumns = getFormattedColumns()
+
+      for (const key in formattedColumns) {
+        console.log(key)
+        if (formattedColumns[key].taskIds.length === 0 && !['done', '0', 'archived'].includes(key)) {
+          delete formattedColumns[key]
+        }
+      }
+
+      return { tasks: formattedTasks, columns: formattedColumns, columnOrder } as Data
     }
   })
 
