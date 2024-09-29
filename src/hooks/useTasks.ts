@@ -51,7 +51,6 @@ export function useTasks() {
       const formattedColumns = getFormattedColumns()
 
       for (const key in formattedColumns) {
-        console.log(key)
         if (formattedColumns[key].taskIds.length === 0 && !['done', '0', 'archived'].includes(key)) {
           delete formattedColumns[key]
         }
