@@ -13,25 +13,7 @@ export function useTasks() {
       const promiseFetchColumn = fetchColumn()
       const promiseFetchColumnOrder = fetchColumnOrder()
       const [tasks, columns, columnOrder] = await Promise.all([promiseFetchTasks, promiseFetchColumn, promiseFetchColumnOrder])
-      const formattedTasks = () => {
-        const tasksMap = {} as { [key: string]: Task | Done }
-        tasks.forEach((task) => {
-          tasksMap[task.key] = {
-            id: task.id,
-            key: task.key,
-            task: task.name,
-            estimatedDuration: task.estimated_duration,
-            timestamp: task.start_timestamp,
-            timestampSum: task.consume_timestamp,
-            markdownContent: task.markdown_content
-          }
-          if (tasksMap[task.key].timestampSum) {
-            (tasksMap[task.key] as Done).efficiency = tasksMap[task.key].estimatedDuration / (tasksMap[task.key] as Done).timestampSum
-          }
-        })
-        return tasksMap
-      }
-      const formattedTasks = () => {
+      const getFormattedTasks = () => {
         const tasksMap = {} as { [key: string]: Task | Done }
         tasks.forEach((task) => {
           tasksMap[task.key] = {
@@ -50,9 +32,9 @@ export function useTasks() {
         return tasksMap
       }
 
-      const formattedTasks = formattedTasks()
+      const formattedTasks = getFormattedTasks()
 
-      const formattedColumns = () => {
+      const getFormattedColumns = () => {
         const columnsMap = {} as { [key: string]: Column }
         columns.forEach((column) => {
           const taskIds = JSON.parse(column.task_order)
@@ -65,7 +47,17 @@ export function useTasks() {
         })
         return columnsMap
       }
-      return { tasks: formattedTasks, columns: formattedColumns(), columnOrder } as Data
+
+      const formattedColumns = getFormattedColumns()
+
+      for (const key in formattedColumns) {
+        console.log(key)
+        if (formattedColumns[key].taskIds.length === 0 && !['done', '0', 'archived'].includes(key)) {
+          delete formattedColumns[key]
+        }
+      }
+
+      return { tasks: formattedTasks, columns: formattedColumns, columnOrder } as Data
     }
   })
 
