@@ -81,7 +81,7 @@ export default function HopeTree({ hope }: HopeTreeProps) {
               {hours}
             </NodeCircleText>
           </g>
-          <foreignObject x={-60} y={radius + 10} width={120} height={120}>
+          <foreignObject x={-60} y={radius + 10} width={120} height={150}>
             <NodeInfoContainer onClick={() => toggleSelectHope(nodeDatum.key)}>
               <NodeName>{nodeDatum.name}</NodeName>
               {nodeDatum.attributes && (
@@ -124,6 +124,8 @@ export default function HopeTree({ hope }: HopeTreeProps) {
         renderCustomNodeElement={renderCustomNodeElement}
         translate={{ x: 100, y: 100 }}
         ref={treeRef}
+        separation={{ siblings: 1, nonSiblings: 2 }}
+        nodeSize={{ x: 200, y: 200 }}
       />
       <DragHandle onDrag={handleDrag} />
     </TreeContainer>
@@ -199,6 +201,9 @@ const NodeInfoContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 0.1em;
+  max-height: 140px;
+  overflow-y: auto;
+  padding: 5px;
 `;
 
 const NodeGroup = styled.g`
