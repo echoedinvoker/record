@@ -6,7 +6,7 @@ import { ModalHopeContext } from "../context/modalHopeContext";
 import { BookOpen, CircleMinus, CirclePlus } from "lucide-react";
 import { HopesContext } from "../context/hopesContext";
 import { EditorHopeContext } from "../context/editorHopeContext";
-import { convertMillisecondsToHMS } from "../utils";
+import { convertMillisecondsToHMS, getHMSNumbersFromMilliseconds } from "../utils";
 
 interface HopeTreeProps {
   hope: HopeMapValue;
@@ -59,11 +59,29 @@ export default function HopeTree({ hope }: HopeTreeProps) {
       }
     }
 
+    const estimatedDuration = nodeDatum.attributes?.estimatedDurationSum || 0;
+    const { hours } = getHMSNumbersFromMilliseconds(estimatedDuration);
+    const radius = Math.max(10, Math.min(30, 10 + hours));
+    
     return (
       <>
         <NodeGroup>
-          <NodeCircle r={10} onClick={handleClickCircle} $isSelected={selectedHope === nodeDatum.key} />
-          <foreignObject x={-50} y={10} width={120} height={120}>
+          <g onClick={handleClickCircle}>
+            <NodeCircle 
+              r={radius} 
+              $isSelected={selectedHope === nodeDatum.key}
+            />
+            <NodeCircleText
+              x="0"
+              y="0"
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize={`${radius * 0.8}px`}
+            >
+              {hours}
+            </NodeCircleText>
+          </g>
+          <foreignObject x={-60} y={radius + 10} width={120} height={150}>
             <NodeInfoContainer onClick={() => toggleSelectHope(nodeDatum.key)}>
               <NodeName>{nodeDatum.name}</NodeName>
               {nodeDatum.attributes && (
@@ -106,6 +124,8 @@ export default function HopeTree({ hope }: HopeTreeProps) {
         renderCustomNodeElement={renderCustomNodeElement}
         translate={{ x: 100, y: 100 }}
         ref={treeRef}
+        separation={{ siblings: 1, nonSiblings: 2 }}
+        nodeSize={{ x: 200, y: 200 }}
       />
       <DragHandle onDrag={handleDrag} />
     </TreeContainer>
@@ -181,6 +201,9 @@ const NodeInfoContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 0.1em;
+  max-height: 140px;
+  overflow-y: auto;
+  padding: 5px;
 `;
 
 const NodeGroup = styled.g`
@@ -191,6 +214,12 @@ const NodeCircle = styled.circle<{ $isSelected: boolean }>`
   fill: ${props => props.$isSelected ? "#c0c0c0" : "#fff"};
   stroke: #000;
   stroke-width: 1.5px;
+`;
+
+const NodeCircleText = styled.text`
+  pointer-events: none;
+  user-select: none;
+  font-weight: bold;
 `;
 
 const TreeContainer = styled.div`
