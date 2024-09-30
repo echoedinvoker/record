@@ -6,7 +6,7 @@ import { ModalHopeContext } from "../context/modalHopeContext";
 import { BookOpen, CircleMinus, CirclePlus } from "lucide-react";
 import { HopesContext } from "../context/hopesContext";
 import { EditorHopeContext } from "../context/editorHopeContext";
-import { convertMillisecondsToHMS } from "../utils";
+import { convertMillisecondsToHMS, getHMSNumbersFromMilliseconds } from "../utils";
 
 interface HopeTreeProps {
   hope: HopeMapValue;
@@ -59,11 +59,21 @@ export default function HopeTree({ hope }: HopeTreeProps) {
       }
     }
 
+    const estimatedDuration = nodeDatum.attributes?.estimatedDurationSum || 0;
+    const { hours, minutes } = getHMSNumbersFromMilliseconds(estimatedDuration);
+    const radius = Math.max(10, Math.min(30, 10 + hours + minutes / 60));
+    
     return (
       <>
         <NodeGroup>
-          <NodeCircle r={10} onClick={handleClickCircle} $isSelected={selectedHope === nodeDatum.key} />
-          <foreignObject x={-50} y={10} width={120} height={120}>
+          <NodeCircle 
+            r={radius} 
+            onClick={handleClickCircle} 
+            $isSelected={selectedHope === nodeDatum.key}
+          >
+            <NodeCircleText>{convertMillisecondsToHMS(estimatedDuration)}</NodeCircleText>
+          </NodeCircle>
+          <foreignObject x={-60} y={radius + 10} width={120} height={120}>
             <NodeInfoContainer onClick={() => toggleSelectHope(nodeDatum.key)}>
               <NodeName>{nodeDatum.name}</NodeName>
               {nodeDatum.attributes && (
@@ -191,6 +201,13 @@ const NodeCircle = styled.circle<{ $isSelected: boolean }>`
   fill: ${props => props.$isSelected ? "#c0c0c0" : "#fff"};
   stroke: #000;
   stroke-width: 1.5px;
+`;
+
+const NodeCircleText = styled.text`
+  font-size: 8px;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
 `;
 
 const TreeContainer = styled.div`
