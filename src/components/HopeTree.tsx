@@ -60,8 +60,8 @@ export default function HopeTree({ hope }: HopeTreeProps) {
     }
 
     const estimatedDuration = nodeDatum.attributes?.estimatedDurationSum || 0;
-    const { hours, minutes } = getHMSNumbersFromMilliseconds(estimatedDuration);
-    const radius = Math.max(10, Math.min(30, 10 + hours + minutes / 60));
+    const { hours } = getHMSNumbersFromMilliseconds(estimatedDuration);
+    const radius = Math.max(10, Math.min(30, 10 + hours));
     
     return (
       <>
@@ -76,9 +76,9 @@ export default function HopeTree({ hope }: HopeTreeProps) {
               y="0"
               textAnchor="middle"
               dominantBaseline="central"
-              fontSize="8px"
+              fontSize={`${radius * 0.8}px`}
             >
-              {convertMillisecondsToHMS(estimatedDuration)}
+              {hours}
             </NodeCircleText>
           </g>
           <foreignObject x={-60} y={radius + 10} width={120} height={120}>
@@ -214,6 +214,7 @@ const NodeCircle = styled.circle<{ $isSelected: boolean }>`
 const NodeCircleText = styled.text`
   pointer-events: none;
   user-select: none;
+  font-weight: bold;
 `;
 
 const TreeContainer = styled.div`
