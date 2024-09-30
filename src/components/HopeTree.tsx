@@ -66,13 +66,21 @@ export default function HopeTree({ hope }: HopeTreeProps) {
     return (
       <>
         <NodeGroup>
-          <NodeCircle 
-            r={radius} 
-            onClick={handleClickCircle} 
-            $isSelected={selectedHope === nodeDatum.key}
-          >
-            <NodeCircleText>{convertMillisecondsToHMS(estimatedDuration)}</NodeCircleText>
-          </NodeCircle>
+          <g onClick={handleClickCircle}>
+            <NodeCircle 
+              r={radius} 
+              $isSelected={selectedHope === nodeDatum.key}
+            />
+            <NodeCircleText
+              x="0"
+              y="0"
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize="8px"
+            >
+              {convertMillisecondsToHMS(estimatedDuration)}
+            </NodeCircleText>
+          </g>
           <foreignObject x={-60} y={radius + 10} width={120} height={120}>
             <NodeInfoContainer onClick={() => toggleSelectHope(nodeDatum.key)}>
               <NodeName>{nodeDatum.name}</NodeName>
@@ -204,10 +212,8 @@ const NodeCircle = styled.circle<{ $isSelected: boolean }>`
 `;
 
 const NodeCircleText = styled.text`
-  font-size: 8px;
-  text-anchor: middle;
-  dominant-baseline: central;
   pointer-events: none;
+  user-select: none;
 `;
 
 const TreeContainer = styled.div`
