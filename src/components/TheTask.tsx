@@ -1,13 +1,12 @@
 import styled from "styled-components";
 import { Task as TypeTask } from "../types";
-import { ContentWrapper, Task, TopRightCorner } from "./ui";
+import { Task, TopRightCorner } from "./ui";
 import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils";
 import { useContext, useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
 import { Draggable, DraggableProvided } from "react-beautiful-dnd";
 import { ArrowBigLeft, ArrowBigRight, X, FileText, Play } from 'lucide-react';
 import TaskNameContainer from "./ui/TaskNameContainer";
-import { Value } from "./ui/Form";
 import { TasksContext } from "../context/tasksContext";
 import { DayContext } from "../context/dayContext";
 import ReactMarkdown from 'react-markdown';
