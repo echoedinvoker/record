@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { Task as TypeTask } from "../types";
-import { CircleButton, ContentWrapper, Task, TaskContents, TextButton, TopRightCorner } from "./ui";
+import { ContentWrapper, Task, TopRightCorner } from "./ui";
 import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils";
 import { useContext, useState } from "react";
 import EditMarkdownModal from "./EditMardownModal";
 import { Draggable, DraggableProvided } from "react-beautiful-dnd";
-import { ArrowBigLeft, ArrowBigRight, X } from 'lucide-react';
+import { ArrowBigLeft, ArrowBigRight, X, FileText, Play } from 'lucide-react';
 import TaskNameContainer from "./ui/TaskNameContainer";
 import { Value } from "./ui/Form";
 import { TasksContext } from "../context/tasksContext";
@@ -92,44 +92,37 @@ export default function TheTask({ index, task }: Props) {
                 </ReactMarkdownContainer>
               )}
             </TaskNameContainer>
-            <TaskContents>
-              <TaskActions>
-                <CircleButton onClick={() => setShowModal(true)}>
-                  <ContentWrapper>
-                    &#128196;
-                  </ContentWrapper>
-                </CircleButton>
-                {parseInt(day) > 0 &&
-                  <CircleButton onClick={handleAdvance}>
-                    <ContentWrapper $offsetY="-1px">
-                      <ArrowBigLeft size={24} />
-                    </ContentWrapper>
-                  </CircleButton>}
-                <CircleButton onClick={handleDelay}>
-                  <ContentWrapper $offsetY="-1px">
-                    <ArrowBigRight size={24} />
-                  </ContentWrapper>
-                </CircleButton>
-              </TaskActions>
-              <PairValueContainer onClick={toggleEditEstimatedDuration}>
+            <TopRightCorner>
+              <ActionButton onClick={() => setShowModal(true)}>
+                <FileText size={16} />
+              </ActionButton>
+              {parseInt(day) > 0 && (
+                <ActionButton onClick={handleAdvance}>
+                  <ArrowBigLeft size={16} />
+                </ActionButton>
+              )}
+              <ActionButton onClick={handleDelay}>
+                <ArrowBigRight size={16} />
+              </ActionButton>
+              <EstimatedDuration onClick={toggleEditEstimatedDuration}>
                 {isEditingEstimatedDuration ? (
                   <CodeMirrorContainer>
                     <MyCodeMirrorComponent initialValue={estimatedDurationHMS} handleSave={handleEstimatedDurationSave} />
                   </CodeMirrorContainer>
                 ) : (
-                  <Value>{convertMillisecondsToHMS(task.estimatedDuration)}</Value>
+                  convertMillisecondsToHMS(task.estimatedDuration)
                 )}
-              </PairValueContainer>
-              <TaskTimer>
-                <TextButton
-                  onClick={() => startTask(task.key)}>
-                  <ContentWrapper $size="1.5em" $weight="bold" $offsetY="-2px">
-                    {!task.timestampSum ? 'Start' : convertMillisecondsToHMS(task.timestampSum + (task.timestamp ? Date.now() - task.timestamp : 0))}
-                  </ContentWrapper>
-                </TextButton>
-              </TaskTimer>
-            </TaskContents>
-            <TopRightCorner onClick={handleDeteteTask}><X /></TopRightCorner>
+              </EstimatedDuration>
+              <ActionButton onClick={() => startTask(task.key)}>
+                <Play size={16} />
+                <TimerDisplay>
+                  {!task.timestampSum ? 'Start' : convertMillisecondsToHMS(task.timestampSum + (task.timestamp ? Date.now() - task.timestamp : 0))}
+                </TimerDisplay>
+              </ActionButton>
+              <ActionButton onClick={handleDeteteTask}>
+                <X size={16} />
+              </ActionButton>
+            </TopRightCorner>
           </Task >
         )}
       </Draggable>
@@ -143,31 +136,31 @@ const CodeMirrorContainer = styled.div`
   color: black;
   width: 70%;
   height: 100%;
-  margin-top: 1.5em;
 `
 
 const ReactMarkdownContainer = styled.div`
   margin-left: 1.5em;
 `
 
-
-const PairValueContainer = styled.div`
-  flex: 1;
+const ActionButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
+  padding: 4px;
+  color: inherit;
+  &:hover {
+    opacity: 0.7;
+  }
 `
 
-const TaskActions = styled.div`
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    align-items: center;
-    gap: .5em;
-  `
+const EstimatedDuration = styled.span`
+  margin: 0 8px;
+  cursor: pointer;
+`
 
-const TaskTimer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
+const TimerDisplay = styled.span`
+  margin-left: 4px;
+  font-size: 0.8em;
 `
