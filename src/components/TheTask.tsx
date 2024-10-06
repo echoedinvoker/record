@@ -111,7 +111,7 @@ export default function TheTask({ index, task }: Props) {
                     <MyCodeMirrorComponent initialValue={estimatedDurationHMS} handleSave={handleEstimatedDurationSave} />
                   </CodeMirrorContainer>
                 ) : (
-                  <span onClick={toggleEditEstimatedDuration}>
+                  <span onClick={toggleEditEstimatedDuration} style={{ paddingRight: '8px' }}>
                     {convertMillisecondsToHMS(task.estimatedDuration)}
                   </span>
                 )}
@@ -188,6 +188,7 @@ const EstimatedDuration = styled.span`
   ${CodeMirrorContainer} {
     width: 80px;
     min-height: 30px;
+    margin-right: 8px;  // Add some space to the right of the CodeMirrorContainer
   }
 `
 
