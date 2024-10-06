@@ -113,8 +113,9 @@ export default function Done({ index, task }: Props) {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             isDragging={snapshot.isDragging}
+            isEditing={isEditingTaskName}
           >
-            <TaskNameContainer onClick={toggleEditTaskName}>
+            <TaskNameContainer onClick={toggleEditTaskName} style={{ width: '100%' }}>
               {isEditingTaskName ? (
                 <CodeMirrorContainer>
                   <MyCodeMirrorComponent
@@ -228,9 +229,17 @@ const Select = styled.select`
 
 const CodeMirrorContainer = styled.div`
   color: black;
-  width: 70%;
+  width: 100%;
   height: 100%;
-  margin-top: 1.5em;
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: inherit;
+  border-radius: inherit;
+  box-sizing: border-box;
 `
 
 const ReactMarkdownContainer = styled.div`
@@ -264,10 +273,18 @@ const EfficiencyDisplay = styled.span`
   margin: 0 8px;
 `
 
-const DraggableTask = styled(Task) <{ isDragging: boolean }>`
+const DraggableTask = styled(Task) <{ isDragging: boolean; isEditing: boolean }>`
   ${({ isDragging }) =>
     isDragging &&
     css`
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+    `}
+  position: relative;
+  ${({ isEditing }) =>
+    isEditing &&
+    css`
+      & > *:not(${TaskNameContainer}) {
+        visibility: hidden;
+      }
     `}
 `

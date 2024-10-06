@@ -78,6 +78,7 @@ export default function TheTask({ index, task }: Props) {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             isDragging={snapshot.isDragging}
+            isEditing={isEditingTaskName}
           >
             <TaskNameContainer onClick={toggleEditTaskName}>
               {isEditingTaskName ? (
@@ -105,13 +106,15 @@ export default function TheTask({ index, task }: Props) {
               <ActionButton onClick={handleDelay}>
                 <ArrowBigRight size={16} />
               </ActionButton>
-              <EstimatedDuration onClick={toggleEditEstimatedDuration}>
+              <EstimatedDuration>
                 {isEditingEstimatedDuration ? (
                   <CodeMirrorContainer>
                     <MyCodeMirrorComponent initialValue={estimatedDurationHMS} handleSave={handleEstimatedDurationSave} />
                   </CodeMirrorContainer>
                 ) : (
-                  convertMillisecondsToHMS(task.estimatedDuration)
+                  <span onClick={toggleEditEstimatedDuration} style={{ paddingRight: '8px' }}>
+                    {convertMillisecondsToHMS(task.estimatedDuration)}
+                  </span>
                 )}
               </EstimatedDuration>
               <ActionButton onClick={() => task.timestamp ? pauseTask(task.key) : startTask(task.key)}>
@@ -138,8 +141,17 @@ export default function TheTask({ index, task }: Props) {
 
 const CodeMirrorContainer = styled.div`
   color: black;
-  width: 70%;
+  width: 100%;
   height: 100%;
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: inherit;
+  border-radius: inherit;
+  box-sizing: border-box;
 `
 
 interface RunningTimerProps {
@@ -162,6 +174,7 @@ function RunningTimer({ task }: RunningTimerProps) {
 
 const ReactMarkdownContainer = styled.div`
   margin-left: 1.5em;
+  width: 100%;
 `
 
 const ActionButton = styled.button`
@@ -187,10 +200,18 @@ const TimerDisplay = styled.span`
   font-size: 0.8em;
 `
 
-const DraggableTask = styled(Task) <{ isDragging: boolean }>`
+const DraggableTask = styled(Task) <{ isDragging: boolean; isEditing: boolean }>`
   ${({ isDragging }) =>
     isDragging &&
     css`
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+    `}
+  position: relative;
+  ${({ isEditing }) =>
+    isEditing &&
+    css`
+      & > *:not(${TaskNameContainer}) {
+        visibility: hidden;
+      }
     `}
 `
