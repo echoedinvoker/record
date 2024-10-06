@@ -1,7 +1,27 @@
 import api from ".";
 
-// 定義 Precept 介面
+export interface Threshold {
+  threshold: number;
+  multiplier: number;
+}
+
 export interface Precept {
+  key: string;
+  startEndTimes: [number, number];
+  baseMultiplier: number;
+  thresholds: Threshold[];
+  hopeKey: string;
+}
+
+export interface PreceptRequest {
+  key: string;
+  start_end_times: string;
+  base_multiplier: number;
+  thresholds: string;
+  hope_key: string;
+}
+
+export interface PreceptResponse {
   id?: number;
   key: string;
   start_end_times: string;
@@ -10,40 +30,66 @@ export interface Precept {
   hope_key: string;
 }
 
-// 獲取所有 Precepts
 export const getAllPrecepts = async (): Promise<Precept[]> => {
-  const response = await api.get(`/precepts`);
-  return response.data;
+  const response: { data: PreceptResponse[] } = await api.get(`/precepts`)
+  return response.data.map((precept) => ({
+    key: precept.key,
+    startEndTimes: precept.start_end_times.split(',').map(Number) as [number, number],
+    baseMultiplier: precept.base_multiplier,
+    thresholds: JSON.parse(precept.thresholds) as Threshold[],
+    hopeKey: precept.hope_key,
+  }));
 };
 
-// 獲取單個 Precept
 export const getPrecept = async (id: number): Promise<Precept> => {
-  const response = await api.get(`/precepts/${id}`);
+  const response: { data: PreceptResponse } = await api.get(`/precepts/${id}`);
+  return {
+    key: response.data.key,
+    startEndTimes: response.data.start_end_times.split(',').map(Number) as [number, number],
+    baseMultiplier: response.data.base_multiplier,
+    thresholds: JSON.parse(response.data.thresholds) as Threshold[],
+    hopeKey: response.data.hope_key,
+  };
+};
+
+export const createPrecept = async (precept: Precept): Promise<{ id: number }> => {
+  const payload: PreceptRequest = {
+    key: precept.key,
+    start_end_times: precept.startEndTimes.join(','),
+    base_multiplier: precept.baseMultiplier,
+    thresholds: JSON.stringify(precept.thresholds),
+    hope_key: precept.hopeKey,
+  };
+  const response: { data: { id: number } } = await api.post(`/precepts`, payload);
   return response.data;
 };
 
-// 創建新的 Precept
-export const createPrecept = async (precept: Omit<Precept, 'id'>): Promise<{ id: number }> => {
-  const response = await api.post(`/precepts`, precept);
-  return response.data;
+export const updatePrecept = async (id: number, precept: Precept): Promise<void> => {
+  const payload: PreceptRequest = {
+    key: precept.key,
+    start_end_times: precept.startEndTimes.join(','),
+    base_multiplier: precept.baseMultiplier,
+    thresholds: JSON.stringify(precept.thresholds),
+    hope_key: precept.hopeKey,
+  };
+  await api.put(`/precepts/${id}`, payload);
 };
 
-// 更新 Precept
-export const updatePrecept = async (id: number, precept: Omit<Precept, 'id'>): Promise<void> => {
-  await api.put(`/precepts/${id}`, precept);
-};
-
-// 刪除 Precept
 export const deletePrecept = async (id: number): Promise<void> => {
   await api.delete(`/precepts/${id}`);
 };
 
-// 根據 key 刪除 Precept
 export const deletePreceptByKey = async (key: string): Promise<void> => {
   await api.delete(`/precepts/key/${key}`);
 };
 
-// 根據 key 更新 Precept
-export const updatePreceptByKey = async (key: string, precept: Omit<Precept, 'id'>): Promise<void> => {
-  await api.put(`/precepts/key/${key}`, precept);
+export const updatePreceptByKey = async (key: string, precept: Precept): Promise<void> => {
+  const payload: PreceptRequest = {
+    key: precept.key,
+    start_end_times: precept.startEndTimes.join(','),
+    base_multiplier: precept.baseMultiplier,
+    thresholds: JSON.stringify(precept.thresholds),
+    hope_key: precept.hopeKey,
+  };
+  await api.put(`/precepts/key/${key}`, payload);
 };
