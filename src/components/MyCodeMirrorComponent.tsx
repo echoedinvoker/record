@@ -51,7 +51,7 @@ export default MyCodeMirrorComponent;
 
 const View = styled.div`
   font-size: 1.3em;
-  width: 120%;
+  width: 100%;
   color: black;
   background-color: white;
   border-radius: 5px;

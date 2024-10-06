@@ -143,7 +143,7 @@ const CodeMirrorContainer = styled.div`
   color: black;
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   right: 0;
@@ -151,7 +151,6 @@ const CodeMirrorContainer = styled.div`
   z-index: 10;
   background-color: inherit;
   border-radius: inherit;
-  padding: 8px;
   box-sizing: border-box;
 `
 
@@ -200,7 +199,6 @@ const EstimatedDuration = styled.span`
   ${CodeMirrorContainer} {
     width: 80px;
     min-height: 30px;
-    margin-right: 8px;  // Add some space to the right of the CodeMirrorContainer
   }
 `
 
