@@ -193,13 +193,6 @@ const ActionButton = styled.button`
 const EstimatedDuration = styled.span`
   margin: 0 8px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-
-  ${CodeMirrorContainer} {
-    width: 80px;
-    min-height: 30px;
-  }
 `
 
 const TimerDisplay = styled.span`
