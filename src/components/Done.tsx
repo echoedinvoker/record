@@ -113,6 +113,7 @@ export default function Done({ index, task }: Props) {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             isDragging={snapshot.isDragging}
+            isEditing={isEditingTaskName}
           >
             <TaskNameContainer onClick={toggleEditTaskName}>
               {isEditingTaskName ? (
@@ -264,10 +265,18 @@ const EfficiencyDisplay = styled.span`
   margin: 0 8px;
 `
 
-const DraggableTask = styled(Task) <{ isDragging: boolean }>`
+const DraggableTask = styled(Task) <{ isDragging: boolean; isEditing: boolean }>`
   ${({ isDragging }) =>
     isDragging &&
     css`
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+    `}
+  position: relative;
+  ${({ isEditing }) =>
+    isEditing &&
+    css`
+      & > *:not(${TaskNameContainer}) {
+        visibility: hidden;
+      }
     `}
 `
