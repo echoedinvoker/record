@@ -115,7 +115,7 @@ export default function TheTask({ index, task }: Props) {
               <ActionButton onClick={() => task.timestamp ? pauseTask(task.key) : startTask(task.key)}>
                 {task.timestamp ? <Pause size={16} /> : <Play size={16} />}
                 <TimerDisplay>
-                  {task.timestamp ? 
+                  {task.timestamp ?
                     <RunningTimer task={task} /> :
                     (!task.timestampSum ? 'Start' : convertMillisecondsToHMS(task.timestampSum))
                   }

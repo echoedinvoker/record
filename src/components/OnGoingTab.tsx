@@ -1,10 +1,9 @@
-import React, { useRef, useState, forwardRef, useContext } from 'react';
+import React, { useRef, useState, forwardRef } from 'react';
 import FormAddTask from './FormAddTask';
 import TheHeader from './TheHeader';
 import Tasks, { TasksRef } from './Tasks';
 import styled from 'styled-components';
 import DoneList, { DoneListRef } from './DoneList';
-import { TasksContext } from '../context/tasksContext';
 
 
 interface Props { }
