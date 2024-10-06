@@ -1,6 +1,5 @@
 import React, { useRef, useState, forwardRef, useContext } from 'react';
 import FormAddTask from './FormAddTask';
-import TheTimer from './TheTimer';
 import TheHeader from './TheHeader';
 import Tasks, { TasksRef } from './Tasks';
 import styled from 'styled-components';
@@ -26,7 +25,6 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({ }, ref) => {
     doneListRef
   }));
 
-  const { runningTask } = useContext(TasksContext);
 
   return (
     <>
@@ -38,7 +36,6 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({ }, ref) => {
         </Columns>
       </Container>
       {showModal && <FormAddTask setShowModal={setShowModal} />}
-      {runningTask && <TheTimer task={runningTask} />}
     </>
   );
 });

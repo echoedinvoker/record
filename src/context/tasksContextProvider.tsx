@@ -87,10 +87,30 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
 
   function startTask(taskKey: string) {
     const task = data.tasks[taskKey] as Task
-    if (!task) return
+    if (!task || task.timestamp) return
     const newTask = {
       ...task,
       timestamp: Date.now()
+    }
+    const newData = {
+      ...data,
+      tasks: {
+        ...data.tasks,
+        [taskKey]: newTask
+      }
+    }
+    mutateSaveTask.mutate({ data: newData, taskKey })
+    setData(newData)
+  }
+
+  function pauseTask(taskKey: string) {
+    const task = data.tasks[taskKey] as Task
+    if (!task || !task.timestamp) return
+    const newTimestampSum = task.timestampSum + (Date.now() - task.timestamp)
+    const newTask = {
+      ...task,
+      timestamp: null,
+      timestampSum: newTimestampSum
     }
     const newData = {
       ...data,
@@ -391,7 +411,8 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
     getTotalElapsedDurationOfOneDay,
     moveTaskToOtherColumn,
     doneToArchive,
-    isPending
+    isPending,
+    pauseTask
   }
 
 
