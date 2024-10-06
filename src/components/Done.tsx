@@ -1,12 +1,11 @@
 import styled from "styled-components"
 import { Hope, Done as TypeDone } from "../types"
-import { CircleButton, ContentWrapper, ModalContainer, ModalOverlay, Task, TaskContents, TaskNameContainer, TextButton, TopRightCorner } from "./ui"
+import { ModalContainer, ModalOverlay, Task, TaskNameContainer, TextButton, TopRightCorner } from "./ui"
 import { useContext, useState } from "react"
 import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils"
 import EditMarkdownModal from "./EditMardownModal"
 import { Draggable, DraggableProvided } from "react-beautiful-dnd"
-import { Value } from "./ui/Form"
-import { ArrowBigLeft, ArrowBigRight, X, FileText, Archive } from 'lucide-react'
+import { X, FileText, Archive } from 'lucide-react'
 import { TasksContext } from "../context/tasksContext"
 import MyCodeMirrorComponent from "./MyCodeMirrorComponent"
 import ReactMarkdown from 'react-markdown';
