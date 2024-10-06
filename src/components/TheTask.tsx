@@ -1,6 +1,7 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Task as TypeTask } from "../types";
-import { Task, TopRightCorner } from "./ui";
+import { TopRightCorner } from "./ui";
+import Task from "./ui/Task";
 import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils";
 import { useContext, useState, useEffect } from "react";
 import EditMarkdownModal from "./EditMardownModal";
@@ -71,11 +72,12 @@ export default function TheTask({ index, task }: Props) {
   return (
     <>
       <Draggable draggableId={task.key} index={index}>
-        {(provided: DraggableProvided) => (
-          <Task
+        {(provided: DraggableProvided, snapshot) => (
+          <DraggableTask
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
+            isDragging={snapshot.isDragging}
           >
             <TaskNameContainer onClick={toggleEditTaskName}>
               {isEditingTaskName ? (
@@ -125,7 +127,7 @@ export default function TheTask({ index, task }: Props) {
                 <X size={16} />
               </ActionButton>
             </TopRightCorner>
-          </Task >
+          </DraggableTask>
         )}
       </Draggable>
       {showModal && <EditMarkdownModal task={task} setShowModal={setShowModal} />
@@ -183,4 +185,12 @@ const EstimatedDuration = styled.span`
 const TimerDisplay = styled.span`
   margin-left: 4px;
   font-size: 0.8em;
+`
+
+const DraggableTask = styled(Task) <{ isDragging: boolean }>`
+  ${({ isDragging }) =>
+    isDragging &&
+    css`
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+    `}
 `

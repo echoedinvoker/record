@@ -1,6 +1,7 @@
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import { Hope, Done as TypeDone } from "../types"
-import { ModalContainer, ModalOverlay, Task, TaskNameContainer, TextButton, TopRightCorner } from "./ui"
+import { ModalContainer, ModalOverlay, TaskNameContainer, TextButton, TopRightCorner } from "./ui"
+import Task from "./ui/Task"
 import { useContext, useState } from "react"
 import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils"
 import EditMarkdownModal from "./EditMardownModal"
@@ -106,11 +107,12 @@ export default function Done({ index, task }: Props) {
   return (
     <>
       <Draggable draggableId={task.key} index={index}>
-        {(provided: DraggableProvided) => (
-          <Task
+        {(provided: DraggableProvided, snapshot) => (
+          <DraggableTask
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
+            isDragging={snapshot.isDragging}
           >
             <TaskNameContainer onClick={toggleEditTaskName}>
               {isEditingTaskName ? (
@@ -158,7 +160,7 @@ export default function Done({ index, task }: Props) {
                 <X size={16} />
               </ActionButton>
             </TopRightCorner>
-          </Task>
+          </DraggableTask>
         )}
       </Draggable>
       {showModal && <EditMarkdownModal task={task} setShowModal={setShowModal} />}
@@ -260,4 +262,12 @@ const ElapsedDuration = styled.span`
 
 const EfficiencyDisplay = styled.span`
   margin: 0 8px;
+`
+
+const DraggableTask = styled(Task) <{ isDragging: boolean }>`
+  ${({ isDragging }) =>
+    isDragging &&
+    css`
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+    `}
 `
