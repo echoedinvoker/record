@@ -6,7 +6,7 @@ import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils"
 import EditMarkdownModal from "./EditMardownModal"
 import { Draggable, DraggableProvided } from "react-beautiful-dnd"
 import { Value } from "./ui/Form"
-import { Archive, X } from "lucide-react"
+import { ArrowBigLeft, ArrowBigRight, X, FileText, Archive } from 'lucide-react'
 import { TasksContext } from "../context/tasksContext"
 import MyCodeMirrorComponent from "./MyCodeMirrorComponent"
 import ReactMarkdown from 'react-markdown';
@@ -127,43 +127,38 @@ export default function Done({ index, task }: Props) {
                 </ReactMarkdownContainer>
               )}
             </TaskNameContainer>
-            <TaskContents>
-              <TaskActions>
-                <CircleButton onClick={() => setShowModal(true)}>
-                  <ContentWrapper>
-                    &#128196;
-                  </ContentWrapper>
-                </CircleButton>
-                <CircleButton>
-                  <ContentWrapper onClick={handleClickArhiveBtn}>
-                    <Archive size={20} />
-                  </ContentWrapper>
-                </CircleButton>
-              </TaskActions>
-              <PairValueContainer onClick={toggleEditEstimatedDuration}>
+            <TopRightCorner>
+              <ActionButton onClick={() => setShowModal(true)}>
+                <FileText size={16} />
+              </ActionButton>
+              <ActionButton onClick={handleClickArhiveBtn}>
+                <Archive size={16} />
+              </ActionButton>
+              <EstimatedDuration onClick={toggleEditEstimatedDuration}>
                 {isEditingEstimatedDuration ? (
                   <CodeMirrorContainer>
                     <MyCodeMirrorComponent initialValue={estimatedDurationHMS} handleSave={handleEstimatedDurationSave} />
                   </CodeMirrorContainer>
                 ) : (
-                  <Value>{convertMillisecondsToHMS(task.estimatedDuration)}</Value>
+                  convertMillisecondsToHMS(task.estimatedDuration)
                 )}
-              </PairValueContainer>
-              <PairValueContainer onClick={toggleEditElapsedDuration}>
+              </EstimatedDuration>
+              <ElapsedDuration onClick={toggleEditElapsedDuration}>
                 {isEditingElapsedDuration ? (
                   <CodeMirrorContainer>
                     <MyCodeMirrorComponent initialValue={elapsedDurationHMS} handleSave={handleElapsedDurationSave} />
                   </CodeMirrorContainer>
                 ) : (
-                  <Value>{task.timestampSum ? convertMillisecondsToHMS(task.timestampSum) : 'none'}</Value>
+                  task.timestampSum ? convertMillisecondsToHMS(task.timestampSum) : 'none'
                 )}
-
-              </PairValueContainer>
-              <PairValueContainer>
-                <Value>{Math.floor(task.efficiency * 100)}%</Value>
-              </PairValueContainer>
-            </TaskContents>
-            <TopRightCorner onClick={() => deleteTask(task.key)}><X /></TopRightCorner>
+              </ElapsedDuration>
+              <EfficiencyDisplay>
+                {Math.floor(task.efficiency * 100)}%
+              </EfficiencyDisplay>
+              <ActionButton onClick={() => deleteTask(task.key)}>
+                <X size={16} />
+              </ActionButton>
+            </TopRightCorner>
           </Task>
         )}
       </Draggable>
@@ -241,17 +236,29 @@ const ReactMarkdownContainer = styled.div`
   margin-left: 1.5em;
 `
 
-const PairValueContainer = styled.div`
-  flex: 1;
+const ActionButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding: 4px;
+  color: inherit;
+  &:hover {
+    opacity: 0.7;
+  }
 `
 
+const EstimatedDuration = styled.span`
+  margin: 0 8px;
+  cursor: pointer;
+`
 
-const TaskActions = styled.div`
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: .5em;
-  `
+const ElapsedDuration = styled.span`
+  margin: 0 8px;
+  cursor: pointer;
+`
+
+const EfficiencyDisplay = styled.span`
+  margin: 0 8px;
+`
