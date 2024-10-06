@@ -186,7 +186,7 @@ const EstimatedDuration = styled.span`
   align-items: center;
 
   ${CodeMirrorContainer} {
-    width: 150px;
+    width: 80px;
     min-height: 30px;
   }
 `
