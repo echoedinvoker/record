@@ -127,7 +127,7 @@ export default function TheTask({ index, task }: Props) {
                 <X size={16} />
               </ActionButton>
             </TopRightCorner>
-          </Task >
+          </DraggableTask>
         )}
       </Draggable>
       {showModal && <EditMarkdownModal task={task} setShowModal={setShowModal} />
@@ -187,7 +187,7 @@ const TimerDisplay = styled.span`
   font-size: 0.8em;
 `
 
-const DraggableTask = styled(Task)<{ isDragging: boolean }>`
+const DraggableTask = styled(Task) <{ isDragging: boolean }>`
   ${({ isDragging }) =>
     isDragging &&
     css`
