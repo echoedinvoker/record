@@ -2,10 +2,10 @@ import styled from "styled-components";
 import { Task as TypeTask } from "../types";
 import { Task, TopRightCorner } from "./ui";
 import { convertHMStoMilliseconds, convertMillisecondsToHMS } from "../utils";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import EditMarkdownModal from "./EditMardownModal";
 import { Draggable, DraggableProvided } from "react-beautiful-dnd";
-import { ArrowBigLeft, ArrowBigRight, X, FileText, Play } from 'lucide-react';
+import { ArrowBigLeft, ArrowBigRight, X, FileText, Play, Pause } from 'lucide-react';
 import TaskNameContainer from "./ui/TaskNameContainer";
 import { TasksContext } from "../context/tasksContext";
 import { DayContext } from "../context/dayContext";
@@ -24,7 +24,7 @@ export default function TheTask({ index, task }: Props) {
   const [estimatedDurationHMS, setEstimatedDurationHMS] = useState(convertMillisecondsToHMS(task.estimatedDuration));
   const [showModal, setShowModal] = useState(false);
 
-  const { updateTask, moveTaskToOtherColumn, startTask, deleteTask } = useContext(TasksContext)
+  const { updateTask, moveTaskToOtherColumn, startTask, pauseTask, deleteTask } = useContext(TasksContext)
   const { day, setDay } = useContext(DayContext)
 
   const handleAdvance = () => {
@@ -112,10 +112,13 @@ export default function TheTask({ index, task }: Props) {
                   convertMillisecondsToHMS(task.estimatedDuration)
                 )}
               </EstimatedDuration>
-              <ActionButton onClick={() => startTask(task.key)}>
-                <Play size={16} />
+              <ActionButton onClick={() => task.timestamp ? pauseTask(task.key) : startTask(task.key)}>
+                {task.timestamp ? <Pause size={16} /> : <Play size={16} />}
                 <TimerDisplay>
-                  {!task.timestampSum ? 'Start' : convertMillisecondsToHMS(task.timestampSum + (task.timestamp ? Date.now() - task.timestamp : 0))}
+                  {task.timestamp ?
+                    <RunningTimer task={task} /> :
+                    (!task.timestampSum ? 'Start' : convertMillisecondsToHMS(task.timestampSum))
+                  }
                 </TimerDisplay>
               </ActionButton>
               <ActionButton onClick={handleDeteteTask}>
@@ -136,6 +139,24 @@ const CodeMirrorContainer = styled.div`
   width: 70%;
   height: 100%;
 `
+
+interface RunningTimerProps {
+  task: TypeTask
+}
+
+function RunningTimer({ task }: RunningTimerProps) {
+  const [elapsedTime, setElapsedTime] = useState(task.timestampSum + (Date.now() - task.timestamp!));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setElapsedTime(task.timestampSum + (Date.now() - task.timestamp!));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [task]);
+
+  return <>{convertMillisecondsToHMS(elapsedTime)}</>;
+}
 
 const ReactMarkdownContainer = styled.div`
   margin-left: 1.5em;

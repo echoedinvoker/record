@@ -18,6 +18,7 @@ interface TaskContextType {
   moveTaskToOtherColumn: (taskKey: string, destinationColumnKey: string) => void;
   doneToArchive: (taskKey: string) => void;
   isPending: boolean;
+  pauseTask: (taskKey: string) => void;
 }
 
 export const TasksContext = createContext<TaskContextType>({} as TaskContextType);

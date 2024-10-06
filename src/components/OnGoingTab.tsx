@@ -1,11 +1,9 @@
-import React, { useRef, useState, forwardRef, useContext } from 'react';
+import React, { useRef, useState, forwardRef } from 'react';
 import FormAddTask from './FormAddTask';
-import TheTimer from './TheTimer';
 import TheHeader from './TheHeader';
 import Tasks, { TasksRef } from './Tasks';
 import styled from 'styled-components';
 import DoneList, { DoneListRef } from './DoneList';
-import { TasksContext } from '../context/tasksContext';
 
 
 interface Props { }
@@ -26,7 +24,6 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({ }, ref) => {
     doneListRef
   }));
 
-  const { runningTask } = useContext(TasksContext);
 
   return (
     <>
@@ -38,7 +35,6 @@ const OnGoingTab = forwardRef<OnGoingTabRef, Props>(({ }, ref) => {
         </Columns>
       </Container>
       {showModal && <FormAddTask setShowModal={setShowModal} />}
-      {runningTask && <TheTimer task={runningTask} />}
     </>
   );
 });
