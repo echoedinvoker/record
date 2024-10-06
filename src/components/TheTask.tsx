@@ -105,13 +105,15 @@ export default function TheTask({ index, task }: Props) {
               <ActionButton onClick={handleDelay}>
                 <ArrowBigRight size={16} />
               </ActionButton>
-              <EstimatedDuration onClick={toggleEditEstimatedDuration}>
+              <EstimatedDuration>
                 {isEditingEstimatedDuration ? (
                   <CodeMirrorContainer>
                     <MyCodeMirrorComponent initialValue={estimatedDurationHMS} handleSave={handleEstimatedDurationSave} />
                   </CodeMirrorContainer>
                 ) : (
-                  convertMillisecondsToHMS(task.estimatedDuration)
+                  <span onClick={toggleEditEstimatedDuration}>
+                    {convertMillisecondsToHMS(task.estimatedDuration)}
+                  </span>
                 )}
               </EstimatedDuration>
               <ActionButton onClick={() => task.timestamp ? pauseTask(task.key) : startTask(task.key)}>
@@ -180,6 +182,13 @@ const ActionButton = styled.button`
 const EstimatedDuration = styled.span`
   margin: 0 8px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  ${CodeMirrorContainer} {
+    width: 150px;
+    min-height: 30px;
+  }
 `
 
 const TimerDisplay = styled.span`
