@@ -115,7 +115,7 @@ export default function Done({ index, task }: Props) {
             isDragging={snapshot.isDragging}
             isEditing={isEditingTaskName}
           >
-            <TaskNameContainer onClick={toggleEditTaskName}>
+            <TaskNameContainer onClick={toggleEditTaskName} style={{ width: '100%' }}>
               {isEditingTaskName ? (
                 <CodeMirrorContainer>
                   <MyCodeMirrorComponent
@@ -229,9 +229,17 @@ const Select = styled.select`
 
 const CodeMirrorContainer = styled.div`
   color: black;
-  width: 70%;
+  width: 100%;
   height: 100%;
-  margin-top: 1.5em;
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: inherit;
+  border-radius: inherit;
+  box-sizing: border-box;
 `
 
 const ReactMarkdownContainer = styled.div`
