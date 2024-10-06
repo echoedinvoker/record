@@ -160,7 +160,7 @@ export default function Done({ index, task }: Props) {
                 <X size={16} />
               </ActionButton>
             </TopRightCorner>
-          </Task>
+          </DraggableTask>
         )}
       </Draggable>
       {showModal && <EditMarkdownModal task={task} setShowModal={setShowModal} />}
@@ -264,7 +264,7 @@ const EfficiencyDisplay = styled.span`
   margin: 0 8px;
 `
 
-const DraggableTask = styled(Task)<{ isDragging: boolean }>`
+const DraggableTask = styled(Task) <{ isDragging: boolean }>`
   ${({ isDragging }) =>
     isDragging &&
     css`
