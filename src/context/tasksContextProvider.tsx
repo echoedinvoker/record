@@ -213,7 +213,20 @@ export default function TasksContextProvider({ children }: TasksContextProviderP
 
   function setDataWhenDifferentColumn(result: DropResult) {
     const [newSourceColumn, newDestinationColumn] = generateNewColumnsWithMutatedTaskIds(result)
-    const newTask = getNewTaskWhenDifferentColumnDnd(result)
+    let newTask = getNewTaskWhenDifferentColumnDnd(result)
+    
+    // Check if the task is being moved to the "done" column and is currently running
+    if (result.destination!.droppableId === "done" && newTask.timestamp) {
+      const currentTime = Date.now()
+      newTask = {
+        ...newTask,
+        timestampSum: newTask.timestampSum + (currentTime - newTask.timestamp),
+        timestamp: null,
+        ts: currentTime,
+        efficiency: newTask.estimatedDuration / (newTask.timestampSum + (currentTime - newTask.timestamp))
+      } as Done
+    }
+
     const newData = {
       ...data!,
       tasks: {
