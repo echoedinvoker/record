@@ -112,8 +112,8 @@ export default function Done({ index, task }: Props) {
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            isDragging={snapshot.isDragging}
-            isEditing={isEditingTaskName}
+            $isdragging={snapshot.isDragging}
+            $isediting={isEditingTaskName}
           >
             <TaskNameContainer onClick={toggleEditTaskName} style={{ width: '100%' }}>
               {isEditingTaskName ? (
@@ -273,15 +273,15 @@ const EfficiencyDisplay = styled.span`
   margin: 0 8px;
 `
 
-const DraggableTask = styled(Task) <{ isDragging: boolean; isEditing: boolean }>`
-  ${({ isDragging }) =>
-    isDragging &&
+const DraggableTask = styled(Task) <{ $isdragging: boolean; $isediting: boolean }>`
+  ${({ $isdragging }) =>
+    $isdragging &&
     css`
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
     `}
   position: relative;
-  ${({ isEditing }) =>
-    isEditing &&
+  ${({ $isediting }) =>
+    $isediting &&
     css`
       & > *:not(${TaskNameContainer}) {
         visibility: hidden;
