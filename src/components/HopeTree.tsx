@@ -88,14 +88,11 @@ export default function HopeTree({ hope }: HopeTreeProps) {
           <foreignObject
             x={-60}
             y={radius + 10}
-            width={120}
+            width={130}
             height={150}
-            style={{
-              backgroundColor: hoveredNode === nodeDatum.key ? "white" : "transparent",
-              border: hoveredNode === nodeDatum.key ? "1px solid black" : "none",
-            }}
           >
             <NodeInfoContainer
+              $isSelected={hoveredNode === nodeDatum.key}
               onClick={() => toggleSelectHope(nodeDatum.key)}
             >
               <NodeName>{nodeDatum.name}</NodeName>
@@ -114,17 +111,19 @@ export default function HopeTree({ hope }: HopeTreeProps) {
                     ))}
                 </NodeAttributesContainer>
               )}
-              <NodeButtonGroup>
-                <NodeButton onClick={handleAddHope}>
-                  <CirclePlus size={16} />
-                </NodeButton>
-                <NodeButton onClick={handleDeleteHope}>
-                  <CircleMinus size={16} />
-                </NodeButton>
-                <NodeButton onClick={handleShowModal}>
-                  <BookOpen size={16} />
-                </NodeButton>
-              </NodeButtonGroup>
+              {!(hoveredNode === nodeDatum.key) && (
+                <NodeButtonGroup>
+                  <NodeButton onClick={handleAddHope}>
+                    <CirclePlus size={16} />
+                  </NodeButton>
+                  <NodeButton onClick={handleDeleteHope}>
+                    <CircleMinus size={16} />
+                  </NodeButton>
+                  <NodeButton onClick={handleShowModal}>
+                    <BookOpen size={16} />
+                  </NodeButton>
+                </NodeButtonGroup>
+              )}
             </NodeInfoContainer>
           </foreignObject>
         </NodeGroup>
@@ -171,11 +170,12 @@ const NodeAttributesContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.1em;
+  z-index: 1;
 `;
 
 const NodeAttribute = styled.div`
   font-size: 0.8em;
-  color: darkgray;
+  color: #333;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -188,14 +188,17 @@ const NodeName = styled.h3`
   font-weight: 600;
 `;
 
-const NodeInfoContainer = styled.div`
+const NodeInfoContainer = styled.div<{ $isSelected?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.1em;
   max-height: 140px;
   overflow-y: auto;
-  padding: 5px;
+  background-color: ${props => props.$isSelected ? "white" : "transparent"};
+  border-radius: ${props => props.$isSelected ? "0.5em" : "0"};
+  border: ${props => props.$isSelected ? "1px solid #000" : "0"};
+  padding: ${props => props.$isSelected ? "1px 5px 10px 5px" : "0"};
 `;
 
 const NodeGroup = styled.g`
