@@ -91,7 +91,9 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
           <Space key={index} style={{ display: 'flex' }}>
             <div style={{ width: '100%' }}>
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="維持時間"
                 value={threshold.threshold}
                 onChange={(e) => handleThresholdChange(index, 'threshold', Number(e.target.value))}
