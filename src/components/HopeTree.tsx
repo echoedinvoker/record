@@ -139,8 +139,8 @@ export default function HopeTree({ hope }: HopeTreeProps) {
         renderCustomNodeElement={renderCustomNodeElement}
         translate={{ x: 80, y: 80 }}
         ref={treeRef}
-        separation={{ siblings: 1, nonSiblings: 2 }}
-        nodeSize={{ x: 200, y: 200 }}
+        separation={{ siblings: 0.5, nonSiblings: 1 }}
+        nodeSize={{ x: 150, y: 150 }}
       />
     </TreeContainer>
   );
