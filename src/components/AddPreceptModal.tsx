@@ -85,16 +85,24 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
         {thresholds.map((threshold, index) => (
           <Space key={index} style={{ display: 'flex' }}>
             <div style={{ width: '100%' }}>
-              <label>維持時間 (分鐘): {threshold.threshold} 分鐘</label>
-              <input
-                type="range"
-                min="0"
-                max="120"
-                step="1"
+              <label>維持時間: {threshold.threshold} {threshold.unit}</label>
+              <Input
+                type="number"
+                placeholder="維持時間"
                 value={threshold.threshold}
                 onChange={(e) => handleThresholdChange(index, 'threshold', Number(e.target.value))}
-                style={{ width: '100%' }}
+                style={{ textAlign: 'center', width: '60%' }}
               />
+              <Select
+                value={threshold.unit || 'minutes'}
+                onChange={(value) => handleThresholdChange(index, 'unit', value)}
+                style={{ width: '40%' }}
+              >
+                <Select.Option value="minutes">分鐘</Select.Option>
+                <Select.Option value="hours">小時</Select.Option>
+                <Select.Option value="days">天</Select.Option>
+                <Select.Option value="months">月</Select.Option>
+              </Select>
             </div>
             <Input
               type="number"
