@@ -1,7 +1,8 @@
-import { DragDropContext, Droppable, DroppableProvided, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DroppableProvided } from "react-beautiful-dnd";
 import { DroppableArea } from "../components/ui";
-import { useState } from "react";
+import { useContext } from "react";
 import ThePrecept from "../components/ThePrecept";
+import { PreceptsContext } from "../context/preceptsContext";
 
 const containerStyle = {
   display: 'flex',
@@ -12,25 +13,7 @@ const containerStyle = {
 };
 
 export default function Precepts() {
-  const [precepts, setPrecepts] = useState([
-    { id: "1", content: "First" },
-    { id: "2", content: "Second" },
-    { id: "3", content: "Third" },
-    { id: "4", content: "Fourth" },
-    { id: "5", content: "Fifth" },
-  ]);
-
-  function onDragEnd(result: DropResult) {
-    if (!result.destination) {
-      return;
-    }
-
-    const items = Array.from(precepts);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    setPrecepts(items);
-  }
+  const { precepts, onDragEnd } = useContext(PreceptsContext);
 
   return (
     <div style={containerStyle}>
@@ -44,7 +27,7 @@ export default function Precepts() {
               {precepts.map((precept, index) => (
                 <ThePrecept
                   index={index}
-                  key={precept.id}
+                  key={precept.key}
                   precept={precept}
                 />
               ))}
