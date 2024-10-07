@@ -1,8 +1,11 @@
 import { DragDropContext, Droppable, DroppableProvided } from "react-beautiful-dnd";
 import { DroppableArea } from "../components/ui";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import ThePrecept from "../components/ThePrecept";
 import { PreceptsContext } from "../context/preceptsContext";
+import AddPreceptModal from "../components/AddPreceptModal";
+import { Button } from "antd";
+import { Threshold } from "../services/precepts";
 
 const containerStyle = {
   display: 'flex',
@@ -13,34 +16,37 @@ const containerStyle = {
   padding: '2rem 0',
 };
 
-const buttonStyle = {
-  marginBottom: '1rem',
-  padding: '0.5rem 1rem',
-  fontSize: '1rem',
-  backgroundColor: '#4CAF50',
-  color: 'white',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
-};
-
 export default function Precepts() {
   const { precepts, onDragEnd, addPrecept } = useContext(PreceptsContext);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleAddPrecept = () => {
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleAddPrecept = (name: string, baseMultiplier: number, thresholds: Threshold[], hopeKey: string) => {
     addPrecept({
-      name: "New Precept",
-      baseMultiplier: 1,
-      thresholds: [],
-      hopeKey: "",
+      name,
+      baseMultiplier,
+      thresholds,
+      hopeKey,
     });
   };
 
   return (
     <div style={containerStyle}>
-      <button style={buttonStyle} onClick={handleAddPrecept}>
+      <Button type="primary" onClick={showModal} style={{ marginBottom: '1rem' }}>
         新增 Precept
-      </button>
+      </Button>
+      <AddPreceptModal
+        isVisible={isModalVisible}
+        onClose={handleCancel}
+        onAdd={handleAddPrecept}
+      />
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="precept-droppable-area">
           {(provided: DroppableProvided) => (

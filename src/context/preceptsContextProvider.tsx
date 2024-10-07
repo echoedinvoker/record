@@ -21,6 +21,12 @@ export default function PreceptsContextProvider({ children }: PreceptsContextPro
     }
 
     setPrecepts(prevPrecepts => [...prevPrecepts, newPrecept])
+
+    // 這裡可以添加與後端 API 通信的邏輯
+    createPrecept(newPrecept).catch(error => {
+      console.error("Failed to create precept:", error);
+      // 可以在這裡添加錯誤處理邏輯，例如顯示錯誤消息給用戶
+    });
   }
 
   function removePrecept(preceptKey: string) {
