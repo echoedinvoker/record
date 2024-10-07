@@ -14,7 +14,7 @@ interface AddPreceptModalProps {
 const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, onAdd }) => {
   const [name, setName] = useState('');
   const [baseMultiplier, setBaseMultiplier] = useState(1);
-  const [thresholds, setThresholds] = useState<Threshold[]>([]);
+  const [thresholds, setThresholds] = useState<(Threshold & { unit: string })[]>([]);
   const [hopeKey, setHopeKey] = useState('');
 
   useHopes()
@@ -30,7 +30,7 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
   }, [isVisible]);
 
   const handleAddThreshold = () => {
-    setThresholds([...thresholds, { threshold: 0, multiplier: 1 }]);
+    setThresholds([...thresholds, { threshold: 0, multiplier: 1, unit: 'minutes' }]);
   };
 
   const handleRemoveThreshold = (index: number) => {
@@ -38,10 +38,15 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
     setThresholds(newThresholds);
   };
 
-  const handleThresholdChange = (index: number, field: 'threshold' | 'multiplier', value: number) => {
-    const newThresholds = [...thresholds];
-    newThresholds[index][field] = value;
-    setThresholds(newThresholds);
+  const handleThresholdChange = (index: number, field: 'threshold' | 'multiplier' | 'unit', value: number | string) => {
+    setThresholds(prev => {
+      const newThresholds = [...prev];
+      newThresholds[index] = {
+        ...newThresholds[index],
+        [field]: value,
+      };
+      return newThresholds;
+    })
   };
 
   const handleSubmit = () => {
@@ -85,7 +90,6 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
         {thresholds.map((threshold, index) => (
           <Space key={index} style={{ display: 'flex' }}>
             <div style={{ width: '100%' }}>
-              <label>維持時間: {threshold.threshold} {threshold.unit}</label>
               <Input
                 type="number"
                 placeholder="維持時間"
@@ -94,7 +98,7 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
                 style={{ textAlign: 'center', width: '60%' }}
               />
               <Select
-                value={threshold.unit || 'minutes'}
+                value={threshold.unit}
                 onChange={(value) => handleThresholdChange(index, 'unit', value)}
                 style={{ width: '40%' }}
               >
