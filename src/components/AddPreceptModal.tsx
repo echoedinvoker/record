@@ -14,7 +14,7 @@ interface AddPreceptModalProps {
 const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, onAdd }) => {
   const [name, setName] = useState('');
   const [baseMultiplier, setBaseMultiplier] = useState(1);
-  const [thresholds, setThresholds] = useState<Threshold[]>([]);
+  const [thresholds, setThresholds] = useState<(Threshold & { unit: string })[]>([]);
   const [hopeKey, setHopeKey] = useState('');
 
   useHopes()
@@ -30,7 +30,7 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
   }, [isVisible]);
 
   const handleAddThreshold = () => {
-    setThresholds([...thresholds, { threshold: 0, multiplier: 1 }]);
+    setThresholds([...thresholds, { threshold: 0, multiplier: 1, unit: 'minutes' }]);
   };
 
   const handleRemoveThreshold = (index: number) => {
@@ -38,10 +38,15 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
     setThresholds(newThresholds);
   };
 
-  const handleThresholdChange = (index: number, field: 'threshold' | 'multiplier', value: number) => {
-    const newThresholds = [...thresholds];
-    newThresholds[index][field] = value;
-    setThresholds(newThresholds);
+  const handleThresholdChange = (index: number, field: 'threshold' | 'multiplier' | 'unit', value: number | string) => {
+    setThresholds(prev => {
+      const newThresholds = [...prev];
+      newThresholds[index] = {
+        ...newThresholds[index],
+        [field]: value,
+      };
+      return newThresholds;
+    })
   };
 
   const handleSubmit = () => {
@@ -70,20 +75,56 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
           placeholder="基礎倍數"
           value={baseMultiplier}
           onChange={(e) => setBaseMultiplier(Number(e.target.value))}
+          onWheel={(e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            setBaseMultiplier((prev) => Math.round((prev + delta) * 10) / 10);
+          }}
+          style={{
+            textAlign: 'center',
+            fontSize: '1.2em',
+            fontWeight: 'bold',
+          }}
+          step={0.1}
         />
         {thresholds.map((threshold, index) => (
           <Space key={index} style={{ display: 'flex' }}>
-            <Input
-              type="number"
-              placeholder="閾值"
-              value={threshold.threshold}
-              onChange={(e) => handleThresholdChange(index, 'threshold', Number(e.target.value))}
-            />
+            <div style={{ width: '100%' }}>
+              <Input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="維持時間"
+                value={threshold.threshold}
+                onChange={(e) => handleThresholdChange(index, 'threshold', Number(e.target.value))}
+                style={{ textAlign: 'center', width: '60%' }}
+              />
+              <Select
+                value={threshold.unit}
+                onChange={(value) => handleThresholdChange(index, 'unit', value)}
+                style={{ width: '40%' }}
+              >
+                <Select.Option value="minutes">分鐘</Select.Option>
+                <Select.Option value="hours">小時</Select.Option>
+                <Select.Option value="days">天</Select.Option>
+                <Select.Option value="months">月</Select.Option>
+              </Select>
+            </div>
             <Input
               type="number"
               placeholder="倍數"
               value={threshold.multiplier}
               onChange={(e) => handleThresholdChange(index, 'multiplier', Number(e.target.value))}
+              onWheel={(e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                handleThresholdChange(index, 'multiplier', Math.round((threshold.multiplier + delta) * 10) / 10);
+              }}
+              style={{
+                textAlign: 'center',
+                fontWeight: 'bold',
+              }}
+              step={0.1}
             />
             <MinusCircleOutlined onClick={() => handleRemoveThreshold(index)} />
           </Space>
