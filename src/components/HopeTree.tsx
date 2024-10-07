@@ -22,7 +22,12 @@ export default function HopeTree({ hope }: HopeTreeProps) {
     setSelectedKey,
     setShowEditorHope } = useContext(EditorHopeContext)
 
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+
   const renderCustomNodeElement: RenderCustomNodeElementFn = ({ nodeDatum, toggleNode }: any) => {
+    const handleMouseEnter = () => setHoveredNode(nodeDatum.key);
+    const handleMouseLeave = () => setHoveredNode(null);
+
     const handleClickCircle = (e: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
       e.stopPropagation();
       toggleNode();
@@ -61,7 +66,11 @@ export default function HopeTree({ hope }: HopeTreeProps) {
     return (
       <>
         <NodeGroup>
-          <g onClick={handleClickCircle}>
+          <g
+            onClick={handleClickCircle}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
             <NodeCircle
               r={radius}
               $isSelected={selectedHope === nodeDatum.key}
@@ -76,10 +85,21 @@ export default function HopeTree({ hope }: HopeTreeProps) {
               {hours}
             </NodeCircleText>
           </g>
-          <foreignObject x={-60} y={radius + 10} width={120} height={150}>
-            <NodeInfoContainer onClick={() => toggleSelectHope(nodeDatum.key)}>
+          <foreignObject
+            x={-60}
+            y={radius + 10}
+            width={120}
+            height={150}
+            style={{
+              backgroundColor: hoveredNode === nodeDatum.key ? "white" : "transparent",
+              border: hoveredNode === nodeDatum.key ? "1px solid black" : "none",
+            }}
+          >
+            <NodeInfoContainer
+              onClick={() => toggleSelectHope(nodeDatum.key)}
+            >
               <NodeName>{nodeDatum.name}</NodeName>
-              {nodeDatum.attributes && (
+              {nodeDatum.attributes && hoveredNode === nodeDatum.key && (
                 <NodeAttributesContainer>
                   {Object.entries(nodeDatum.attributes)
                     .filter(([_, value]) => !!value)
