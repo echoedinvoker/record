@@ -6,6 +6,7 @@ import { PreceptsContext } from "../context/preceptsContext";
 import AddPreceptModal from "../components/AddPreceptModal";
 import { Button } from "antd";
 import { Threshold } from "../services/precepts";
+import { getUUID } from "../utils/uuid";
 
 const containerStyle = {
   display: 'flex',
@@ -29,12 +30,16 @@ export default function Precepts() {
   };
 
   const handleAddPrecept = (name: string, baseMultiplier: number, thresholds: Threshold[], hopeKey: string) => {
-    addPrecept({
+    const precept = {
       name,
       baseMultiplier,
       thresholds,
       hopeKey,
-    });
+      key: getUUID(),
+      startEndTimes: [],
+    };
+
+    addPrecept(precept)
   };
 
   return (

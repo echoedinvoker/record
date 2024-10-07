@@ -3,6 +3,7 @@ import { Modal, Button, Input, Select, Space } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { Threshold } from '../services/precepts';
 import { HopesContext } from '../context/hopesContext';
+import { useHopes } from '../hooks/hopes/useHopes';
 
 interface AddPreceptModalProps {
   isVisible: boolean;
@@ -16,6 +17,7 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
   const [thresholds, setThresholds] = useState<Threshold[]>([]);
   const [hopeKey, setHopeKey] = useState('');
 
+  useHopes()
   const { hopes } = useContext(HopesContext);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
   return (
     <Modal
       title="新增 Precept"
-      visible={isVisible}
+      open={isVisible}
       onCancel={onClose}
       footer={[
         <Button key="cancel" onClick={onClose}>取消</Button>,
