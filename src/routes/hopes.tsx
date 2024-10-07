@@ -62,11 +62,11 @@ export default function Hopes() {
 }
 
 const TreeContainer = styled.div`
-  flex: 1.2;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 1em;
-  
+  width: 100%;
+  height: 90vh;
 `
 
 const HopeContaniner = styled.div`
