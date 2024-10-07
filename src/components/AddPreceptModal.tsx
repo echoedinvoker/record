@@ -95,6 +95,11 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
               placeholder="倍數"
               value={threshold.multiplier}
               onChange={(e) => handleThresholdChange(index, 'multiplier', Number(e.target.value))}
+              style={{
+                textAlign: 'center',
+                fontWeight: 'bold',
+              }}
+              step={0.1}
             />
             <MinusCircleOutlined onClick={() => handleRemoveThreshold(index)} />
           </Space>
