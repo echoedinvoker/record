@@ -36,14 +36,8 @@ export default function Precepts() {
 
   return (
     <PreceptRootContainer>
-      <Button type="primary" onClick={showModal} style={{ marginBottom: '1rem' }}>
-        Add Precept
-      </Button>
-      <AddPreceptModal
-        isVisible={isModalVisible}
-        onClose={handleCancel}
-        onAdd={handleAddPrecept}
-      />
+      <Button type="primary" onClick={showModal} style={{ marginBottom: '1rem' }}>Add Precept</Button>
+      <AddPreceptModal isVisible={isModalVisible} onClose={handleCancel} onAdd={handleAddPrecept} />
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="precept-droppable-area">
           {(provided: DroppableProvided) => (
@@ -51,13 +45,7 @@ export default function Precepts() {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {precepts.map((precept, index) => (
-                <ThePrecept
-                  index={index}
-                  key={precept.key}
-                  precept={precept}
-                />
-              ))}
+              {precepts.map((precept, index) => (<ThePrecept index={index} key={precept.key} precept={precept} />))}
               {provided.placeholder}
             </DroppableArea>
           )}

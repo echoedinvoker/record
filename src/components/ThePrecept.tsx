@@ -3,24 +3,18 @@ import { Draggable, DraggableProvided } from "react-beautiful-dnd";
 import { Precept } from "../services/precepts";
 import { PreceptsContext } from "../context/preceptsContext";
 import { useAccummulatedTimestamp } from "../hooks/useAccummulatedTimestamp";
+import { convertMillisecondsToHMS } from "../utils";
 
-interface Props {
+interface ThePreceptProps {
   precept: Precept;
   index: number;
 }
 
-export default function ThePrecept({ index, precept }: Props) {
+export default function ThePrecept({ index, precept }: ThePreceptProps) {
   const status = precept.startEndTimes.length % 2 === 0 ? 'Stopped' : 'Active';
   const accumulatedTimestamp = useAccummulatedTimestamp(precept.key);
   const currentThreshold = getCurrentThreshold(precept, accumulatedTimestamp);
   const { changePreceptStatus } = useContext(PreceptsContext)
-
-  const formatTime = (time: number) => {
-    const hours = Math.floor(time / 3600000);
-    const minutes = Math.floor((time % 3600000) / 60000);
-    const seconds = Math.floor((time % 60000) / 1000);
-    return `${hours}h ${minutes}m ${seconds}s`;
-  };
 
   function getCurrentThreshold(precept: Precept, accumulatedTimestamp: number) {
     const thresholdsPlugTimestamp = precept.thresholds.map(threshold => {
@@ -69,7 +63,7 @@ export default function ThePrecept({ index, precept }: Props) {
         >
           <h3>{precept.name}</h3>
           <p>狀態: {status}</p>
-          <p>累積時間: {formatTime(accumulatedTimestamp)}</p>
+          <p>累積時間: {convertMillisecondsToHMS(accumulatedTimestamp)}</p>
           <p>當前門檻: {`${`${currentThreshold.thresholdNumber} ${currentThreshold.unit}`}`}</p>
           <p>當前倍率: {currentThreshold.multiplier}</p>
           <button onClick={() => changePreceptStatus(precept.key)}>Change Status</button>
