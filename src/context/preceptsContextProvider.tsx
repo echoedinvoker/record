@@ -52,6 +52,14 @@ export default function PreceptsContextProvider({ children }: PreceptsContextPro
     setPrecepts(items);
   }
 
+  function changePreceptStatus(preceptKey: string) {
+    setPrecepts(prevPrecepts => prevPrecepts.map(precept => {
+      if (precept.key === preceptKey) {
+        return { ...precept, startEndTimes: [...precept.startEndTimes, Date.now()] }
+      }
+      return precept
+    }))
+  }
 
   const value = {
     precepts,
@@ -61,6 +69,7 @@ export default function PreceptsContextProvider({ children }: PreceptsContextPro
     togglePrecept,
     updatePrecept,
     onDragEnd,
+    changePreceptStatus,
   }
 
 

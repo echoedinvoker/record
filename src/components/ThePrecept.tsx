@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useContext } from "react";
 import { Draggable, DraggableProvided } from "react-beautiful-dnd";
-import { Precept, Threshold } from "../services/precepts";
+import { Precept } from "../services/precepts";
+import { PreceptsContext } from "../context/preceptsContext";
+import { useAccummulatedTimestamp } from "../hooks/useAccummulatedTimestamp";
 
 interface Props {
   precept: Precept;
@@ -8,44 +10,10 @@ interface Props {
 }
 
 export default function ThePrecept({ index, precept }: Props) {
-  const [status, setStatus] = useState<'未開始' | '啟用中' | '已停止'>('未開始');
-  const [currentMultiplier, setCurrentMultiplier] = useState<number>(precept.baseMultiplier);
-  const [accumulatedTime, setAccumulatedTime] = useState<number>(0);
-
-  useEffect(() => {
-    updateStatus();
-    updateMultiplier();
-  }, [precept.startEndTimes, accumulatedTime]);
-
-  const updateStatus = () => {
-    const now = Date.now();
-    if (precept.startEndTimes.length === 0) {
-      setStatus('未開始');
-    } else if (precept.startEndTimes.length % 2 === 1) {
-      setStatus('啟用中');
-    } else {
-      setStatus('已停止');
-    }
-  };
-
-  const updateMultiplier = () => {
-    let multiplier = precept.baseMultiplier;
-    for (const threshold of precept.thresholds) {
-      if (accumulatedTime >= threshold.threshold) {
-        multiplier = threshold.multiplier;
-      } else {
-        break;
-      }
-    }
-    setCurrentMultiplier(multiplier);
-  };
-
-  const handleClick = () => {
-    const now = Date.now();
-    const newStartEndTimes = [...precept.startEndTimes, now];
-    // Here you should call a function to update the precept in your state or backend
-    console.log("Updated startEndTimes:", newStartEndTimes);
-  };
+  const status = precept.startEndTimes.length % 2 === 0 ? 'Stopped' : 'Active';
+  const accumulatedTimestamp = useAccummulatedTimestamp(precept.key);
+  const currentThreshold = getCurrentThreshold(precept, accumulatedTimestamp);
+  const { changePreceptStatus } = useContext(PreceptsContext)
 
   const formatTime = (time: number) => {
     const hours = Math.floor(time / 3600000);
@@ -53,6 +21,42 @@ export default function ThePrecept({ index, precept }: Props) {
     const seconds = Math.floor((time % 60000) / 1000);
     return `${hours}h ${minutes}m ${seconds}s`;
   };
+
+  function getCurrentThreshold(precept: Precept, accumulatedTimestamp: number) {
+    const thresholdsPlugTimestamp = precept.thresholds.map(threshold => {
+      const thresholdTime = threshold.thresholdNumber * (
+        threshold.unit === 'minutes' ? 60000 :
+          threshold.unit === 'hours' ? 3600000 :
+            threshold.unit === 'days' ? 86400000 :
+              threshold.unit === 'weeks' ? 604800000 :
+                threshold.unit === 'months' ? 2628000000 : 0
+      );
+      return {
+        ...threshold,
+        thresholdTime,
+      }
+    });
+    const index = thresholdsPlugTimestamp.findIndex(threshold => accumulatedTimestamp < threshold.thresholdTime);
+    if (index === 0) {
+      return {
+        thresholdNumber: precept.thresholds[0].thresholdNumber,
+        unit: precept.thresholds[0].unit,
+        multiplier: precept.baseMultiplier,
+      }
+    }
+    if (index === -1) {
+      return {
+        thresholdNumber: 'infinity',
+        unit: '',
+        multiplier: precept.thresholds[precept.thresholds.length - 1].multiplier,
+      }
+    }
+    return {
+      thresholdNumber: thresholdsPlugTimestamp[index].thresholdNumber,
+      unit: thresholdsPlugTimestamp[index].unit,
+      multiplier: thresholdsPlugTimestamp[index - 1].multiplier,
+    }
+  }
 
   return (
     <Draggable draggableId={precept.key} index={index}>
@@ -65,11 +69,10 @@ export default function ThePrecept({ index, precept }: Props) {
         >
           <h3>{precept.name}</h3>
           <p>狀態: {status}</p>
-          <p>累積時間: {formatTime(accumulatedTime)}</p>
-          <p>當前倍率: {currentMultiplier}x</p>
-          <button onClick={handleClick}>
-            {status === '啟用中' ? '停止' : '開始/繼續'}
-          </button>
+          <p>累積時間: {formatTime(accumulatedTimestamp)}</p>
+          <p>當前門檻: {`${`${currentThreshold.thresholdNumber} ${currentThreshold.unit}`}`}</p>
+          <p>當前倍率: {currentThreshold.multiplier}</p>
+          <button onClick={() => changePreceptStatus(precept.key)}>Change Status</button>
         </div>
       )}
     </Draggable>

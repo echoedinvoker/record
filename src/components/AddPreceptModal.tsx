@@ -14,12 +14,14 @@ interface AddPreceptModalProps {
 const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, onAdd }) => {
   const [name, setName] = useState('');
   const [baseMultiplier, setBaseMultiplier] = useState(1);
-  const [thresholds, setThresholds] = useState<(Threshold & { unit: string })[]>([]);
+  const [thresholds, setThresholds] = useState<Threshold[]>([]);
   const [hopeKey, setHopeKey] = useState('');
 
   useHopes()
+
   const { hopes } = useContext(HopesContext);
 
+  // reset form whenever modal is closed or opened
   useEffect(() => {
     if (!isVisible) {
       setName('');
@@ -30,7 +32,7 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
   }, [isVisible]);
 
   const handleAddThreshold = () => {
-    setThresholds([...thresholds, { threshold: 0, multiplier: 1, unit: 'minutes' }]);
+    setThresholds([...thresholds, { thresholdNumber: 0, multiplier: 1, unit: 'minutes' }]);
   };
 
   const handleRemoveThreshold = (index: number) => {
@@ -38,7 +40,7 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
     setThresholds(newThresholds);
   };
 
-  const handleThresholdChange = (index: number, field: 'threshold' | 'multiplier' | 'unit', value: number | string) => {
+  const handleThresholdChange = (index: number, field: 'thresholdNumber' | 'multiplier' | 'unit', value: number | string) => {
     setThresholds(prev => {
       const newThresholds = [...prev];
       newThresholds[index] = {
@@ -56,23 +58,23 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
 
   return (
     <Modal
-      title="新增 Precept"
+      title="Create Precept"
       open={isVisible}
       onCancel={onClose}
       footer={[
-        <Button key="cancel" onClick={onClose}>取消</Button>,
-        <Button key="submit" type="primary" onClick={handleSubmit}>新增</Button>
+        <Button key="cancel" onClick={onClose}>Cancel</Button>,
+        <Button key="submit" type="primary" onClick={handleSubmit}>Create</Button>
       ]}
     >
       <Space direction="vertical" style={{ width: '100%' }}>
         <Input
-          placeholder="Precept 名稱"
+          placeholder="Precept Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <Input
           type="number"
-          placeholder="基礎倍數"
+          placeholder="Base Multiplier"
           value={baseMultiplier}
           onChange={(e) => setBaseMultiplier(Number(e.target.value))}
           onWheel={(e) => {
@@ -95,8 +97,8 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
                 inputMode="numeric"
                 pattern="[0-9]*"
                 placeholder="維持時間"
-                value={threshold.threshold}
-                onChange={(e) => handleThresholdChange(index, 'threshold', Number(e.target.value))}
+                value={threshold.thresholdNumber}
+                onChange={(e) => handleThresholdChange(index, 'thresholdNumber', Number(e.target.value))}
                 style={{ textAlign: 'center', width: '60%' }}
               />
               <Select
