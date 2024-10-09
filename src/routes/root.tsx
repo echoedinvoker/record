@@ -45,11 +45,12 @@ const Pages = styled.div`
   gap: 1rem;
   `;
 
-const PageButton = styled(Link)<{ isActive: boolean }>`
-  color: ${props => props.isActive ? 'yellow' : 'white'};
+const PageButton = styled(Link) <{ isActive: boolean }>`
+  color: white;
   pointer-events: ${props => props.isActive ? 'none' : 'auto'};
-  opacity: ${props => props.isActive ? 0.7 : 1};
-  text-decoration: ${props => props.isActive ? 'underline' : 'none'};
+  opacity: ${props => props.isActive ? 1 : 0.7};
+  text-transform: ${props => props.isActive ? 'uppercase' : 'none'};
+  font-weight: ${props => props.isActive ? 'bold' : 'normal'};
 `;
 
 const ActionGroup = styled.div`
