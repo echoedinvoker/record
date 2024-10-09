@@ -8,18 +8,16 @@ interface Props {
 
 export default function ThePrecept({ index, precept }: Props) {
   return (
-    <>
-      <Draggable draggableId={precept.key} index={index}>
-        {(provided: DraggableProvided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-          >
-            {precept.name}
-          </div>
-        )}
-      </Draggable>
-    </>
+    <Draggable draggableId={precept.key} index={index}>
+      {(provided: DraggableProvided) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
+          {precept.name}
+        </div>
+      )}
+    </Draggable>
   );
 }
