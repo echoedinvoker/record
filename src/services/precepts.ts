@@ -1,8 +1,9 @@
 import api from ".";
 
 export interface Threshold {
-  threshold: number;
   multiplier: number;
+  thresholdNumber: number;
+  unit: string;
 }
 
 export interface Precept {
