@@ -1,4 +1,4 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { Save } from 'lucide-react';
 import { useContext } from "react";
@@ -13,6 +13,7 @@ function RootHeader() {
   const { isPending: isPendingTasks } = useContext(TasksContext);
   const { isPending: isPendingHopes } = useContext(HopesContext);
   const isPending = isPendingTasks || isPendingHopes;
+  const location = useLocation();
 
   return (
     <Header>
@@ -20,9 +21,9 @@ function RootHeader() {
         <Logo />
       </LogoContainer>
       <Pages>
-        <PageButton to="/hopes">Hopes</PageButton>
-        <PageButton to="/todos">Todos</PageButton>
-        <PageButton to="/precepts">Precepts</PageButton>
+        <PageButton to="/hopes" isActive={location.pathname === "/hopes"}>Hopes</PageButton>
+        <PageButton to="/todos" isActive={location.pathname === "/todos"}>Todos</PageButton>
+        <PageButton to="/precepts" isActive={location.pathname === "/precepts"}>Precepts</PageButton>
       </Pages>
       <ActionGroup>
         <ActionButton disabled={isPending}>
@@ -44,9 +45,13 @@ const Pages = styled.div`
   gap: 1rem;
   `;
 
-const PageButton = styled(Link)`
+const PageButton = styled(Link) <{ isActive: boolean }>`
   color: white;
-  `;
+  pointer-events: ${props => props.isActive ? 'none' : 'auto'};
+  opacity: ${props => props.isActive ? 1 : 0.7};
+  text-transform: ${props => props.isActive ? 'uppercase' : 'none'};
+  font-weight: ${props => props.isActive ? 'bold' : 'normal'};
+`;
 
 const ActionGroup = styled.div`
   flex: 1;
