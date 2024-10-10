@@ -56,11 +56,14 @@ export default function Precepts() {
 }
 
 const PreceptRootContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  min-height: 100vh;
-  padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+    border-radius: 0.5em;
+    background-color: rgba(255, 255, 255, 0.5);
+    width: 30em;
+    margin: 0 auto;
+    margin-top: 1em;
   `;
 

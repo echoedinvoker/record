@@ -13,7 +13,8 @@
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
   --color-text: #fff;
   --color-background: #242424;
-  --color-primary: #3498db; /* 您可以根據品牌調整這個顏色 */
+  --color-primary: #1677ff; /* 您可以根據品牌調整這個顏色 */
+  --color-secondary: #e74c3c;
 }
 
 html {
