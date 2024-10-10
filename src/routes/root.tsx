@@ -21,9 +21,9 @@ function RootHeader() {
         <Logo />
       </LogoContainer>
       <Pages>
-        <PageButton to="/hopes" isActive={location.pathname === "/hopes"}>Hopes</PageButton>
-        <PageButton to="/todos" isActive={location.pathname === "/todos"}>Todos</PageButton>
-        <PageButton to="/precepts" isActive={location.pathname === "/precepts"}>Precepts</PageButton>
+        <PageButton to="/hopes" $isactive={location.pathname === "/hopes"}>Hopes</PageButton>
+        <PageButton to="/todos" $isactive={location.pathname === "/todos"}>Todos</PageButton>
+        <PageButton to="/precepts" $isactive={location.pathname === "/precepts"}>Precepts</PageButton>
       </Pages>
       <ActionGroup>
         <ActionButton disabled={isPending}>
@@ -45,12 +45,12 @@ const Pages = styled.div`
   gap: 1rem;
   `;
 
-const PageButton = styled(Link) <{ isActive: boolean }>`
+const PageButton = styled(Link) <{ $isactive: boolean }>`
   color: white;
-  pointer-events: ${props => props.isActive ? 'none' : 'auto'};
-  opacity: ${props => props.isActive ? 1 : 0.7};
-  text-transform: ${props => props.isActive ? 'uppercase' : 'none'};
-  font-weight: ${props => props.isActive ? 'bold' : 'normal'};
+  pointer-events: ${props => props.$isactive ? 'none' : 'auto'};
+  opacity: ${props => props.$isactive ? 1 : 0.7};
+  text-transform: ${props => props.$isactive ? 'uppercase' : 'none'};
+  font-weight: ${props => props.$isactive ? 'bold' : 'normal'};
 `;
 
 const ActionGroup = styled.div`

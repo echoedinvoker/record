@@ -17,6 +17,13 @@ export default function ThePrecept({ index, precept }: ThePreceptProps) {
   const { changePreceptStatus } = useContext(PreceptsContext)
 
   function getCurrentThreshold(precept: Precept, accumulatedTimestamp: number) {
+    if (precept.thresholds.length === 0) {
+      return {
+        thresholdNumber: 'infinity',
+        unit: '',
+        multiplier: precept.baseMultiplier,
+      }
+    }
     const thresholdsPlugTimestamp = precept.thresholds.map(threshold => {
       const thresholdTime = threshold.thresholdNumber * (
         threshold.unit === 'minutes' ? 60000 :
