@@ -16,6 +16,7 @@ import ModalHopeContextProvider from './context/modalHopeContextProvider.tsx'
 import EditorHopeContextProvider from './context/editorHopeContextProvider.tsx'
 import TasksContextProvider from './context/tasksContextProvider.tsx'
 import PreceptsContextProvider from './context/preceptsContextProvider.tsx'
+import './global.css'
 
 const router = createBrowserRouter([
   {
@@ -59,3 +60,5 @@ createRoot(document.getElementById('root')!).render(
     </PreceptsContextProvider>
   </QueryClientProvider>
 )
+
+

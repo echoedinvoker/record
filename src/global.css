@@ -1,0 +1,88 @@
+/* 導入 Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Reset 基本元素 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 設置根元素 */
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  --color-text: #fff;
+  --color-background: #242424;
+  --color-primary: #3498db; /* 您可以根據品牌調整這個顏色 */
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--color-background) !important;
+}
+
+/* 設置 body */
+body {
+  display: flex;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  height: 100%;
+}
+
+/* 重置 a 標籤 */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 重置 button 標籤 */
+button {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  padding: 0.5em 1em;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: darken(var(--color-primary), 10%);
+}
+
+/* 重置 input 和 textarea */
+input,
+textarea {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  padding: 0.5em;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* 設置標題樣式 */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: semibold;
+}
+
+/* 確保 img 和 svg 正確顯示 */
+img,
+svg {
+  display: block;
+  max-width: 100%;
+  height: 100%;
+}
+
+/* 設置列表樣式 */
+ul, ol {
+  list-style: none;
+}
+
+/* 設置表格樣式 */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
