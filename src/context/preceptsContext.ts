@@ -11,6 +11,9 @@ interface PreceptContextType {
   updatePrecept: (precept: Precept) => void;
   onDragEnd: (result: DropResult) => void;
   changePreceptStatus: (preceptKey: string) => void;
+  isModalVisible: boolean;
+  showModal: () => void;
+  handleCancel: () => void;
 }
 
 export const PreceptsContext = createContext<PreceptContextType>({} as PreceptContextType);

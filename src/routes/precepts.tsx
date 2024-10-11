@@ -10,16 +10,14 @@ import styled from "styled-components";
 import AddPreceptModal from "../components/AddPreceptModal";
 
 export default function Precepts() {
-  const { precepts, onDragEnd, addPrecept } = useContext(PreceptsContext);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
+  const {
+    precepts,
+    onDragEnd,
+    addPrecept,
+    isModalVisible,
+    showModal,
+    handleCancel,
+  } = useContext(PreceptsContext);
 
   const handleAddPrecept = (name: string, baseMultiplier: number, thresholds: Threshold[], hopeKey: string) => {
     const precept = {
