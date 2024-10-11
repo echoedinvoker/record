@@ -78,15 +78,10 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
           value={baseMultiplier}
           onChange={(e) => setBaseMultiplier(Number(e.target.value))}
           onWheel={(e) => {
-            e.preventDefault();
             const delta = e.deltaY > 0 ? -0.1 : 0.1;
             setBaseMultiplier((prev) => Math.round((prev + delta) * 10) / 10);
           }}
-          style={{
-            textAlign: 'center',
-            fontSize: '1.2em',
-            fontWeight: 'bold',
-          }}
+          style={{ textAlign: 'center', fontSize: '1.2em', fontWeight: 'bold' }}
           step={0.1}
         />
         {thresholds.map((threshold, index) => (
@@ -118,7 +113,6 @@ const AddPreceptModal: React.FC<AddPreceptModalProps> = ({ isVisible, onClose, o
               value={threshold.multiplier}
               onChange={(e) => handleThresholdChange(index, 'multiplier', Number(e.target.value))}
               onWheel={(e) => {
-                e.preventDefault();
                 const delta = e.deltaY > 0 ? -0.1 : 0.1;
                 handleThresholdChange(index, 'multiplier', Math.round((threshold.multiplier + delta) * 10) / 10);
               }}

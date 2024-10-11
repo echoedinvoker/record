@@ -19,7 +19,7 @@ export default function ThePrecept({ index, precept }: ThePreceptProps) {
   const isActived = status === 'Active';
   const accumulatedTimestamp = useAccummulatedTimestamp(precept.key);
   const currentThreshold = getCurrentThreshold(precept, accumulatedTimestamp);
-  const { changePreceptStatus } = useContext(PreceptsContext)
+  const { changePreceptStatus, removePrecept } = useContext(PreceptsContext)
   const { hopes } = useContext(HopesContext)
   const connectedHope = hopes.find(hope => hope.key === precept.hopeKey);
 
@@ -86,7 +86,7 @@ export default function ThePrecept({ index, precept }: ThePreceptProps) {
                 {accumulatedTimestamp ? convertMillisecondsToHMS(accumulatedTimestamp) : 'Start'}
               </TimerDisplay>
             </ActionButton>
-            <ActionButton>
+            <ActionButton onClick={() => removePrecept(precept.key)}>
               <X size={16} />
             </ActionButton>
           </TopRightCorner>
