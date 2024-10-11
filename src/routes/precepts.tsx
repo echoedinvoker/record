@@ -1,6 +1,6 @@
 import { DragDropContext, Droppable, DroppableProvided } from "react-beautiful-dnd";
 import { DroppableArea } from "../components/ui";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import ThePrecept from "../components/ThePrecept";
 import { PreceptsContext } from "../context/preceptsContext";
 import { Button } from "antd";
