@@ -11,7 +11,21 @@ export default function PreceptsContextProvider({ children }: PreceptsContextPro
   const { precepts, setPrecepts, addPrecept, removePrecept, togglePrecept, updatePrecept, onDragEnd, changePreceptStatus
   } = usePrecept()
 
-  const { isModalVisible, showModal, handleCancel } = useModal()
+  const {
+    isModalVisible,
+    showModal,
+    handleCancel,
+    name,
+    setName,
+    baseMultiplier,
+    setBaseMultiplier,
+    thresholds,
+    hopeKey,
+    setHopeKey,
+    handleThresholdChange,
+    handleAddThreshold,
+    handleRemoveThreshold,
+  } = useModal()
 
   const value = {
     precepts,
@@ -24,7 +38,17 @@ export default function PreceptsContextProvider({ children }: PreceptsContextPro
     changePreceptStatus,
     isModalVisible,
     showModal,
-    handleCancel
+    handleCancel,
+    name,
+    setName,
+    baseMultiplier,
+    setBaseMultiplier,
+    thresholds,
+    hopeKey,
+    setHopeKey,
+    handleThresholdChange,
+    handleAddThreshold,
+    handleRemoveThreshold,
   }
 
 

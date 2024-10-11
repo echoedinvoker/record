@@ -11,10 +11,10 @@ import AddPreceptModal from "../components/AddPreceptModal";
 
 export default function Precepts() {
   const {
+    isModalVisible,
     precepts,
     onDragEnd,
     addPrecept,
-    isModalVisible,
     showModal,
     handleCancel,
   } = useContext(PreceptsContext);
@@ -35,7 +35,7 @@ export default function Precepts() {
   return (
     <>
       <PreceptRootContainer>
-        <Button type="primary" onClick={showModal} style={{ marginBottom: '1rem' }}>Add Precept</Button>
+        <Button type="primary" onClick={showModal} style={{ marginBottom: '1rem' }}>{isModalVisible ? 'TRUE' : 'FALSE'}</Button>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="precept-droppable-area">
             {(provided: DroppableProvided) => (
@@ -51,7 +51,7 @@ export default function Precepts() {
           </Droppable>
         </DragDropContext>
       </PreceptRootContainer>
-      <AddPreceptModal isVisible={isModalVisible} onClose={handleCancel} onAdd={handleAddPrecept} />
+      <AddPreceptModal onClose={handleCancel} onAdd={handleAddPrecept} />
     </>
   );
 }
