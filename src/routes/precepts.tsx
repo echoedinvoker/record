@@ -1,6 +1,6 @@
 import { DragDropContext, Droppable, DroppableProvided } from "react-beautiful-dnd";
 import { DroppableArea } from "../components/ui";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import ThePrecept from "../components/ThePrecept";
 import { PreceptsContext } from "../context/preceptsContext";
 import { Button } from "antd";
@@ -10,16 +10,14 @@ import styled from "styled-components";
 import AddPreceptModal from "../components/AddPreceptModal";
 
 export default function Precepts() {
-  const { precepts, onDragEnd, addPrecept } = useContext(PreceptsContext);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
+  const {
+    isModalVisible,
+    precepts,
+    onDragEnd,
+    addPrecept,
+    showModal,
+    handleCancel,
+  } = useContext(PreceptsContext);
 
   const handleAddPrecept = (name: string, baseMultiplier: number, thresholds: Threshold[], hopeKey: string) => {
     const precept = {
@@ -37,7 +35,7 @@ export default function Precepts() {
   return (
     <>
       <PreceptRootContainer>
-        <Button type="primary" onClick={showModal} style={{ marginBottom: '1rem' }}>Add Precept</Button>
+        <Button type="primary" onClick={showModal} style={{ marginBottom: '1rem' }}>{isModalVisible ? 'TRUE' : 'FALSE'}</Button>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="precept-droppable-area">
             {(provided: DroppableProvided) => (
@@ -53,7 +51,7 @@ export default function Precepts() {
           </Droppable>
         </DragDropContext>
       </PreceptRootContainer>
-      <AddPreceptModal isVisible={isModalVisible} onClose={handleCancel} onAdd={handleAddPrecept} />
+      <AddPreceptModal onClose={handleCancel} onAdd={handleAddPrecept} />
     </>
   );
 }
