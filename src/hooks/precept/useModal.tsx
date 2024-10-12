@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Threshold } from "../../services/precepts";
+import { Precept, Threshold } from "../../services/precepts";
 
 export default function useModal() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -7,9 +7,20 @@ export default function useModal() {
   const [baseMultiplier, setBaseMultiplier] = useState(1);
   const [thresholds, setThresholds] = useState<Threshold[]>([]);
   const [hopeKey, setHopeKey] = useState('');
+  const [modalType, setModalType] = useState<'add' | 'edit'>('add');
+  const [key, setKey] = useState('');
 
-  const showModal = () => {
-    console.log('showModal');
+  const showModal = (precept: Precept | null) => {
+    if (precept) {
+      setName(precept.name);
+      setBaseMultiplier(precept.baseMultiplier);
+      setThresholds(precept.thresholds);
+      setHopeKey(precept.hopeKey);
+      setModalType('edit');
+      setKey(precept.key);
+    } else {
+      setModalType('add');
+    }
     setIsModalVisible(true);
   };
 
@@ -61,6 +72,8 @@ export default function useModal() {
     thresholds,
     hopeKey,
     setHopeKey,
+    modalType,
+    key
   };
 }
 
