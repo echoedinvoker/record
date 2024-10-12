@@ -17,6 +17,9 @@ export default function Precepts() {
     addPrecept,
     showModal,
     handleCancel,
+    modalType,
+    updatePrecept,
+    key
   } = useContext(PreceptsContext);
 
   const handleAddPrecept = (name: string, baseMultiplier: number, thresholds: Threshold[], hopeKey: string) => {
@@ -29,13 +32,18 @@ export default function Precepts() {
       startEndTimes: [],
     };
 
+    if (modalType === 'edit') {
+      precept.key = key
+      updatePrecept(precept)
+      return;
+    }
     addPrecept(precept)
   };
 
   return (
     <>
       <PreceptRootContainer>
-        <Button type="primary" onClick={showModal} style={{ marginBottom: '1rem' }}>{isModalVisible ? 'TRUE' : 'FALSE'}</Button>
+        <Button type="primary" onClick={() => showModal(null)} style={{ marginBottom: '1rem' }}>{isModalVisible ? 'TRUE' : 'FALSE'}</Button>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="precept-droppable-area">
             {(provided: DroppableProvided) => (

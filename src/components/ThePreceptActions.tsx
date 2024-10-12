@@ -13,11 +13,11 @@ interface ThePreceptActionsProps {
 }
 
 export default function ThePreceptActions({ precept, isActived, accumulatedTimestamp }: ThePreceptActionsProps) {
-  const { changePreceptStatus, removePrecept } = useContext(PreceptsContext)
+  const { changePreceptStatus, removePrecept, showModal } = useContext(PreceptsContext)
 
   return (
     <TopRightCorner>
-      <ActionButton>
+      <ActionButton onClick={() => showModal(precept)}>
         <FileText size={16} />
       </ActionButton>
       <ActionButton onClick={() => changePreceptStatus(precept.key)}>

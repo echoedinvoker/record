@@ -12,7 +12,7 @@ interface PreceptContextType {
   onDragEnd: (result: DropResult) => void;
   changePreceptStatus: (preceptKey: string) => void;
   isModalVisible: boolean;
-  showModal: () => void;
+  showModal: (precept: Precept | null) => void;
   handleCancel: () => void;
   name: string;
   setName: React.Dispatch<React.SetStateAction<string>>;
@@ -24,6 +24,8 @@ interface PreceptContextType {
   handleThresholdChange: (index: number, field: 'thresholdNumber' | 'multiplier' | 'unit', value: number | string) => void;
   handleAddThreshold: () => void;
   handleRemoveThreshold: (index: number) => void;
+  modalType: 'add' | 'edit';
+  key: string;
 }
 
 export const PreceptsContext = createContext<PreceptContextType>({} as PreceptContextType);

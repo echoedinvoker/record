@@ -25,6 +25,8 @@ export default function PreceptsContextProvider({ children }: PreceptsContextPro
     handleThresholdChange,
     handleAddThreshold,
     handleRemoveThreshold,
+    modalType,
+    key
   } = useModal()
 
   const value = {
@@ -49,6 +51,8 @@ export default function PreceptsContextProvider({ children }: PreceptsContextPro
     handleThresholdChange,
     handleAddThreshold,
     handleRemoveThreshold,
+    modalType,
+    key
   }
 
 
